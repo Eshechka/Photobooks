@@ -24,8 +24,12 @@ const optimization = () => {
 
 	if (isProd) {
 		config.minimizer = [
-			new OptimizeCSSAssetsPlugin(),
-			new TerserPlugin()
+			new TerserPlugin({
+				cache: true,
+				parallel: true,
+				sourceMap: false
+			}),
+			new OptimizeCSSAssetsPlugin({})
 		]
 	}
 
@@ -42,7 +46,7 @@ module.exports = {
 	},
 
 	output: {
-		filename: '[name].[hash].js',
+		filename: 'js/[name].[hash].js',
 		path: path.resolve(__dirname, 'dist'),
 		publicPath: isProd ? '/Photobooks/' : '',
 	},
@@ -59,8 +63,25 @@ module.exports = {
 	},
 
 	plugins: [
-		new HTMLWebpackPlugin({
-			template: './src/index.html',
+		new HTMLWebpackPlugin({ 
+			template: 'src/index.html',
+			filename: 'index.html',
+			chunks: ['index'],
+		 }),
+		new HTMLWebpackPlugin({ 
+			template: 'src/login.html',
+			filename: 'login.html',
+			chunks: ['login'],
+		}),
+		new HTMLWebpackPlugin({ 
+			template: 'src/album.html',			
+			filename: 'album.html',
+			chunks: ['album'],
+		}),
+		new HTMLWebpackPlugin({ 
+			template: 'src/search.html',			
+			filename: 'search.html',
+			chunks: ['search'],
 		}),
 
 
@@ -69,39 +90,53 @@ module.exports = {
 
 		new CopyWebpackPlugin({
 			patterns: [
-				{ 	from: path.resolve(__dirname, 'src/favicon.ico'),
-					to: path.resolve(__dirname, 'dist') },
+				{ 	
+					from: path.resolve(__dirname, 'src/favicon.ico'),
+					to: path.resolve(__dirname, 'dist') 
+				},
 		      ],
 		    }),
 
 
 		new MiniCssExtractPlugin({
-			filename: 'style.[hash].css',
+			filename: './style/[name].[contenthash].css',
 		}),
 	],
 
 	module: {
 		rules: [
 		{
-			test: /\.(s)css$/,
+			test: /\.s[ac]ss$/,
 			use: [
-			// isDev ? 'vue-style-loader' :
-			{
-				loader: MiniCssExtractPlugin.loader, 
-				options: {
-					hmr: isDev,
-					reloadAll: true,
+				// isDev ? 'vue-style-loader' :
+				{
+					loader: MiniCssExtractPlugin.loader, 
+					options: {
+						hmr: isDev,
+						reloadAll: true
+					},
 				},
-			},
 
-			'css-loader', 
-			'sass-loader'
+				{loader: 'css-loader'},
+				{loader: 'resolve-url-loader'},
+				{loader: 'sass-loader'},
+
 			]
 		},
 
 		{
 			test: /\.(png|jpg|svg|gif)$/,
-			use: ['file-loader']	
+			exclude: [
+				path.resolve(__dirname, 'src/fonts/'),
+			],
+			use: [
+				{ 
+					loader: 'file-loader',
+					options: {
+						name: 'img/[name].[ext]',
+					},
+				 }
+			]	
 		},
 
 		{
@@ -109,7 +144,11 @@ module.exports = {
 			include: [
 				path.resolve(__dirname, 'src/fonts/'),
 			],
-			use: ['file-loader']	
+			loader: 'file-loader',
+
+			options: {
+	          name: 'fonts/[name].[ext]',
+	        },
 		},
 
 		{	

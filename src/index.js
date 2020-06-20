@@ -1,3 +1,2 @@
-import '../src/styles/main.scss'
+import '../src/styles/pages/index/index.scss'
 
-console.log('index.js');
