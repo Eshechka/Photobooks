@@ -48,38 +48,46 @@ module.exports = {
 	output: {
 		filename: 'js/[name].[hash].js',
 		path: path.resolve(__dirname, 'dist'),
-		publicPath: isProd ? '/Photobooks/' : '',
+		publicPath: '',
+		// publicPath: isProd ? '/Photobooks/' : '',
 	},
 
 	devServer: {
 		port: 4200,
 		stats: 'errors-only',
-		index: 'UIKit.html',
-		openPage: '',
+		index: 'login.html',
+		// openPage: '',
 		historyApiFallback: true,
 		noInfo: false,
 		overlay: true,
-		hot: isDev,
+		// hot: isDev,
 	},
 
 	plugins: [
+
+	    // ...PAGES.map((page) => new HtmlWebpackPlugin({
+	    //   template: `${PAGES_DIR}/${page}`,
+	    //   filename: `./${page}`,
+	    //   inject: true,
+	    // })),
+
 		new HTMLWebpackPlugin({ 
-			template: 'src/index.html',
+			template: 'src/markup/index.html',
 			filename: 'index.html',
 			chunks: ['index'],
 		 }),
 		new HTMLWebpackPlugin({ 
-			template: 'src/login.html',
+			template: 'src/markup/login.html',
 			filename: 'login.html',
 			chunks: ['login'],
 		}),
 		new HTMLWebpackPlugin({ 
-			template: 'src/album.html',			
+			template: 'src/markup/album.html',			
 			filename: 'album.html',
 			chunks: ['album'],
 		}),
 		new HTMLWebpackPlugin({ 
-			template: 'src/search.html',			
+			template: 'src/markup/search.html',			
 			filename: 'search.html',
 			chunks: ['search'],
 		}),
@@ -99,7 +107,7 @@ module.exports = {
 
 
 		new MiniCssExtractPlugin({
-			filename: './style/[name].[contenthash].css',
+			filename: 'style/[name].[contenthash].css',
 		}),
 	],
 
@@ -112,8 +120,8 @@ module.exports = {
 				{
 					loader: MiniCssExtractPlugin.loader, 
 					options: {
-						hmr: isDev,
-						reloadAll: true
+						// hmr: isDev,
+						// reloadAll: true
 					},
 				},
 
@@ -129,14 +137,11 @@ module.exports = {
 			exclude: [
 				path.resolve(__dirname, 'src/fonts/'),
 			],
-			use: [
-				{ 
-					loader: 'file-loader',
-					options: {
-						name: 'img/[name].[ext]',
-					},
-				 }
-			]	
+
+			loader: 'file-loader',
+			options: {
+				name: 'img/[name].[ext]',
+			},
 		},
 
 		{
@@ -145,10 +150,9 @@ module.exports = {
 				path.resolve(__dirname, 'src/fonts/'),
 			],
 			loader: 'file-loader',
-
 			options: {
-	          name: 'fonts/[name].[ext]',
-	        },
+				name: 'fonts/[name].[ext]',
+			},				
 		},
 
 		{	

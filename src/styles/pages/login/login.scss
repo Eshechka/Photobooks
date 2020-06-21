@@ -1,22 +1,139 @@
+/*colors*/
+$color-text: #323232;
+$color-white: #fff;
+$color-blue: rgb(40, 187, 240);
+
 @import '~normalize.css';
-@import '../../fonts.scss';
+@import '../../fonts.css';
 @import '../../layout.scss';
 @import '../../mixins.scss';
 
-
 .login {
 	height: 100vh;
-	min-height: 650px;
+	/*min-height: 650px;*/
+	min-width: 320px;
+	font-family: 'ProximaNova-Light';
+	color: $color-white;
+	/*padding: 60px 0 20px;*/
 	
+
 	background-image: url('/img/bg.png');
 	background-repeat: no-repeat;
 	background-size: cover;
+
+	.container_login {
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-template-rows: 
+								minmax(20%, 1fr) 
+								1fr 
+								minmax(75px, 1fr);
+
+		grid-template-areas: 	'title'
+								'content'
+								'footer';
+		
+		align-items: end;
+	}
+
+	&__title {
+		grid-area: title;
+
+		font-family: Panton-Bold;
+		text-align: center;
+		color: $color-white;
+		padding-bottom: 23px;
+	}
+
+	&__form {
+		grid-area: content;
+		align-self: start;
+	}
+
+	&__footer {
+		grid-area: footer;
+		text-align: center;
+		padding: 0 17px;
+	}
 }
 
 
 .registration {
-	background-color: rgb(255, 255, 255);
-	width: 300px;
-	height: 200px;
+	display: flex;
+	flex-direction: column;
+	margin: 0 auto;
+
+	color: $color-text;
+	background-color: $color-white;
+	min-width: 300px;
+	width: 90%;
+	min-height: 200px;
 	border-radius: 20px;
+	overflow: hidden;
+
+
+	&__label {
+		height: 40px;
+		width: 100%;
+		padding-left: 44px;
+		border-bottom: 1px solid #e1e1e1;
+
+		background-repeat: no-repeat;
+		background-position: 20px 50%;
+
+		&_name {
+			background-image: url('/img/name.svg');
+		}
+		&_email {
+			background-image: url('/img/envelope.svg');
+		}
+		&_password {
+			background-image: url('/img/password.svg');
+		}
+	}
+
+	&__input {
+		height: 100%;
+		width: 100%;
+		border: none;
+		outline: none;
+		
+		padding: 17px 0;
+
+		&::placeholder {
+			color: gray;
+		}
+	}
+
+
+
+	&__wrapper {
+		padding: 0px 20px;
+		display: flex;
+		flex-direction: column;
+
+		&_enter {
+			flex-direction: row;
+		}
+	}
+
+	&__text {
+		display: inline-block;
+	    margin-top: 10px;
+	    margin-bottom: 16px;
+	}
+
+	&__submit {
+	  background-color: $color-blue;
+	  width: 260px;
+	  height: 38px;
+	  color: $color-white;
+	  border-radius: 30px;
+	  align-self: center;
+	}
+
+	&__enter {
+		color: $color-blue;
+		display: inline-flex;
+	}
 }
