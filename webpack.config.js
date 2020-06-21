@@ -102,6 +102,10 @@ module.exports = {
 					from: path.resolve(__dirname, 'src/favicon.ico'),
 					to: path.resolve(__dirname, 'dist') 
 				},
+				{ 	
+					from: path.resolve(__dirname, 'src/fonts/'),
+					to: path.resolve(__dirname, 'dist/fonts/') 
+				},
 		      ],
 		    }),
 
@@ -151,8 +155,10 @@ module.exports = {
 			],
 			loader: 'file-loader',
 			options: {
-				name: 'fonts/[name].[ext]',
-			},				
+
+				name: isProd ? '../fonts/[name]/[name].[ext]' : '../../../fonts/[name]/[name].[ext]',
+
+			},
 		},
 
 		{	

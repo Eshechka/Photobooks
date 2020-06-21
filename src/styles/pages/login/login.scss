@@ -4,9 +4,10 @@ $color-white: #fff;
 $color-blue: rgb(40, 187, 240);
 
 @import '~normalize.css';
-@import '../../fonts.css';
+@import '../../fonts.scss';
 @import '../../layout.scss';
 @import '../../mixins.scss';
+
 
 .login {
 	height: 100vh;
@@ -39,7 +40,7 @@ $color-blue: rgb(40, 187, 240);
 	&__title {
 		grid-area: title;
 
-		font-family: Panton-Bold;
+		font-family: 'Panton-Bold';
 		text-align: center;
 		color: $color-white;
 		padding-bottom: 23px;
