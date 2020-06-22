@@ -1,0 +1,57 @@
+@import 'normalize.css';
+@import '../../fonts.pcss';
+@import '../../mixins.pcss';
+@import '../../layout.pcss';
+@import 'blocks/*';
+
+
+.login {
+	min-height: 100vh;
+	min-width: 320px;
+	font-family: 'ProximaNova-Light';
+	color: $color-white;	
+
+	background-image: url('/img/bg.png');
+	background-repeat: no-repeat;
+	background-size: cover;
+
+	&__container {
+		min-height: 100vh;
+		margin: 0 auto;
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-template-rows: 
+								20%
+								1fr 
+								75px;
+
+		grid-template-areas: 	'greeting'
+								'content'
+								'footer';
+		
+		align-items: end;
+	}
+
+	&__greeting {
+		grid-area: greeting;
+		padding-bottom: 23px;
+		padding-top: 36px;
+		text-align: center;
+	}
+
+	&__title {
+		font-family: 'Panton-Bold';		
+		color: $color-white;		
+	}
+
+	&__form {
+		grid-area: content;
+		align-self: start;
+	}
+
+	&__footer {
+		grid-area: footer;
+		text-align: center;
+		padding: 0 17px;
+	}
+}

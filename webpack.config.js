@@ -11,6 +11,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
+const SpriteLoaderPlugin = require('svg-sprite-loader/plugin');
+
 const isDev = process.env.NODE_env === 'development';
 const isProd = !isDev;
 
@@ -55,7 +57,7 @@ module.exports = {
 	devServer: {
 		port: 4200,
 		stats: 'errors-only',
-		index: 'login.html',
+		// index: 'login.html',
 		// openPage: '',
 		historyApiFallback: true,
 		noInfo: false,
@@ -65,11 +67,11 @@ module.exports = {
 
 	plugins: [
 
-	    // ...PAGES.map((page) => new HtmlWebpackPlugin({
-	    //   template: `${PAGES_DIR}/${page}`,
-	    //   filename: `./${page}`,
-	    //   inject: true,
-	    // })),
+	// ...PAGES.map((page) => new HtmlWebpackPlugin({
+	//   template: `${PAGES_DIR}/${page}`,
+	//   filename: `./${page}`,
+	//   inject: true,
+	// })),
 
 		new HTMLWebpackPlugin({ 
 			template: 'src/markup/index.html',
@@ -95,6 +97,7 @@ module.exports = {
 
 		new CleanWebpackPlugin(),
 
+		new SpriteLoaderPlugin({ plainSprite: true }),
 
 		new CopyWebpackPlugin({
 			patterns: [
@@ -106,8 +109,8 @@ module.exports = {
 					from: path.resolve(__dirname, 'src/fonts/'),
 					to: path.resolve(__dirname, 'dist/fonts/') 
 				},
-		      ],
-		    }),
+			],
+		}),
 
 
 		new MiniCssExtractPlugin({
@@ -117,22 +120,32 @@ module.exports = {
 
 	module: {
 		rules: [
+		// {
+		// 	test: /\.s[ac]ss$/,
+		// 	use: [
+		// 		// isDev ? 'vue-style-loader' :
+		// 		{
+		// 			loader: MiniCssExtractPlugin.loader, 
+		// 			options: {
+		// 				// hmr: isDev,
+		// 				// reloadAll: true
+		// 			},
+		// 		},
+
+		// 		{loader: 'css-loader'},
+		// 		{loader: 'resolve-url-loader'},
+		// 		{loader: 'sass-loader'},
+
+		// 	]
+		// },
+
 		{
-			test: /\.s[ac]ss$/,
+			test: /\.(p|post|s|)css$/,
 			use: [
 				// isDev ? 'vue-style-loader' :
-				{
-					loader: MiniCssExtractPlugin.loader, 
-					options: {
-						// hmr: isDev,
-						// reloadAll: true
-					},
-				},
-
-				{loader: 'css-loader'},
-				{loader: 'resolve-url-loader'},
-				{loader: 'sass-loader'},
-
+				MiniCssExtractPlugin.loader, 
+				'css-loader',
+				'postcss-loader'
 			]
 		},
 
@@ -140,6 +153,7 @@ module.exports = {
 			test: /\.(png|jpg|svg|gif)$/,
 			exclude: [
 				path.resolve(__dirname, 'src/fonts/'),
+				path.resolve(__dirname, 'src/icons/'),
 			],
 
 			loader: 'file-loader',
@@ -159,6 +173,36 @@ module.exports = {
 				name: isProd ? '../fonts/[name]/[name].[ext]' : '../../../fonts/[name]/[name].[ext]',
 
 			},
+		},
+
+		{
+	test: /\.svg$/,
+	include: [
+		path.resolve(__dirname, 'src/icons/'),
+	],
+	use: [
+		{
+			loader: "svg-sprite-loader",
+			options: {
+				extract: true,
+				spriteFilename: 'img/spriteIcons'
+			}
+		},
+		"svg-transform-loader",
+		{
+			loader: "svgo-loader",
+			options: {
+				plugins: [
+					{ removeTitle: true },
+					{
+						removeAttrs: {
+							attrs: "(fill|stroke)"
+						}
+					}
+				]
+			}
+		}
+	]
 		},
 
 		{	

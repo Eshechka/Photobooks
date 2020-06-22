@@ -1,1 +1,1 @@
-import '../src/styles/pages/album/album.scss'
+import '../src/styles/pages/album/album.pcss'

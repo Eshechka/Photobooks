@@ -8,21 +8,41 @@
 <body>
 
 <section class="login">
-	<div class="container container_login">
+	<div class="login__container">
 
-		<h1 class="login__title">Регистрация</h1>
+		<div class="login__greeting">
+			
+			<h1 class="login__title">Регистрация / Добро пожаловать</h1>
+
+			<p class="login__text">Перед вами сервис, который поможет вам организовать свои фотографии в альбомы и поделиться ими со всем миром!</p>
+
+		</div>
 
 		<div class="login__form">
 
 			<form class="registration">
 
-				<label class="registration__label registration__label_name">				
+				<label class="registration__label registration__label_name">
+					
+					<svg class="registration__icon registration__icon_name">
+						 <use xlink:href="../img/spriteIcons.svg#name" />
+					</svg>
 					<input class="registration__input registration__input_name" type="text" placeholder="Имя">
+
 				</label>
-				<label class="registration__label registration__label_email">
+				<label class="registration__label registration__label_email">					
+					
+					<svg class="registration__icon registration__icon_email">
+						 <use xlink:href="../img/spriteIcons.svg#envelope" />
+					</svg>
 					<input class="registration__input registration__input_email" type="text" placeholder="Электронная почта">
+
 				</label>
-				<label class="registration__label registration__label_password">
+				<label class="registration__label registration__label_password">					
+					
+					<svg class="registration__icon registration__icon_password">
+						 <use xlink:href="../img/spriteIcons.svg#password" />
+					</svg>
 					<input class="registration__input registration__input_password" type="text" placeholder="Пароль">
 				</label>
 
@@ -32,13 +52,49 @@
 
 					<button  class="registration__submit" type="submit">Создать аккаунт</button>
 					
-					<div class="registration__wrapper_enter">
+					<div class="registration__wrapper_toenter">
 						<p class="registration__text">Уже зарегистрированы?</p> 
-						<button class="registration__enter" type='button'>Войти</button>
+						<button class="registration__button" type="button">Войти</button>
 					</div>
 
 				</div>
 
+			</form>
+
+
+			<form class="enter">
+
+				<label class="enter__label enter__label_email">					
+					
+					<svg class="enter__icon enter__icon_email">
+						 <use xlink:href="../img/spriteIcons.svg#envelope" />
+					</svg>
+					<input class="enter__input enter__input_email" type="text" placeholder="Электронная почта">
+
+				</label>
+
+				<label class="enter__label enter__label_password">
+					
+					<svg class="enter__icon enter__icon_password">
+						 <use xlink:href="../img/spriteIcons.svg#password" />
+					</svg>
+					<input class="enter__input enter__input_password" type="text" placeholder="Пароль">
+
+				</label>
+				
+
+				<div class="enter__wrapper">
+					
+					<button class="enter__button" type="button">Забыли пароль?</p>
+
+					<button  class="enter__submit" type="submit">Создать аккаунт</button>
+					
+					<div class="enter__wrapper_toregistration">
+						<p class="enter__text">Нет аккаунта?</p> 
+						<button class="enter__button" type="button">Зарегистрироваться</button>
+					</div>
+
+				</div>
 
 			</form>
 

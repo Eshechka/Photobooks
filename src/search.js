@@ -1,2 +1,2 @@
-import '../src/styles/pages/search/search.scss'
+import '../src/styles/pages/search/search.pcss'
 
