@@ -55,14 +55,13 @@ module.exports = {
 	},
 
 	devServer: {
-		port: 4200,
+		port: 4800,
 		stats: 'errors-only',
 		// index: 'login.html',
 		// openPage: '',
 		historyApiFallback: true,
 		noInfo: false,
 		overlay: true,
-		// hot: isDev,
 	},
 
 	plugins: [
@@ -140,7 +139,7 @@ module.exports = {
 		// },
 
 		{
-			test: /\.(p|post|s|)css$/,
+			test: /\.(p|post|)css$/,
 			use: [
 				// isDev ? 'vue-style-loader' :
 				MiniCssExtractPlugin.loader, 
@@ -150,10 +149,9 @@ module.exports = {
 		},
 
 		{
-			test: /\.(png|jpg|svg|gif)$/,
+			test: /\.(png|jpg|gif|svg)$/,
 			exclude: [
 				path.resolve(__dirname, 'src/fonts/'),
-				path.resolve(__dirname, 'src/icons/'),
 			],
 
 			loader: 'file-loader',
@@ -175,40 +173,40 @@ module.exports = {
 			},
 		},
 
-		{
-	test: /\.svg$/,
-	include: [
-		path.resolve(__dirname, 'src/icons/'),
-	],
-	use: [
-		{
-			loader: "svg-sprite-loader",
-			options: {
-				extract: true,
-				spriteFilename: 'img/spriteIcons'
-			}
-		},
-		"svg-transform-loader",
-		{
-			loader: "svgo-loader",
-			options: {
-				plugins: [
-					{ removeTitle: true },
-					{
-						removeAttrs: {
-							attrs: "(fill|stroke)"
-						}
-					}
-				]
-			}
-		}
-	]
-		},
+	// 	{
+	// test: /\.svg$/,
+	// include: [
+	// 	path.resolve(__dirname, 'src/icons/'),
+	// ],
+	// use: [
+	// 	{
+	// 		loader: "svg-sprite-loader",
+	// 		options: {
+	// 			extract: true,
+	// 			spriteFilename: 'img/spriteIcons'
+	// 		}
+	// 	},
+	// 	"svg-transform-loader",
+	// 	{
+	// 		loader: "svgo-loader",
+	// 		options: {
+	// 			plugins: [
+	// 				{ removeTitle: true },
+	// 				{
+	// 					removeAttrs: {
+	// 						attrs: "(fill|stroke)"
+	// 					}
+	// 				}
+	// 			]
+	// 		}
+	// 	}
+	// ]
+	// 	},
 
-		{	
-			// test: /\.vue$/,
-			// loader: "vue-loader"
-		},
+		// {	
+		// 	test: /\.vue$/,
+		// 	loader: "vue-loader"
+		// },
 
 		]
 	}

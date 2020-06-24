@@ -17,10 +17,10 @@ module.exports = {
     }),
     require("postcss-nested"),
     require("postcss-rgb"),
-    // require("postcss-inline-svg")({
-    //   removeFill: true,
-    //   path: "./src/icons"
-    // }),
+    require("postcss-inline-svg")({
+      removeFill: true,
+      paths: ["./src/icons/"]
+    }),
     require("cssnano"),
     // require("postcss-pxtorem")({
     //   rootValue: 16,
