@@ -5,76 +5,13 @@
 
 
 @import '../../blocks/header.pcss';
+@import '../../blocks/avatar.pcss';
 @import '../../blocks/socials.pcss';
+@import '../../blocks/form-search.pcss';
 @import '../../blocks/card.pcss';
 @import '../../blocks/new.pcss';
-@import '../../blocks/search.pcss';
+@import '../../blocks/my-search.pcss';
 @import '../../blocks/site-button.pcss';
-@import '../../blocks/album.pcss';
+@import '../../blocks/my-album.pcss';
 @import '../../blocks/my-albums.pcss';
 @import '../../blocks/footer.pcss';
-
-
-
-.avatar {
-
-	width: 100%;
-	text-align: center;
-
-	&__img {
-		margin: 0 auto;
-		margin-bottom: 10px;
-		border-radius: 50%;
-		height: 50px;
-		width: 50px;		
-	}
-}
-
-.form-search {
-	position: relative;
-	width: 350px;
-	height: 40px;
-	border-radius: 40px;
-	box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
-	background: #fff;
-	transition: all 0.3s ease;
-
-	&__input {
-		position: absolute;
-		top: 0;
-		left: 38px;
-		font-size: 14px;
-		background: transparent;
-		color: $color-text;
-		width: 300px;
-		height: 40px;
-		border: none;
-		appearance: none;
-		outline: none;
-
-		&::-webkit-search-cancel-button {
-			appearance: none;
-		}
-	}
-
-	&__submit {
-		position: absolute;
-		top: 50%;
-		left: 20px;
-		transform: translateY(-50%);
-		height: 15px;
-		width: 15px;
-		padding: 0;
-		margin: 0;
-		border: none;
-		background: none;
-		outline: none!important;
-		cursor: pointer;
-
-		& svg {
-			width: 15px;
-			height: 15px;
-			fill: $color-text;
-		}
-	}
-}

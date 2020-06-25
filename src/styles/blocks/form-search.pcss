@@ -1,0 +1,48 @@
+.form-search {
+	position: relative;
+	width: 350px;
+	height: 40px;
+	border-radius: 40px;
+	box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+	background: #fff;
+	transition: all 0.3s ease;
+
+	&__input {
+		position: absolute;
+		top: 0;
+		left: 38px;
+		font-size: 14px;
+		background: transparent;
+		color: $color-text;
+		width: 300px;
+		height: 40px;
+		border: none;
+		appearance: none;
+		outline: none;
+
+		&::-webkit-search-cancel-button {
+			appearance: none;
+		}
+	}
+
+	&__submit {
+		position: absolute;
+		top: 50%;
+		left: 20px;
+		transform: translateY(-50%);
+		height: 15px;
+		width: 15px;
+		padding: 0;
+		margin: 0;
+		border: none;
+		background: none;
+		outline: none!important;
+		cursor: pointer;
+
+		& svg {
+			width: 15px;
+			height: 15px;
+			fill: $color-text;
+		}
+	}
+}

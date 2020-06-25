@@ -57,7 +57,10 @@ module.exports = {
 	devServer: {
 		port: 4800,
 		stats: 'errors-only',
+		
+		index: 'search.html',
 		// index: 'login.html',
+		
 		// openPage: '',
 		historyApiFallback: true,
 		noInfo: false,
