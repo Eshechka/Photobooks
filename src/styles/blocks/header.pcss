@@ -1,0 +1,41 @@
+.header {
+	background-image: url('/img/bg-main-header.png');
+	background-repeat: no-repeat;
+	background-size: cover;
+
+	min-width: 320px;
+	padding: 20px 0;
+
+	color: $color-white;
+
+	&__container {
+		display: flex;
+		flex-direction: column;
+		margin: 0 auto;
+		width: 95%;
+	}
+
+	&__top {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		margin-bottom: 15px;
+	}
+
+	&__title {
+		font-family: 'Panton-Bold';
+		font-size: 21px;
+	}
+
+	&__text {
+		font-family: 'ProximaNova-Light';
+		text-align: center;
+		font-size: 14px;
+		color: rgba(#{$color-white}, 0.8);
+		margin-bottom: 18px;
+	}
+
+	&__socials {
+		text-align: center;		
+	}
+}
