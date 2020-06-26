@@ -58,7 +58,8 @@ module.exports = {
 		port: 4800,
 		stats: 'errors-only',
 		
-		index: 'search.html',
+		index: 'album.html',
+		// index: 'search.html',
 		// index: 'login.html',
 		
 		// openPage: '',
