@@ -5,7 +5,7 @@ const HTMLWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
-// const VueLoaderPlugin = require("vue-loader/lib/plugin");
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
@@ -55,10 +55,10 @@ module.exports = {
 	},
 
 	devServer: {
-		port: 4800,
+		port: 4200,
 		stats: 'errors-only',
 		
-		index: 'album.html',
+		// index: 'album.html',
 		// index: 'search.html',
 		// index: 'login.html',
 		
@@ -101,6 +101,8 @@ module.exports = {
 		new CleanWebpackPlugin(),
 
 		new SpriteLoaderPlugin({ plainSprite: true }),
+
+		new VueLoaderPlugin(),
 
 		new CopyWebpackPlugin({
 			patterns: [
@@ -145,11 +147,15 @@ module.exports = {
 		{
 			test: /\.(p|post|)css$/,
 			use: [
-				// isDev ? 'vue-style-loader' :
-				MiniCssExtractPlugin.loader, 
+				isDev ? 'vue-style-loader' : MiniCssExtractPlugin.loader, 
 				'css-loader',
 				'postcss-loader'
 			]
+		},
+
+		{
+			test: /\.vue$/,
+			loader: "vue-loader"
 		},
 
 		{
@@ -172,7 +178,8 @@ module.exports = {
 			loader: 'file-loader',
 			options: {
 
-				name: isProd ? '../fonts/[name]/[name].[ext]' : '../../../fonts/[name]/[name].[ext]',
+				name: isProd ? '../fonts/[name]/[name].[ext]' : '../fonts/[name]/[name].[ext]',
+				// name: isProd ? '../fonts/[name]/[name].[ext]' : '../../../fonts/[name]/[name].[ext]',
 
 			},
 		},
