@@ -206,8 +206,18 @@
                                     <textarea class="form-addAlbum__input form-addAlbum__input_textarea" cols="20" rows="5" placeholder="Описание альбома"></textarea>
                                 </label>
                         
-                                <!-- <button class="site-button site-button_theme-light" type="submit">Добавить</button> -->
 
+                                <div class="form-addAlbum__cover">
+
+                                    <div class="form-addAlbum__cover-img-wrapper">
+                                        <img class="form-addAlbum__cover-img" :src="urlCover" alt="card avatar">
+                                    </div>
+
+                                    <div class="form-addAlbum__cover-button">
+                                        <button class="site-button site-button_theme-light" type="button">Загрузить обложку</button>
+                                    </div>
+
+                                </div>
                                 
                                 <div class="form-addAlbum__buttons">
                                     <button class="site-button" type="submit">Сохранить</button>
@@ -258,7 +268,9 @@
             openAddAlbum: !false,
 
             urlAvatar: require('../img/anton.png').default,
+            urlCover: require('../img/bg-main-header.png').default,
             urlInlineSvgSprite: require('../img/spriteIcons.svg').default,
+
             cards: [
                 {   id: 1, title: 'Путешествие на лодке по озеру', avatarPhoto: '../img/card-avatar1.png', photo: '../img/card-img1.png', comments: '9', likes: '15', folderName: 'Прогулки по воде',  },
                 {   id: 2, title: 'Путешествие на лодке по озеру2', avatarPhoto: '../img/card-avatar1.png', photo: '../img/card-img1.png', comments: '9', likes: '15', folderName: 'Прогулки по воде2',  },
@@ -284,7 +296,7 @@
     @import '../styles/mixins.pcss';
     @import '../styles/layout.pcss';
 
-    @import '../styles/blocks/header.pcss';
+    /* @import '../styles/blocks/header.pcss'; */
     @import '../styles/blocks/avatar.pcss';
     @import '../styles/blocks/socials.pcss';
     @import '../styles/blocks/form-search.pcss';
@@ -295,6 +307,118 @@
     @import '../styles/blocks/footer.pcss';
 
 
+    .header {
+        background-image: url('/img/bg-main-header.png');
+        background-repeat: no-repeat;
+        background-size: cover;
+
+        min-width: 320px;
+        padding: 20px 0;
+
+        color: $color-white;
+
+        &__container {
+            display: flex;
+            flex-direction: column;
+            margin: 0 auto;
+            width: 95%;
+        }
+
+        &__top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        &__title {
+            font-family: 'Panton-Bold';
+            font-size: 21px;
+        }
+
+        &__text {
+            font-family: 'ProximaNova-Light';
+            text-align: center;
+            font-size: 14px;
+            color: rgba(#{$color-white}, 0.8);
+            margin-bottom: 18px;
+        }
+
+        &__socials {
+            text-align: center;		
+        }
+
+        &__avatar {
+            display: inline-block;		
+            vertical-align: middle;
+        }
+
+        // ---------------------
+        &_album {
+
+            position: relative;
+            padding-bottom: 45px;
+
+            .header__title {
+                display: inline-block;
+                vertical-align: middle;
+                font-family: 'Panton-Bold';
+                font-size: 16px;
+            }
+
+            .header__album-title {
+                font-family: 'ProximaNova Semibold';
+                font-size: 18px;
+                line-height: 24px;
+                text-align: center;
+                margin-bottom: 10px;
+            }
+            .header__text {
+                font-family: 'ProximaNova-Light';
+                font-size: 14px;
+                line-height: 21px;
+                text-align: center;
+            }
+            .header__album-info {
+                position: absolute;
+                bottom: 0;
+                right: 0;
+                left: 0;
+                background-color: rgba($color-white, 0.8);
+                height: 45px;
+                padding: 10px;
+                overflow: hidden;
+            }
+            .header__album-info-wrapper {
+                text-align: center;
+            }
+
+            .header__button {
+                text-align: center;
+                font-family: 'Panton Bold';
+                font-size: 16px;
+                color: $color-text;
+                padding-left: 30px;
+        
+                background-repeat: no-repeat;
+                background-size: 20px;
+                background-position: 0 50%;
+
+                &_comments {
+                    background-image: svg-load('comments.svg', fill=rgba(#{$color-text}, 0.9));
+                }
+                &_likes {
+                    background-image: svg-load('heart.svg', fill=rgba(#{$color-text}, 0.9));
+                }
+                &_photos {
+                    background-image: svg-load('cam.svg', fill=rgba(#{$color-text}, 0.9));
+                }
+            }
+
+
+        }
+        // ---------------------
+    }
 
 
     .site-tag {
@@ -532,78 +656,6 @@
 
     }
 
-    .add-album {
-
-        width: 100%;        
-        min-width: 320px;
-        background-color: #f2f2f2;
-        border-radius: 3px;
-        box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.15);
-        overflow: hidden;
-
-        &__card {
-            min-width: 300px;
-            background-color: $color-white;
-            display: flex;
-            flex-direction: column;
-        }
-
-        &__topgroup {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-        }
-
-        &__button {
-            background-repeat: no-repeat;
-            background-size: 20px;
-            background-position: 50%;
-
-            &_likes {
-                background-image: svg-load('heart.svg', viewBox='53 56 22 17', height='18px', fill=rgb(238, 70, 52), stroke-width=2px, stroke=rgba(#{$color-white}, 0.95));
-            }
-        }
-
-        &__title {
-            font-family: 'Proxima Nova Semibold';
-            font-size: 18px;
-            line-height: 24px;
-        }
-
-
-        &__textarea {
-            border: 1px solid rgb(216, 214, 214);
-            background-color: $color-white;
-            min-width: 278px;
-            width: 80%;
-            padding: 13px 16px;
-            border-radius: 30px;
-            resize: vertical;
-            min-height: 48px;
-            max-height: 150px;
-            margin-bottom: 10px;
-        }
-    }
-
-    .form-addAlbum {
-        display: flex;
-        flex-direction: column;
-        padding: 10px;
-
-        &__input {
-            display: block;
-            border-width: 1px  rgb(216, 214, 214) solid;
-            background-color: $color-white;
-            min-width: 280px;
-            min-height: 38px;
-            border-radius: 20px;
-            padding: 10px 15px;
-
-            &_textarea {
-                resize: none;
-            }
-        }
-    }
 
     .comment {
         background-color: rgba(f6f6f6, 0.8);
@@ -626,6 +678,7 @@
         }
 
     }
+
 
 
     .my-albums {
@@ -669,4 +722,117 @@
         }
         
     }
+
+    
+    .add-album {
+
+        width: 100%;        
+        min-width: 320px;
+        border-radius: 3px;
+        box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+
+        &__card {
+            min-width: 300px;
+            background-color: #f2f2f2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        &__topgroup {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 10px;
+        }
+
+        &__title {
+            font-family: 'Panton-Bold';
+            font-size: 21px;
+            line-height: 21px;
+        }
+
+        &__button {
+            width: 20px;
+            height: 20px;
+            background-repeat: no-repeat;
+            background-size: 20px;
+            background-position: 50%;
+
+            &_close {
+                background-image: svg-load('close.svg', fill=rgba(#{$color-text}, 0.4));
+            }
+        }
+
+
+        &__textarea {
+            border: 1px solid rgb(216, 214, 214);
+            background-color: $color-white;
+            min-width: 278px;
+            width: 80%;
+            padding: 13px 16px;
+            border-radius: 30px;
+            resize: vertical;
+            min-height: 48px;
+            max-height: 150px;
+            margin-bottom: 10px;
+        }
+    }
+
+    
+    .form-addAlbum {
+        display: flex;
+        flex-direction: column;
+        background-color: $color-white;
+
+        &__label {
+            font-family: 'Proxima Nova Semibold';
+            font-size: 14px;
+            padding: 15px 10px 10px;
+        }
+
+        &__input {
+            display: block;
+            margin-top: 5px;
+            border: 1px solid rgb(216, 214, 214);
+            background-color: $color-white;
+            min-width: 280px;
+            width: 100%;
+            min-height: 38px;
+            border-radius: 20px;
+            padding: 10px 15px;
+
+            &_textarea {
+                resize: none;
+            }
+        }
+
+         &__cover {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+        }
+
+        &__cover-img-wrapper {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        &__cover-img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+
+         &__cover-button {
+             margin-left: 18px;
+        }
+
+         &__buttons {
+            background-color: #f2f2f2;
+            padding: 10px;
+        }
+    }
+
 </style>
