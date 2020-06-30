@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <div class="wrapper__overlay" v-if="openBigCard"></div>
+        <div class="wrapper__overlay" v-if="openBigCard || openAddAlbum"></div>
 
         <header class="header">
 
@@ -50,6 +50,7 @@
 
                 </div>
             </div>
+
         </header>
 
 
@@ -123,11 +124,23 @@
 
                         <div class="big-card__comments">
 
-                            <h4 class="big-card__comments-title">Комментарии</h4>
-                            <div class="big-card__my-name">Антон Черепов</div>
-                        
-                            <textarea class="big-card__my-comment-text" name="" id="" cols="10" rows="2" placeholder="добавить комментарий"></textarea>
-                            <button class="site-button site-button_theme-light" type="submit">Добавить</button>
+                            <div class="big-card__comments-topgroup">
+                                <h4 class="big-card__comments-title">Комментарии</h4>
+                                <button type="button" class="big-card__button big-card__button_tick"></button>
+                            </div>
+                            
+                            <div class="big-card__my-comment">
+                                <div class="big-card__my-comment-name">Антон Черепов</div>
+                            
+                                <form class="big-card__my-comment-form">
+
+                                    <textarea class="big-card__my-comment-text" name="" id="" cols="10" rows="1" placeholder="Добавить комментарий"></textarea>
+                                    <div class="big-card__my-comment-submit">
+                                        <button class="site-button site-button_theme-light" type="submit">Добавить</button>
+                                    </div>
+
+                                </form>
+                            </div>
 
                             <div class="comment">
 
@@ -147,8 +160,6 @@
                     </div>
                 </div>
             </div>
-           
-
 
         </section>
 
@@ -156,7 +167,9 @@
 
 
         <section class="my-albums">
+
             <div class="my-albums__container">
+
                 <div class="my-albums__topgroup">
                     <h2 class="my-albums__title">Мои альбомы</h2>
                     <div class="my-albums__button-plus">
@@ -171,6 +184,41 @@
                     </li>
                 </ul> 
 
+            </div>
+
+            <div class="my-albums__add-album" v-if="openAddAlbum">
+                <div class="add-album">
+                    <div class="add-album__card">
+
+                        <div class="add-album__topgroup">
+                            <h4 class="add-album__title">Добавить альбом</h4>
+                            <button type="button" class="add-album__button add-album__button_close"></button>
+                        </div>
+                        
+                        <div class="add-album__form">
+                            <form class="form-addAlbum">
+
+                                <label class="form-addAlbum__label">Название альбома
+                                    <input class="form-addAlbum__input" type="text" placeholder="Мой альбом">
+                                </label>
+
+                                <label class="form-addAlbum__label">Описание
+                                    <textarea class="form-addAlbum__input form-addAlbum__input_textarea" cols="20" rows="5" placeholder="Описание альбома"></textarea>
+                                </label>
+                        
+                                <!-- <button class="site-button site-button_theme-light" type="submit">Добавить</button> -->
+
+                                
+                                <div class="form-addAlbum__buttons">
+                                    <button class="site-button" type="submit">Сохранить</button>
+                                    <button class="site-button site-button_theme-just-text" type="button">Отменить</button>
+                                </div>
+
+                            </form>
+                        </div>      
+
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -207,6 +255,7 @@
     data() {
         return {
             openBigCard: false,
+            openAddAlbum: !false,
 
             urlAvatar: require('../img/anton.png').default,
             urlInlineSvgSprite: require('../img/spriteIcons.svg').default,
@@ -239,13 +288,13 @@
     @import '../styles/blocks/avatar.pcss';
     @import '../styles/blocks/socials.pcss';
     @import '../styles/blocks/form-search.pcss';
-    /* @import '../styles/blocks/card.pcss'; */
     @import '../styles/blocks/new.pcss';
     @import '../styles/blocks/my-search.pcss';
     @import '../styles/blocks/site-button.pcss';
     @import '../styles/blocks/my-albums.pcss';
-    /* @import '../styles/blocks/my-album.pcss'; */
     @import '../styles/blocks/footer.pcss';
+
+
 
 
     .site-tag {
@@ -254,6 +303,93 @@
         font-family: 'Proxima Nova Semibold';
         font-size: 14px;
         font-weight: bolder;
+    }
+
+
+    .card {
+        min-width: 300px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+
+        background-color: rgb(246, 246, 246);
+        border-radius: 3px;
+        box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+
+        color: $color-text;
+
+        &__img-card {
+            width: 100%;
+            height: 200px;
+        }
+        &__img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+        
+        &__info {
+            display: flex;
+            padding: 10px;
+            background-color: $color-white;
+        }
+
+        &__avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+        &__avatar-img {
+            object-fit: cover;
+        }
+        &__desc {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-left: 10px;	
+        }
+        &__desc-title {
+            font-family: 'ProximaNova-Light';
+            font-size: 14px;
+        }
+        &__button {
+            font-family: 'Panton Bold';
+            font-size: 16px;
+            color: $color-text;
+            padding-left: 30px;
+
+            background-repeat: no-repeat;
+            background-size: 20px;
+            background-position: 0 50%;
+
+            &_comments {
+                background-image: svg-load('comments.svg', fill=rgba(#{$color-text}, 0.2));
+            } 
+            &_likes {
+                background-image: svg-load('heart.svg', fill=rgba(#{$color-text}, 0.2));
+            }
+        }
+
+        &__folder {
+            text-align: right;	
+            padding: 10px;		
+        }
+
+        &__folder-name {
+            display: inline-block;
+            padding-left: 30px;
+
+            background-repeat: no-repeat;
+            background-size: 20px;
+            background-position: 0 50%;
+            
+            background-image: svg-load('album.svg', fill=rgba(#{$color-text}, 0.2));
+            
+            font-family: 'Proxima Nova Semibold';
+            font-size: 14px;
+        }
+
     }
 
 
@@ -267,11 +403,7 @@
 
         &__card {
             min-width: 300px;
-            /* width: 90%;
-            margin: 0 auto;           */
-            border-radius: 3px;
             background-color: $color-white;
-
             display: flex;
             flex-direction: column;
         }
@@ -291,7 +423,12 @@
         &__author-info {
             display: flex;
             justify-content: flex-start;
+            align-items: center;
             padding: 10px;
+        }
+
+        &__avatar {
+            margin-right: 10px;
         }
 
         &__likes {
@@ -306,10 +443,9 @@
         }
 
         &__name {
-
-        }
-        &__surname {
-
+            font-family: 'Panton-Bold';
+            font-size: 14px;
+            line-height: 18px;
         }
 
         &__button {
@@ -322,6 +458,16 @@
             background-size: 20px;
             background-position: 18px 50%;
 
+            &_tick {
+                background-image: svg-load('arrow_left.svg', fill=rgba(#{$color-text}, 0.2));
+                background-position: 50%;
+                padding: 0px;
+                height: 20px;
+                width: 20px;
+                background-size: 8px;
+                transform: rotate(90deg);
+            }
+
             &_likes {
                 background-image: svg-load('heart.svg', viewBox='53 56 22 17', height='18px', fill=rgb(238, 70, 52), stroke-width=2px, stroke=rgba(#{$color-white}, 0.95));
             }
@@ -332,6 +478,12 @@
             padding-bottom: 30px;
         }
 
+        &__title {
+            font-family: 'Proxima Nova Semibold';
+            font-size: 18px;
+            line-height: 24px;
+            margin-bottom: 10px;
+        }
 
 
         &__comments {
@@ -341,18 +493,180 @@
             padding: 20px 10px;
         }
 
+        &__comments-topgroup {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        &__comments-title {
+            font-family: 'Proxima Nova Semibold';
+            font-size: 14px;
+            line-height: 21px;
+            padding-right: 10px;
+        }
+
+        &__my-comment {
+            padding-bottom: 10px;
+        }
+
+        &__my-comment-name {
+            font-family: 'Panton-Bold';
+            font-size: 14px;
+            line-height: 18px;
+            margin-bottom: 10px;
+        }
+
+        &__my-comment-text {
+            border: 1px solid rgb(216, 214, 214);
+            background-color: $color-white;
+            min-width: 278px;
+            width: 80%;
+            padding: 13px 16px;
+            border-radius: 30px;
+            resize: vertical;
+            min-height: 48px;
+            max-height: 150px;
+            margin-bottom: 10px;
+        }
 
     }
 
+    .add-album {
+
+        width: 100%;        
+        min-width: 320px;
+        background-color: #f2f2f2;
+        border-radius: 3px;
+        box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+
+        &__card {
+            min-width: 300px;
+            background-color: $color-white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        &__topgroup {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+        }
+
+        &__button {
+            background-repeat: no-repeat;
+            background-size: 20px;
+            background-position: 50%;
+
+            &_likes {
+                background-image: svg-load('heart.svg', viewBox='53 56 22 17', height='18px', fill=rgb(238, 70, 52), stroke-width=2px, stroke=rgba(#{$color-white}, 0.95));
+            }
+        }
+
+        &__title {
+            font-family: 'Proxima Nova Semibold';
+            font-size: 18px;
+            line-height: 24px;
+        }
+
+
+        &__textarea {
+            border: 1px solid rgb(216, 214, 214);
+            background-color: $color-white;
+            min-width: 278px;
+            width: 80%;
+            padding: 13px 16px;
+            border-radius: 30px;
+            resize: vertical;
+            min-height: 48px;
+            max-height: 150px;
+            margin-bottom: 10px;
+        }
+    }
+
+    .form-addAlbum {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+
+        &__input {
+            display: block;
+            border-width: 1px  rgb(216, 214, 214) solid;
+            background-color: $color-white;
+            min-width: 280px;
+            min-height: 38px;
+            border-radius: 20px;
+            padding: 10px 15px;
+
+            &_textarea {
+                resize: none;
+            }
+        }
+    }
 
     .comment {
         background-color: rgba(f6f6f6, 0.8);
         display: flex;
         flex-direction: column;
         padding: 20px 10px;
+        border-top: 1px solid #f2f2f2;
 
-        &:not(:last-child) {
-            border-bottom: 1px solid #f2f2f2;
+        &__author {
+            font-family: 'Panton-Bold';
+            font-size: 14px;
+            line-height: 18px;
+            margin-bottom: 5px;
         }
+
+        &__text {
+            font-family: 'Myriad Pro';
+            font-size: 14px;
+            line-height: 21px;
+        }
+
+    }
+
+
+    .my-albums {
+        min-width: 320px;
+        padding: 30px 0;
+        background: rgb(246,246,246);
+        background: linear-gradient(0deg, rgba(246,246,246,1) 0%, $color-white 100%);
+        
+        &__container {
+            margin: 0 auto;
+            width: 90%;
+            min-width: 300px;
+        }
+
+        &__topgroup {
+            position: relative;
+        }
+
+        &__title {
+            font-family: 'Panton Bold';
+            font-size: 30px;
+            margin-bottom: 20px;
+            width: 100%;
+            text-align: center;
+        }
+
+        &__button-show-more {
+            text-align: center;
+            padding: 10px;
+        }
+
+        &__button-plus {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        &__albums-item {
+            margin-bottom: 10px;
+        }
+        
     }
 </style>
