@@ -1,10 +1,12 @@
 <template>
     <div class="wrapper">
-        <div class="wrapper__overlay" v-if="openBigCard || openAddAlbum || openEditProfile"></div>
+        <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigCard || openAddAlbum || openEditProfile"></div>
+        <div class="wrapper__overlay wrapper__overlay_white" v-if="openEditHeader"></div>
 
         <header class="header">
+        <!-- <header class="header" :style="{zIndex: 11}"> -->
 
-            <div class="header__container">		
+            <div class="header__container" v-if="!openEditHeader">		
 
                 <div class="header__top">
                     <div class="header__logout">
@@ -131,9 +133,61 @@
                         </div>      
 
                     </div>
-   
 
 
+
+
+                </div>
+
+            </div>
+
+
+            <div class="header__edit-header" v-if="openEditHeader">
+
+                <div class="edit-header">
+
+                    <div class="edit-header__card">
+                    
+                        <div class="edit-header__form">
+                            
+                            <form class="form-edit-header">
+
+                                <div class="form-edit-header__load-image">
+                                    <div class="form-edit-header__img-wrapper">
+                                        <img class="form-edit-header__img" :src="urlAvatar" alt="avatar image">
+                                    </div>
+                                </div>   
+
+                                <label class="form-edit-header__label">
+                                    <input class="form-edit-header__input" type="text" placeholder="Антон Черепов">
+                                </label>
+
+
+                                <label class="form-edit-header__label">
+                                    <textarea class="form-edit-header__input form-edit-header__input_textarea" cols="20" rows="2" placeholder="Описание альбома"></textarea>
+                                </label>
+
+
+                                <div class="form-edit-header__load-image">
+
+                                    <div class="form-edit-header__img-wrapper">
+                                        <img class="form-edit-header__img" :src="urlCover" alt="background cover image">
+                                    </div>
+
+                                </div>
+
+                                <div class="form-edit-header__socials">socials
+                                </div>
+                                
+                                <div class="form-edit-header__buttons">
+                                    <button class="site-button" type="submit">Сохранить</button>
+                                    <button class="site-button site-button_theme-just-text" type="button">Отменить</button>
+                                </div>
+
+                            </form>
+                        </div>      
+
+                    </div>
 
                 </div>
 
@@ -143,7 +197,6 @@
 
 
         <div class="my-search">
-            
             <form class="form-search">
                 <input type="search" value="" placeholder="Исследовать мир" class="form-search__input">
                 <button type="submit" class="form-search__submit">
@@ -152,7 +205,7 @@
                     </svg>
                 </button>
             </form>
-
+            <div class="my-search__overlay" v-if="openEditHeader"></div>
         </div>
 
 
@@ -252,8 +305,6 @@
         </section>
 
 
-
-
         <section class="my-albums">
 
             <div class="my-albums__container">
@@ -320,6 +371,7 @@
             </div>
         </section>
 
+
         <footer class="footer">
 
             <div class="footer__container">	
@@ -354,7 +406,8 @@
         return {
             openBigCard: false,
             openAddAlbum: false,
-            openEditProfile: !false,
+            openEditProfile: false,
+            openEditHeader: !false,
 
             urlAvatar: require('../img/anton.png').default,
             urlCover: require('../img/bg-main-header.png').default,
@@ -401,14 +454,15 @@
         background-repeat: no-repeat;
         background-size: cover;
 
-        min-width: 320px;
-        padding: 20px 0;
+        min-width: 320px;       
 
         color: $color-white;
 
         position: relative;
 
+
         &__container {
+            padding: 20px 0;
             display: flex;
             flex-direction: column;
             margin: 0 auto;
@@ -448,8 +502,21 @@
             @include popup-container;
         }
 
+        &__edit-header {
+            position: relative;
+            /* top: 0; */ 
+            width: 100%;
+            min-height: 100%;
+            margin: 0;
+            /* bottom: 0; */
+            z-index: 12;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-image: linear-gradient(rgba($color-text, 0.95), rgba($color-text, 0.8)), url('/img/bg-main-header.png');
+        }
+
         // ---------------------
-        &_album {
+        /* &_album {
 
             position: relative;
             padding-bottom: 45px;
@@ -511,10 +578,73 @@
             }
 
 
-        }
+        } */
         // ---------------------
     }
 
+        
+    .edit-header {
+        width: 100%;        
+        min-width: 320px;
+        overflow: hidden;
+
+        &__card {
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            color: $color-text;
+
+        }
+    }
+
+        
+    .form-edit-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: -60px;
+
+         &__load-image {
+            padding-top: 20px;
+        }
+
+        &__img-wrapper {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        &__img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+
+        &__label {
+            font-family: 'Proxima Nova Semibold';
+            font-size: 14px;
+            display: block;
+            width: 90%;
+        }
+
+        &__input {
+            @include popup-input;
+            margin-top: 5px;
+
+            &_textarea {
+                resize: none;
+            }
+        }
+
+        &__socials {
+
+        }
+
+         &__buttons {
+            padding: 10px;
+        }
+    }
 
         
     .edit-profile {

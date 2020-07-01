@@ -7,6 +7,20 @@
 	align-items: center;
 	background-color: #f1f1f1;
 	padding: 10px;
+	position: relative;
+
+	height: 60px;
+
+	&__overlay {
+		position: absolute;
+		top: 0;
+		right: 0;
+		left: 0;
+		bottom: 0;
+		z-index: 11;
+		opacity: 0.9;
+		background-color: $color-white;
+	}
 
 	&__show-new {
 		padding: 5px;

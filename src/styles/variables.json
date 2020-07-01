@@ -2,6 +2,7 @@
 
 "color-text": "#323232",
 "color-white": "#fff",
-"color-blue": "rgb(40, 187, 240)"
+"color-blue": "rgb(40, 187, 240)",
+"color-blue-hover": "#24b0e3"
 
 }
