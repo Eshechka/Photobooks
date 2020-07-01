@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <div class="wrapper__overlay" v-if="openBigCard || openAddAlbum"></div>
+        <div class="wrapper__overlay" v-if="openBigCard || openAddAlbum || openEditProfile"></div>
 
         <header class="header">
 
@@ -49,6 +49,94 @@
                     </ul>
 
                 </div>
+            </div>
+
+            <div class="header__edit-profile" v-if="openEditProfile">
+
+                <div class="edit-profile">
+
+                    <div class="edit-profile__card">
+
+                        <div class="edit-profile__topgroup">
+                            <h4 class="edit-profile__title">Редактировать профиль</h4>
+                            <button type="button" class="edit-profile__button edit-profile__button_close"></button>
+                        </div>
+                        
+                        <div class="edit-profile__form">
+                            
+                            <form class="form-edit-profile">
+
+                                <label class="form-edit-profile__label">Имя
+                                    <input class="form-edit-profile__input" type="text" placeholder="Антон">
+                                </label>
+
+                                <label class="form-edit-profile__label form-edit-profile__label_no_top_padding">Фамилия
+                                    <input class="form-edit-profile__input" type="text" placeholder="Черепов">
+                                </label>
+
+                                <label class="form-edit-profile__label">О себе
+                                    <textarea class="form-edit-profile__input form-edit-profile__input_textarea" cols="20" rows="5" placeholder="Описание альбома"></textarea>
+                                </label>
+                        
+
+                                <div class="form-edit-profile__load-image">
+
+                                    <div class="form-edit-profile__img-wrapper">
+                                        <img class="form-edit-profile__img" :src="urlAvatar" alt="avatar image">
+                                    </div>
+
+                                    <div class="form-edit-profile__button">
+                                        <button class="site-button site-button_theme-light" type="button">Загрузить фотографию</button>                                        
+                                        <div class="form-edit-profile__notice-size">(файл должен быть размером не более 512 КБ)</div>
+                                    </div>
+
+                                </div>                        
+
+                                <div class="form-edit-profile__load-image">
+
+                                    <div class="form-edit-profile__img-wrapper">
+                                        <img class="form-edit-profile__img" :src="urlCover" alt="background cover image">
+                                    </div>
+
+                                    <div class="form-edit-profile__button">
+                                        <button class="site-button site-button_theme-light" type="button">Загрузить фон</button>
+                                        <div class="form-edit-profile__notice-size">(файл должен быть размером не более 1024 КБ)</div>
+                                    </div>
+
+                                </div>
+
+                                <div class="form-edit-profile__socials">
+
+                                    <label class="form-edit-profile__label">Вконтакте
+                                        <input class="form-edit-profile__input" type="text">
+                                    </label>
+                                    <label class="form-edit-profile__label">Facebook
+                                        <input class="form-edit-profile__input" type="text">
+                                    </label>
+                                    <label class="form-edit-profile__label">Email
+                                        <input class="form-edit-profile__input" type="text">
+                                    </label>
+                                    <label class="form-edit-profile__label">Twitter
+                                        <input class="form-edit-profile__input" type="text">
+                                    </label>
+
+                                </div>
+                                
+                                <div class="form-edit-profile__buttons">
+                                    <button class="site-button" type="submit">Сохранить</button>
+                                    <button class="site-button site-button_theme-just-text" type="button">Отменить</button>
+                                </div>
+
+                            </form>
+                        </div>      
+
+                    </div>
+   
+
+
+
+                </div>
+
             </div>
 
         </header>
@@ -134,7 +222,7 @@
                             
                                 <form class="big-card__my-comment-form">
 
-                                    <textarea class="big-card__my-comment-text" name="" id="" cols="10" rows="1" placeholder="Добавить комментарий"></textarea>
+                                    <textarea class="big-card__input" name="" id="" cols="10" rows="1" placeholder="Добавить комментарий"></textarea>
                                     <div class="big-card__my-comment-submit">
                                         <button class="site-button site-button_theme-light" type="submit">Добавить</button>
                                     </div>
@@ -265,7 +353,8 @@
     data() {
         return {
             openBigCard: false,
-            openAddAlbum: !false,
+            openAddAlbum: false,
+            openEditProfile: !false,
 
             urlAvatar: require('../img/anton.png').default,
             urlCover: require('../img/bg-main-header.png').default,
@@ -317,6 +406,8 @@
 
         color: $color-white;
 
+        position: relative;
+
         &__container {
             display: flex;
             flex-direction: column;
@@ -351,6 +442,10 @@
         &__avatar {
             display: inline-block;		
             vertical-align: middle;
+        }
+
+        &__edit-profile {
+            @include popup-container;
         }
 
         // ---------------------
@@ -418,6 +513,115 @@
 
         }
         // ---------------------
+    }
+
+
+        
+    .edit-profile {
+
+        @include popup;
+
+        &__card {
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            background-color: #f2f2f2;
+            color: $color-text;
+        }
+
+        &__topgroup {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 10px;
+        }
+
+        &__title {
+            font-family: 'Panton-Bold';
+            font-size: 21px;
+            line-height: 21px;            
+        }
+
+        &__button {
+            width: 20px;
+            height: 20px;
+            background-repeat: no-repeat;
+            background-size: 20px;
+            background-position: 50%;
+
+            &_close {
+                background-image: svg-load('close.svg', fill=rgba(#{$color-text}, 0.4));
+            }
+        }
+
+    }
+
+        
+    .form-edit-profile {
+        display: flex;
+        flex-direction: column;
+        background-color: $color-white;
+
+        &__label {
+            font-family: 'Proxima Nova Semibold';
+            font-size: 14px;
+            display: block;
+            padding: 15px 10px 10px;
+
+            &_no_top_padding {
+                padding-top: 0;
+            }
+        }
+
+        &__input {
+            @include popup-input;
+
+            margin-top: 5px;
+
+            &_textarea {
+                resize: none;
+            }
+        }
+
+         &__load-image {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+        }
+
+        &__img-wrapper {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        &__img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+
+        &__button {
+             margin-left: 18px;
+        }
+
+        &__notice-size {
+            width: 70%;
+            font-family: 'ProximaNova-LightIt';
+            font-size: 14px;
+            line-height: 14px;
+            padding: 10px 0;
+        }
+
+        &__socials {
+            border-top: 1px solid #f2f2f2;
+            padding-bottom: 20px;
+        }
+
+         &__buttons {
+            background-color: #f2f2f2;
+            padding: 10px;
+        }
     }
 
 
@@ -518,12 +722,9 @@
 
 
     .big-card {
-        width: 100%;        
-        min-width: 320px;
+        @include popup;
+
         background-color: rgb(246, 246, 246);
-        border-radius: 3px;
-        box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.15);
-        overflow: hidden;
 
         &__card {
             min-width: 300px;
@@ -624,7 +825,7 @@
         }
 
         &__comments-title {
-            font-family: 'Proxima Nova Semibold';
+            font-family: 'Proxima Nova Semibold';            
             font-size: 14px;
             line-height: 21px;
             padding-right: 10px;
@@ -641,14 +842,12 @@
             margin-bottom: 10px;
         }
 
-        &__my-comment-text {
-            border: 1px solid rgb(216, 214, 214);
-            background-color: $color-white;
-            min-width: 278px;
+        &__input {
+            @include popup-input();
+
             width: 80%;
             padding: 13px 16px;
-            border-radius: 30px;
-            resize: vertical;
+            resize: vertical;            
             min-height: 48px;
             max-height: 150px;
             margin-bottom: 10px;
@@ -726,11 +925,7 @@
     
     .add-album {
 
-        width: 100%;        
-        min-width: 320px;
-        border-radius: 3px;
-        box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.15);
-        overflow: hidden;
+        @include popup;
 
         &__card {
             min-width: 300px;
@@ -764,19 +959,6 @@
             }
         }
 
-
-        &__textarea {
-            border: 1px solid rgb(216, 214, 214);
-            background-color: $color-white;
-            min-width: 278px;
-            width: 80%;
-            padding: 13px 16px;
-            border-radius: 30px;
-            resize: vertical;
-            min-height: 48px;
-            max-height: 150px;
-            margin-bottom: 10px;
-        }
     }
 
     
@@ -792,15 +974,9 @@
         }
 
         &__input {
-            display: block;
+            @include popup-input;
+
             margin-top: 5px;
-            border: 1px solid rgb(216, 214, 214);
-            background-color: $color-white;
-            min-width: 280px;
-            width: 100%;
-            min-height: 38px;
-            border-radius: 20px;
-            padding: 10px 15px;
 
             &_textarea {
                 resize: none;

@@ -21,3 +21,35 @@
     @content;
   }
 }
+
+@mixin popup() {
+    width: 100%;        
+    min-width: 320px;
+    border-radius: 3px;
+    box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+@mixin popup-container() {
+  position: absolute;
+  top: 0;
+  width: 90%;
+  margin: 0 5%;
+  z-index: 11;
+}
+
+@mixin popup-input() {
+  display: block;
+  border: 1px solid rgb(216, 214, 214);
+  background-color: $color-white;
+  min-width: 280px;
+  min-height: 38px;
+  border-radius: 20px;
+  padding: 10px 15px;
+  width: 100%;
+  outline: none;
+
+  &:active, &:focus {
+    border: 1px solid $color-blue;
+  }
+}

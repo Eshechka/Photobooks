@@ -19,6 +19,11 @@
 		background-color: $color-white;
 		color: $color-blue;
 		border: 2px solid $color-blue;
+
+		&:hover {
+			background-color: $color-blue;
+			color: $color-white;
+		}
 	}
 
 	&_theme-just-text {
@@ -28,7 +33,17 @@
 		font-family: 'Proxima Nova Semibold';
 		min-width: unset;
 		min-height: unset;
+
+		&:hover {			
+			color: rgba($color-text, 0.8);
+		}
 	}
+
+	
+	&:hover {			
+		color: rgba($color-text, 0.5);
+	}
+
 
 	// &_round-button {
 	// 	border-radius: 50%;
