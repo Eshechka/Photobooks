@@ -167,17 +167,51 @@
                                     <textarea class="form-edit-header__input form-edit-header__input_textarea" cols="20" rows="2" placeholder="Описание альбома"></textarea>
                                 </label>
 
+                                <div class="form-edit-header__socials">
+                                    <div class="socials">
+                                    <!-- <div @socialHandler="socialHandler" class="socials"> -->
 
-                                <div class="form-edit-header__load-image">
+                                        <ul class="socials__list">
+                                            <li v-for="social in socials" :key="social.id" class="socials__item"> 
+                                                <a @click.prevent="socialClickHandler" :class="`socials__link socials__link_${social.text}`">{{social.text}}</a>
+                                                <!-- <a @click.prevent="$emit('socialHandler', e.taget)" class="socials__link socials__link_vk">vk</a> -->
 
-                                    <div class="form-edit-header__img-wrapper">
-                                        <img class="form-edit-header__img" :src="urlCover" alt="background cover image">
+                                            </li>
+                                        </ul>
+
+
+                                        <div v-if="isActiveSocial" class="soc-edit">
+
+                                            <div class="soc-edit__card">
+
+                                                <form class="soc-edit__form">
+                                                    <input type="text" class="soc-edit__input">
+
+                                                    <div class="soc-edit__buttons">
+                                                        <button type="submit" class="site-button site-button_theme_light">Сохранить</button>
+                                                        <button type="button" class="site-button site-button_theme-just-text">Отменить</button>
+                                                    </div>
+
+                                                </form>
+
+                                            </div>
+                                        </div>
+
+
                                     </div>
+                                </div>
+
+                                <div class="form-edit-header__load-cover">
+
+                                    <label for="input-load-bgcover-header" class="form-edit-header__label form-edit-header__label_file-load">
+                                        <input type="file" id="load-bgcover-header" class="form-edit-header__input-load">
+                                        <div class="form-edit-header__cover-img"></div>
+                                        <div class="form-edit-header__cover-img-text">Изменить фон</div>
+                                    </label>
 
                                 </div>
 
-                                <div class="form-edit-header__socials">socials
-                                </div>
+
                                 
                                 <div class="form-edit-header__buttons">
                                     <button class="site-button" type="submit">Сохранить</button>
@@ -196,16 +230,16 @@
         </header>
 
 
-        <div class="my-search">
+        <div class="my-search" v-if="!openEditHeader">
             <form class="form-search">
-                <input type="search" value="" placeholder="Исследовать мир" class="form-search__input">
+                <input type="search" placeholder="Исследовать мир" class="form-search__input">
                 <button type="submit" class="form-search__submit">
                     <svg class="form-search__icon">
                         <use :xlink:href="urlInlineSvgSprite+'#search'"></use>
                     </svg>
                 </button>
             </form>
-            <div class="my-search__overlay" v-if="openEditHeader"></div>
+            <!-- <div class="my-search__overlay" v-if="openEditHeader"></div> -->
         </div>
 
 
@@ -413,6 +447,8 @@
             urlCover: require('../img/bg-main-header.png').default,
             urlInlineSvgSprite: require('../img/spriteIcons.svg').default,
 
+            isActiveSocial: false,
+
             cards: [
                 {   id: 1, title: 'Путешествие на лодке по озеру', avatarPhoto: '../img/card-avatar1.png', photo: '../img/card-img1.png', comments: '9', likes: '15', folderName: 'Прогулки по воде',  },
                 {   id: 2, title: 'Путешествие на лодке по озеру2', avatarPhoto: '../img/card-avatar1.png', photo: '../img/card-img1.png', comments: '9', likes: '15', folderName: 'Прогулки по воде2',  },
@@ -422,9 +458,28 @@
                 {   id: 1, photo: '../img/album-img1.png', folderName: 'Поход в горы',  },
                 {   id: 2, photo: '../img/album-img1.png', folderName: 'Поход в горы2',  },
                 {   id: 3, photo: '../img/album-img1.png', folderName: 'Поход в горы3',  },
+            ],
+            socials: [
+                {   id: 'vk', icon: '../icons/soc_vk.svg', text: 'vk', isActive: false, link: 'https://vk.com/' },
+                {   id: 'fb', icon: '../icons/soc_fb.svg', text: 'fb', isActive: false, link: 'https://vk.com/' },
+                {   id: 'tw', icon: '../icons/soc_twitter.svg', text: 'tw', isActive: false, link: 'https://vk.com/' },
+                {   id: 'google', icon: '../icons/social_google.svg', text: 'google', isActive: false, link: 'https://vk.com/' },
+                {   id: 'email', icon: '../icons/soc_email.svg', text: 'email', isActive: false, link: 'https://vk.com/' },
             ]
         }
-    }
+    },
+
+    methods: {
+        socialClickHandler(e) {
+            console.log(e.target.offsetWidth);
+            console.log(e.target.getBoundingClientRect());
+            e.target.classList.toggle('socials__link_active');
+            this.socials[0].isActive=true;
+            
+            this.isActiveSocial=!this.isActiveSocial;
+            
+        },
+    },
         
     }
 
@@ -440,7 +495,7 @@
 
     /* @import '../styles/blocks/header.pcss'; */
     @import '../styles/blocks/avatar.pcss';
-    @import '../styles/blocks/socials.pcss';
+    /* @import '../styles/blocks/socials.pcss'; */
     @import '../styles/blocks/form-search.pcss';
     @import '../styles/blocks/new.pcss';
     @import '../styles/blocks/my-search.pcss';
@@ -454,7 +509,8 @@
         background-repeat: no-repeat;
         background-size: cover;
 
-        min-width: 320px;       
+        min-width: 320px;
+        min-height: 210px;   
 
         color: $color-white;
 
@@ -506,7 +562,7 @@
             position: relative;
             /* top: 0; */ 
             width: 100%;
-            min-height: 100%;
+            min-height: 210px;
             margin: 0;
             /* bottom: 0; */
             z-index: 12;
@@ -602,7 +658,6 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        margin-bottom: -60px;
 
          &__load-image {
             padding-top: 20px;
@@ -613,6 +668,32 @@
             height: 50px;
             border-radius: 50%;
             overflow: hidden;
+        }
+
+        &__load-cover {
+            width: 90px;
+            min-height: 50px;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        &__input-load {
+            cursor: pointer;
+        }
+
+        &__cover-img {
+            height: 32px;
+            background-repeat: no-repeat;
+            background-size: 32px;
+            background-position: top center;
+            background-image: svg-load('cam.svg', fill=rgba(#{$color-white}, 0.8));
+        }
+
+        &__cover-img-text {
+            font-family: 'Proxima Nova Semibold';
+            font-size: 12px;
+            color: rgba(#{$color-white}, 0.8);
+            text-align: center;
         }
 
         &__img {
@@ -626,6 +707,19 @@
             font-size: 14px;
             display: block;
             width: 90%;
+            
+            &_file-load {
+                width: 100%;
+                position: relative;
+            }
+        }
+
+        &__input-load {
+            opacity: 0;    
+            width: 100%;    
+            height: 100%;    
+            position: absolute;
+            top: 0;
         }
 
         &__input {
@@ -638,11 +732,17 @@
         }
 
         &__socials {
-
+            margin-top: 20px;
+            margin-bottom: 10px;
+            width: 88%;
         }
 
          &__buttons {
             padding: 10px;
+            height: 60px;
+            background: $color-white;
+            width: 100%;
+            text-align: right;
         }
     }
 
@@ -755,6 +855,92 @@
     }
 
 
+    .socials {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        padding: 10px;
+
+        &__list {
+            display: flex;
+            justify-content: center;
+        }
+
+        &__link {
+            display: block;
+            font-size: 0px;
+            width: 20px;
+            height: 20px;
+            border-radius: 5px;
+            margin-right: 5px;
+
+            background-repeat: no-repeat;
+            background-size: 20px;
+            background-position: 50%;
+
+            &_vk {		
+                background-image: svg-load('soc_vk.svg', fill=rgba(#{$color-white}, 0.8));
+            }
+            &_tw {		
+                background-image: svg-load('soc_twitter.svg', fill=rgba(#{$color-white}, 0.8));
+            }
+            &_google {		
+                background-image: svg-load('social_google.svg', fill=rgba(#{$color-white}, 0.8));
+            }
+            &_fb {		
+                background-image: svg-load('soc_fb.svg', fill=rgba(#{$color-white}, 0.8));
+            }
+            &_email {		
+                background-image: svg-load('soc_email.svg', fill=rgba(#{$color-white}, 0.8));
+            }
+
+            &_active {
+                background-color: rgba(#{$color-white}, 0.3);
+                position: relative;
+
+                &::after {
+                    content: '';
+                    position: absolute;
+                    bottom: -10px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 0;
+                    height: 0;
+                    border-left: 7px solid transparent;
+                    border-right: 7px solid transparent;
+                    border-bottom: 8px solid $color-white;
+                }
+            }
+        }
+    }
+
+    .soc-edit {
+        @include popup();
+        min-width: calc(320px * 0.88);
+        position: absolute;
+        top: 100%;
+        z-index: 13;
+        overflow: unset;
+
+        &__card {
+            background-color: #fff;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+        }
+
+        &__input {
+            @include popup-input();
+            min-width: unset;
+        }
+
+        &__buttons {
+            padding-top: 10px;
+        }
+
+    }
+
     .site-tag {
         cursor: pointer;
         color: $color-blue;
@@ -764,17 +950,18 @@
     }
 
 
-    .card {
-        min-width: 300px;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-
-        background-color: rgb(246, 246, 246);
+    .card {        
+        
         border-radius: 3px;
         box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.15);
         overflow: hidden;
 
+        /* @include popup(); */
+        min-width: 300px;        
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        background-color: rgb(246, 246, 246);
         color: $color-text;
 
         &__img-card {
