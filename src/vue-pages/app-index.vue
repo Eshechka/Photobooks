@@ -4,7 +4,6 @@
         <div class="wrapper__overlay wrapper__overlay_white" v-if="openEditHeader"></div>
 
         <header class="header">
-        <!-- <header class="header" :style="{zIndex: 11}"> -->
 
             <div class="header__container" v-if="!openEditHeader">		
 
@@ -446,7 +445,7 @@
             openBigCard: false,
             openAddAlbum: false,
             openEditProfile: false,
-            openEditHeader: !false,
+            openEditHeader: false,
 
             urlAvatar: require('../img/anton.png').default,
             urlCover: require('../img/bg-main-header.png').default,
@@ -962,14 +961,13 @@
         font-weight: bolder;
     }
 
-
+/* 
     .card {        
         
         border-radius: 3px;
         box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.15);
         overflow: hidden;
 
-        /* @include popup(); */
         min-width: 300px;        
         margin: 0 auto;
         display: flex;
@@ -1049,7 +1047,7 @@
         }
 
     }
-
+ */
 
     .big-card {
         @include popup;

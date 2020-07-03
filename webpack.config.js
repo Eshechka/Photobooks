@@ -58,7 +58,7 @@ module.exports = {
 		port: 4200,
 		stats: 'errors-only',
 		
-		// index: 'album.html',
+		index: 'album.html',
 		// index: 'search.html',
 		// index: 'login.html',
 		
