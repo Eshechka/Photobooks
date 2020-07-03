@@ -173,9 +173,12 @@
 
                                         <ul class="socials__list">
                                             <li v-for="social in socials" :key="social.id" class="socials__item"> 
-                                                <a @click.prevent="socialClickHandler" :class="`socials__link socials__link_${social.text}`">{{social.text}}</a>
+                                                <a
+                                                    @click.prevent="socialClickHandler(social.id, $event)" 
+                                                    :class="[`socials__link socials__link_${social.text}`,
+                                                            {'socials__link_active': social.isActive}]"
+                                                >{{social.text}}</a>
                                                 <!-- <a @click.prevent="$emit('socialHandler', e.taget)" class="socials__link socials__link_vk">vk</a> -->
-
                                             </li>
                                         </ul>
 
@@ -185,7 +188,9 @@
                                             <div class="soc-edit__card">
 
                                                 <form class="soc-edit__form">
-                                                    <input type="text" class="soc-edit__input">
+                                                    <input 
+                                                        v-model="activeSocialLink"
+                                                    type="text" class="soc-edit__input">
 
                                                     <div class="soc-edit__buttons">
                                                         <button type="submit" class="site-button site-button_theme_light">Сохранить</button>
@@ -448,6 +453,7 @@
             urlInlineSvgSprite: require('../img/spriteIcons.svg').default,
 
             isActiveSocial: false,
+            activeSocialLink: '',
 
             cards: [
                 {   id: 1, title: 'Путешествие на лодке по озеру', avatarPhoto: '../img/card-avatar1.png', photo: '../img/card-img1.png', comments: '9', likes: '15', folderName: 'Прогулки по воде',  },
@@ -470,14 +476,21 @@
     },
 
     methods: {
-        socialClickHandler(e) {
-            console.log(e.target.offsetWidth);
-            console.log(e.target.getBoundingClientRect());
-            e.target.classList.toggle('socials__link_active');
-            this.socials[0].isActive=true;
+        socialClickHandler(socialId, e) {
+
+            this.socials.map(social => 
+                {
+                    if (social.id !== socialId) 
+                        social.isActive = false;
+                    else {
+                        social.isActive = !social.isActive;
+                        this.isActiveSocial = social.isActive;
+                        this.activeSocialLink = social.link;
+                    }
+                }
+            );
             
-            this.isActiveSocial=!this.isActiveSocial;
-            
+           
         },
     },
         
