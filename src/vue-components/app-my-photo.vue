@@ -13,9 +13,10 @@
 
 		<div class="my-photo__folder">
 			<button type="button" class="my-photo__button my-photo__button_edit"></button>
-			<div class="my-photo__folder-name"> {{myPhotoObject.folderName}} </div>
-			
+			<div class="my-photo__folder-name"> {{myPhotoObject.photoName}} </div>			
 		</div>
+
+	
 	</div>
 
 

@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
-        <!-- <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigCard || openAddAlbum"></div>
-        <div class="wrapper__overlay wrapper__overlay_white" v-if="openEditHeader"></div> -->
+        <div class="wrapper__overlay wrapper__overlay_black" v-if="openEditPhoto || openAddPhoto"></div>
+        <!-- <div class="wrapper__overlay wrapper__overlay_white" v-if="openEditHeader"></div> -->
 
 		<header class="header header_album">
 	
@@ -17,7 +17,7 @@
 						<h1 class="header__title">Антон Черепов</h1>
 					</div>
 					<div class="header__album-desc">
-						<h2 class="header__album-title">Лесные прогулки</h2>
+						<h2 class="header__album-title"> {{thisAlbumName}} </h2>
 						<div class="header__text">Фотографии природы леса, енотов и оленей. Как прекрасно сойти на дальней станции и пройтись по полю босиком. И чтобы никто не беспокоил бродить влюбленным в тишину. Запах мёда, лесных оленей и енотов будоражит нутро.</div>
 					</div>
 					<div class="header__album-info">
@@ -44,9 +44,90 @@
 				<ul class="my-photos__photos-list">
                     
 					<li class="my-photos__photos-item" v-for="myPhoto in myPhotos" :key="myPhoto.id">
-						<appMyPhoto :myPhotoObject="myPhoto">                            
+						<appMyPhoto :myPhotoObject="myPhoto">
                         </appMyPhoto>
 					</li>
+
+                    <div class="my-photos__edit-photo" v-if="openEditPhoto">
+                        
+                       <div class="edit-photo">
+                            <div class="edit-photo__card">
+
+                                <div class="edit-photo__topgroup">
+                                    <h4 class="edit-photo__title">Редактировать фотографию</h4>
+                                    <button type="button" class="edit-photo__button edit-photo__button_close"></button>
+                                </div>
+                                
+                                <div class="edit-photo__form">
+
+                                    <form class="form-editPhoto">
+
+                                        <label class="form-editPhoto__label">Название
+                                            <input class="form-editPhoto__input" type="text" placeholder="Домик в лесу">
+                                        </label>
+
+                                        <label class="form-editPhoto__label">Описание
+                                            <textarea class="form-editPhoto__input form-editPhoto__input_textarea" cols="10" rows="2" placeholder="Описание альбома">Описание фотографии может быть с #хештегами. Чтобы было красиво описание должно быть на несколько строк. Убедитесь сами!</textarea>
+                                        </label>
+                                
+                                        <div class="form-editPhoto__buttons">
+                                            <button class="site-button" type="submit">Сохранить</button>
+                                            <button class="site-button site-button_theme-just-text" type="button">Отменить</button>
+                                            <button class="round-button round-button_delete" type="button"></button>
+                                        </div>
+
+                                    </form>
+                                </div>      
+
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    
+                    <div class="my-photos__add-photo" v-if="openAddPhoto">
+                        
+                       <div class="add-photo">
+                            <div class="add-photo__card">
+
+                                <div class="add-photo__topgroup">
+                                    <h4 class="add-photo__title">Добавить фотографии</h4>
+                                    <button type="button" class="add-photo__button add-photo__button_close"></button>
+                                </div>
+                                
+                                <div class="add-photo__form">
+
+                                    <form class="form-addPhoto">
+
+                                        <div class="form-addPhoto__album-name-label">Название
+                                            <span class="form-addPhoto__album-name" type="text"> {{thisAlbumName}} </span>
+                                        </div>
+
+                                        <div class="form-addPhoto__load-cover">
+
+                                            <label for="load-photo" class="form-addPhoto__label form-addPhoto__label_file-load">
+                                                <input type="file" id="load-photo" class="form-addPhoto__input-load">
+                                                <div class="form-addPhoto__cover-img"></div>
+                                                <div class="form-addPhoto__cover-img-text">Выберите файл</div>
+                                            </label>
+
+                                        </div>
+                                
+                                        <div class="form-addPhoto__buttons">
+                                            <button class="site-button" type="submit">Сохранить</button>
+                                            <button class="site-button site-button_theme-just-text" type="button">Отменить</button>
+                                        </div>
+
+                                    </form>
+                                </div>      
+
+                            </div>
+                        </div>
+
+
+                    </div>
+
 
 				</ul>
 			</div>
@@ -83,19 +164,21 @@
 
     data() {
         return {
-            // openBigCard: false,
-            // openAddAlbum: false,
+            thisAlbumName: "Лесные прогулки",
+
+            openEditPhoto: false,
+            openAddPhoto: !false,
 
             urlAvatar: require('../img/anton.png').default,
             // urlInlineSvgSprite: require('../img/spriteIcons.svg').default,
 
 
             myPhotos: [
-                {   id: 1, photo: '../img/photo-img1.png', comments: 9, likes: 15, folderName: 'Путешествие на лодке по озеру',  },
-                {   id: 2, photo: '../img/photo-img2.png', comments: 9, likes: 15, folderName: 'Отдых в палатке',  },
-                {   id: 3, photo: '../img/photo-img3.png', comments: 9, likes: 15, folderName: 'Путешествие на лодке по озеру',  },
-                {   id: 4, photo: '../img/photo-img4.png', comments: 9, likes: 15, folderName: 'Мечтательный взгляд вдоль поверх...',  },
-                {   id: 5, photo: '../img/photo-img5.png', comments: 9, likes: 15, folderName: 'Путешествие на лодке по озеру',  },
+                {   id: 1, photo: '../img/photo-img1.png', comments: 9, likes: 15, photoName: 'Путешествие на лодке по озеру',  },
+                {   id: 2, photo: '../img/photo-img2.png', comments: 9, likes: 15, photoName: 'Отдых в палатке',  },
+                {   id: 3, photo: '../img/photo-img3.png', comments: 9, likes: 15, photoName: 'Путешествие на лодке по озеру',  },
+                {   id: 4, photo: '../img/photo-img4.png', comments: 9, likes: 15, photoName: 'Мечтательный взгляд вдоль поверх...',  },
+                {   id: 5, photo: '../img/photo-img5.png', comments: 9, likes: 15, photoName: 'Путешествие на лодке по озеру',  },
             ],
         }
     },
@@ -253,6 +336,7 @@
         // ---------------------
     }
 
+
     .avatar {
         width: 100%;
         text-align: center;
@@ -265,6 +349,7 @@
             width: 50px;		
         }
     }
+
 
     .my-photos {
         min-width: 320px;
@@ -286,15 +371,291 @@
             right: 0;
             top: 50%;
             transform: translateY(-50%);
-            z-index: 10;
+            z-index: 9;
+        }
+
+        &__photos-list {
+            position: relative;
         }
 
         &__photos-item {
             margin-bottom: 10px;
         }
 
+        &__edit-photo, &__add-photo {
+            @include popup-container;
+            position: fixed;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+        }
+
     }
 
+    
+    .add-album {
+
+        @include popup;
+
+        &__card {
+            min-width: 300px;
+            background-color: #f2f2f2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        &__topgroup {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 10px;
+        }
+
+        &__title {
+            font-family: 'Panton-Bold';
+            font-size: 21px;
+            line-height: 21px;
+        }
+
+        &__button {
+            width: 20px;
+            height: 20px;
+            background-repeat: no-repeat;
+            background-size: 20px;
+            background-position: 50%;
+
+            &_close {
+                background-image: svg-load('close.svg', fill=rgba(#{$color-text}, 0.4));
+            }
+        }
+
+    }
+
+    
+    .form-addAlbum {
+        display: flex;
+        flex-direction: column;
+        background-color: $color-white;
+
+        &__label {
+            font-family: 'Proxima Nova Semibold';
+            font-size: 14px;
+            padding: 15px 10px 10px;
+        }
+
+        &__input {
+            @include popup-input;
+
+            margin-top: 5px;
+
+            &_textarea {
+                resize: none;
+            }
+        }
+
+        &__buttons {
+            background-color: #f2f2f2;
+            padding: 10px;
+        }
+    }
+
+
+    .edit-photo {
+        @include popup;
+
+        &__card {
+            min-width: 300px;
+            background-color: #f2f2f2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        &__topgroup {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 10px;
+        }
+
+        &__title {
+            font-family: 'Panton-Bold';
+            font-size: 21px;
+            line-height: 21px;
+        }
+
+        &__button {
+            width: 20px;
+            height: 20px;
+            background-repeat: no-repeat;
+            background-size: 20px;
+            background-position: 50%;
+
+            &_close {
+                background-image: svg-load('close.svg', fill=rgba(#{$color-text}, 0.4));
+            }
+        }
+    }
+
+
+    .form-editPhoto {
+        display: flex;
+        flex-direction: column;
+        background-color: $color-white;
+
+        &__label {
+            font-family: 'Proxima Nova Semibold';
+            font-size: 14px;
+            padding: 15px 10px 10px;
+        }
+
+        &__input {
+            @include popup-input;
+
+            margin-top: 5px;
+
+            &_textarea {
+                resize: none;
+                min-height: 120px;
+            }
+        }
+
+         &__cover {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+        }
+
+        &__cover-img-wrapper {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        &__cover-img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+
+         &__cover-button {
+             margin-left: 18px;
+        }
+
+        &__buttons {
+            display: flex;
+            align-items: center;
+            background-color: #f2f2f2;
+            padding: 10px;
+        }
+    }
+
+    .add-photo {
+        @include popup;
+
+        &__card {
+            min-width: 300px;
+            background-color: #f2f2f2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        &__topgroup {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 10px;
+        }
+
+        &__title {
+            font-family: 'Panton-Bold';
+            font-size: 21px;
+            line-height: 21px;
+        }
+
+        &__button {
+            width: 20px;
+            height: 20px;
+            background-repeat: no-repeat;
+            background-size: 20px;
+            background-position: 50%;
+
+            &_close {
+                background-image: svg-load('close.svg', fill=rgba(#{$color-text}, 0.4));
+            }
+        }
+    }
+
+    .form-addPhoto {
+        display: flex;
+        flex-direction: column;
+        background-color: $color-white;
+
+        &__album-name-label {
+            font-family: 'Proxima Nova Semibold';
+            font-size: 14px;
+            padding: 30px 10px 20px;
+        }
+
+        &__album-name {
+            font-family: 'ProximaNova-Light';
+            font-size: 14px;
+            padding-left: 30px;
+        }
+
+        &__load-cover {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f9f9f9;
+            border: 3px dashed #f1f1f1;
+            border-radius: 10px;
+            margin: 0 10px 10px;
+            height: 280px;
+            position: relative;
+
+            &:hover .form-addPhoto__cover-img-text {
+                background-color: $color-blue;
+                color: $color-white;
+            }
+        }
+
+        &__input-load {
+            cursor: pointer;
+            opacity: 0;    
+            width: 100%;    
+            height: 100%;    
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        &__cover-img {
+            height: 32px;
+            background-repeat: no-repeat;
+            background-size: 32px;
+            background-position: top center;
+            background-image: svg-load('cam.svg', fill=rgba(#{$color-text}, 0.2));
+        }
+
+        &__cover-img-text {
+            font-family: 'Proxima Nova Semibold';
+            font-size: 12px;
+            color: rgba(#{$color-white}, 0.8);
+            text-align: center;
+            min-height: 38px;
+            padding: 10px 14px;
+            font-family: Panton-Bold;
+            border-radius: 30px;
+            background-color: $color-white;
+            color: $color-blue;
+            border: 2px solid $color-blue;
+        }
+
+        &__buttons {
+            background-color: #f1f1f1;
+            padding: 10px;
+        }
+    }
 
     /* .edit-header {
         width: 100%;        

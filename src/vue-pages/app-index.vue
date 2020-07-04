@@ -207,7 +207,7 @@
 
                                 <div class="form-edit-header__load-cover">
 
-                                    <label for="input-load-bgcover-header" class="form-edit-header__label form-edit-header__label_file-load">
+                                    <label for="load-bgcover-header" class="form-edit-header__label form-edit-header__label_file-load">
                                         <input type="file" id="load-bgcover-header" class="form-edit-header__input-load">
                                         <div class="form-edit-header__cover-img"></div>
                                         <div class="form-edit-header__cover-img-text">Изменить фон</div>
@@ -509,7 +509,7 @@
     @import '../styles/blocks/avatar.pcss';
     /* @import '../styles/blocks/socials.pcss'; */
     @import '../styles/blocks/form-search.pcss';
-    @import '../styles/blocks/new.pcss';
+    /* @import '../styles/blocks/new.pcss'; */
     @import '../styles/blocks/my-search.pcss';
     @import '../styles/blocks/site-button.pcss';
     @import '../styles/blocks/my-albums.pcss';
@@ -927,6 +927,42 @@
         }
     }
 
+
+    .new {
+        position: relative;
+        min-width: 320px;
+        padding: 30px 0;
+
+        &__container {
+            margin: 0 auto;
+            width: 90%;
+            min-width: 300px;
+        }
+        
+        &__title {
+            font-family: 'Panton-Bold';
+            font-size: 30px;
+            margin-bottom: 20px;
+            width: 100%;
+            text-align: center;
+        }
+
+        &__button-show-more {
+            text-align: center;
+            padding: 10px;
+        }
+
+        &__card-item {
+            margin-bottom: 10px;
+        }
+
+        &__big-card {
+            @include popup-container;
+        }
+            
+    }
+
+
     .soc-edit {
         @include popup();
         min-width: calc(320px * 0.88);
@@ -953,6 +989,7 @@
 
     }
 
+
     .site-tag {
         cursor: pointer;
         color: $color-blue;
@@ -961,93 +998,6 @@
         font-weight: bolder;
     }
 
-/* 
-    .card {        
-        
-        border-radius: 3px;
-        box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.15);
-        overflow: hidden;
-
-        min-width: 300px;        
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        background-color: rgb(246, 246, 246);
-        color: $color-text;
-
-        &__img-card {
-            width: 100%;
-            height: 200px;
-        }
-        &__img {
-            object-fit: cover;
-            width: 100%;
-            height: 100%;
-        }
-        
-        &__info {
-            display: flex;
-            padding: 10px;
-            background-color: $color-white;
-        }
-
-        &__avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-        }
-        &__avatar-img {
-            object-fit: cover;
-        }
-        &__desc {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            margin-left: 10px;	
-        }
-        &__desc-title {
-            font-family: 'ProximaNova-Light';
-            font-size: 14px;
-        }
-        &__button {
-            font-family: 'Panton Bold';
-            font-size: 16px;
-            color: $color-text;
-            padding-left: 30px;
-
-            background-repeat: no-repeat;
-            background-size: 20px;
-            background-position: 0 50%;
-
-            &_comments {
-                background-image: svg-load('comments.svg', fill=rgba(#{$color-text}, 0.2));
-            } 
-            &_likes {
-                background-image: svg-load('heart.svg', fill=rgba(#{$color-text}, 0.2));
-            }
-        }
-
-        &__folder {
-            text-align: right;	
-            padding: 10px;		
-        }
-
-        &__folder-name {
-            display: inline-block;
-            padding-left: 30px;
-
-            background-repeat: no-repeat;
-            background-size: 20px;
-            background-position: 0 50%;
-            
-            background-image: svg-load('album.svg', fill=rgba(#{$color-text}, 0.2));
-            
-            font-family: 'Proxima Nova Semibold';
-            font-size: 14px;
-        }
-
-    }
- */
 
     .big-card {
         @include popup;
@@ -1207,7 +1157,6 @@
     }
 
 
-
     .my-albums {
         min-width: 320px;
         padding: 30px 0;
@@ -1333,7 +1282,7 @@
              margin-left: 18px;
         }
 
-         &__buttons {
+        &__buttons {
             background-color: #f2f2f2;
             padding: 10px;
         }
