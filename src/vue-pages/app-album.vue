@@ -48,6 +48,7 @@
                         </appMyPhoto>
 					</li>
 
+
                     <div class="my-photos__edit-photo" v-if="openEditPhoto">
                         
                        <div class="edit-photo">
@@ -106,8 +107,23 @@
 
                                         <div class="form-addPhoto__load-cover">
 
-                                            <label for="load-photo" class="form-addPhoto__label form-addPhoto__label_file-load">
-                                                <input type="file" id="load-photo" class="form-addPhoto__input-load">
+                                            <div class="form-addPhoto__added-photos" v-if="isPhotosLoaded">
+                                                <ul class="added-photos">
+                                                    <li class="added-photos__item" 
+                                                        v-for="photo in renderedPhotos" :key="photo.id"
+                                                        :style="{ backgroundImage : `url(${photo.pic})` }"
+                                                    >                                                        
+                                                        <button class="round-button round-button_close">
+                                                        </button>
+                                                    </li>
+
+                                                </ul>
+                                            </div>
+
+                                            <label for="load-photo" class="form-addPhoto__label form-addPhoto__label_file-load" v-if="openAddPhoto && !isPhotosLoaded">
+                                                <input type="file" id="load-photo" multiple="multiple" class="form-addPhoto__input-load"
+                                                    @change='loadPhotosFiles'
+                                                >
                                                 <div class="form-addPhoto__cover-img"></div>
                                                 <div class="form-addPhoto__cover-img-text">Выберите файл</div>
                                             </label>
@@ -156,6 +172,21 @@
 <script>
   import appMyPhoto from '../vue-components/app-my-photo.vue'
 
+    const renderer = file => {
+        const reader = new FileReader();
+
+        return new Promise((resolve, reject) => {
+            try {
+                reader.readAsDataURL(file);
+                reader.onloadend = () => {
+                    resolve(reader.result);
+                };
+            } catch (error) {
+                throw new Error("Ошибка при чтении файла");
+            }
+        });
+    }
+
   export default {   
 
     components: {
@@ -168,6 +199,7 @@
 
             openEditPhoto: false,
             openAddPhoto: !false,
+            isPhotosLoaded: !!false,
 
             urlAvatar: require('../img/anton.png').default,
             // urlInlineSvgSprite: require('../img/spriteIcons.svg').default,
@@ -175,16 +207,43 @@
 
             myPhotos: [
                 {   id: 1, photo: '../img/photo-img1.png', comments: 9, likes: 15, photoName: 'Путешествие на лодке по озеру',  },
-                {   id: 2, photo: '../img/photo-img2.png', comments: 9, likes: 15, photoName: 'Отдых в палатке',  },
-                {   id: 3, photo: '../img/photo-img3.png', comments: 9, likes: 15, photoName: 'Путешествие на лодке по озеру',  },
-                {   id: 4, photo: '../img/photo-img4.png', comments: 9, likes: 15, photoName: 'Мечтательный взгляд вдоль поверх...',  },
-                {   id: 5, photo: '../img/photo-img5.png', comments: 9, likes: 15, photoName: 'Путешествие на лодке по озеру',  },
+                {   id: 2, photo: '../img/photo-img2.png', comments: 9, likes: 16, photoName: 'Отдых в палатке',  },
+                {   id: 3, photo: '../img/photo-img3.png', comments: 9, likes: 18, photoName: 'Путешествие на лодке по озеру',  },
+                {   id: 4, photo: '../img/photo-img4.png', comments: 9, likes: 25, photoName: 'Мечтательный взгляд вдоль поверх...',  },
+                {   id: 5, photo: '../img/photo-img5.png', comments: 9, likes: 5, photoName: 'Путешествие на лодке по озеру',  },
             ],
+
+            renderedPhotos: [],
         }
     },
 
     methods: {
+        loadPhotosFiles(e) {
+                       
+            let id=0;
+            let photosAmount = e.target.files.length;
 
+            let photos = [];
+            for (let i=0; i<photosAmount; i++) {
+                photos.push(e.target.files[i]);
+                this.renderedPhotos.push({pic: '', id: i,});
+            }
+
+            photos.forEach(photo => {
+
+                renderer(photo).then(pic => {
+                    
+                    this.renderedPhotos[id].pic = pic;
+                    this.renderedPhotos[id].id = id;
+                    id++;
+                
+                    if (id === photosAmount) this.isPhotosLoaded = !this.isPhotosLoaded;
+                    
+                })
+                
+            })
+            
+        },
     },
         
     }
@@ -604,18 +663,28 @@
 
         &__load-cover {
             display: flex;
-            align-items: center;
             justify-content: center;
             background-color: #f9f9f9;
             border: 3px dashed #f1f1f1;
             border-radius: 10px;
             margin: 0 10px 10px;
-            height: 280px;
+            min-height: 280px;
+            max-height: 500px;
+            overflow-y: scroll;
             position: relative;
 
             &:hover .form-addPhoto__cover-img-text {
                 background-color: $color-blue;
                 color: $color-white;
+            }
+        }
+
+        &__label {
+            
+            &_file-load {
+                padding: 10px;
+                width: 100%;
+                position: relative;
             }
         }
 
@@ -627,6 +696,11 @@
             position: absolute;
             top: 0;
             left: 0;
+        }
+
+        &__added-photos {
+            width: 100%;
+            height: 100%;
         }
 
         &__cover-img {
@@ -654,6 +728,26 @@
         &__buttons {
             background-color: #f1f1f1;
             padding: 10px;
+        }
+    }
+
+    .added-photos {
+        display: flex;     
+        flex-wrap: wrap;
+        padding: 10px;
+
+        &__item {
+            position: relative;
+            border-radius: 1px;
+            background-color: rgb(207, 216, 220);
+            width: 59px;
+            height: 59px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+
+            background-position: center;
+            background-size: contain;
+            background-repeat: no-repeat;
         }
     }
 
