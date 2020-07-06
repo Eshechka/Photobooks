@@ -4,10 +4,11 @@
 		<div class="my-photo__img-my-photo">
 
 			<img class="my-photo__img" :src="myPhotoObject.photo" alt="photo image">
+            <div class="my-photo__img-overlay"></div>
 		
 			<div class="my-photo__comments-likes-wrapper">					
-				<button type="button" class="my-photo__button my-photo__button_comments">{{myPhotoObject.comments}}</button>
-				<button type="button" class="my-photo__button my-photo__button_likes">{{myPhotoObject.likes}}</button>
+				<div class="my-photo__info-button my-photo__info-button_comments">{{myPhotoObject.comments}}</div>
+				<div class="my-photo__info-button my-photo__info-button_likes">{{myPhotoObject.likes}}</div>
 			</div>
 		</div>
 
@@ -75,6 +76,36 @@
             height: 100%;
         }
 
+        &__img-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            cursor: pointer;
+            background-color: $color-text;
+            opacity: 0;
+            z-index: 5;
+
+            &::after {
+                content: '';
+                position: absolute;
+                width: 40px;
+                height: 40px;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background-repeat: no-repeat;
+                background-size: 40px;
+                background-position: 0 50%;
+                background-image: svg-load('loupe.svg', fill=$color-white);
+            }
+
+            &:hover {
+                opacity: 0.9;
+            }
+        }
+
         &__comments-likes-wrapper {
             position: absolute;
             left: 20px;
@@ -83,11 +114,13 @@
             box-shadow: 0 0 0 5px rgba(#{$color-text}, 0.1);
         }
 
-        &__button {
+        &__info-button {
             font-family: 'Panton Bold';
             color: $color-white;
             font-size: 16px;
             padding-left: 30px;
+            margin-right: 5px;
+            display: inline-block;
 
             background-repeat: no-repeat;
             background-size: 20px;
@@ -99,6 +132,13 @@
             &_likes {
                 background-image: svg-load('heart.svg', fill=rgba(#{$color-white}, 0.9));
             }
+        }
+
+        &__button {
+            background-repeat: no-repeat;
+            background-size: 20px;
+            background-position: 0 50%;
+
             &_edit {
                 height: 20px;
                 width: 30px;

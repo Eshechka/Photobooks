@@ -46,7 +46,12 @@
 
 }
 
-button.round-button {
+// button.round-button {
+// 	background-color: $color-white;
+// }
+
+.round-button.round-button {
+	display: block;
 	border-radius: 50%;
 	background-color: $color-white;
 	box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.22);
@@ -71,6 +76,10 @@ button.round-button {
 			background-size: 14px;
 		}
 	}
+	&_home {		
+		background-image: svg-load('home.svg', fill=rgba(#{$color-text}, 0.4));
+		background-size: 18px;
+	}
 	&_logout {		
 		background-image: svg-load('off.svg', fill=rgba(#{$color-text}, 0.6));
 	}
@@ -78,12 +87,13 @@ button.round-button {
 		background-image: svg-load('edit.svg', fill=rgba(#{$color-text}, 0.6));
 	}
 	&_plus {		
-		background-image: svg-load('add.svg', fill=rgba(#{$color-text}, 0.6));
+		background-image: svg-load('add.svg', fill=rgba(#{$color-text}, 0.4));
 	}
 	&_up {
 		background-color: transparent;
 		background-image: svg-load('top.svg', fill=rgba(#{$color-white}, 0.6));
 		box-shadow: unset;
+		margin: 0 auto;		
 	}
 	&_close {
 		position: absolute;

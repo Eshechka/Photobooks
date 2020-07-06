@@ -1,13 +1,12 @@
 <template>
     <div class="wrapper">
         <div class="wrapper__overlay wrapper__overlay_black" v-if="openEditPhoto || openAddPhoto"></div>
-        <!-- <div class="wrapper__overlay wrapper__overlay_white" v-if="openEditHeader"></div> -->
+        <div class="wrapper__overlay wrapper__overlay_white" v-if="openEditHeader"></div>
 
 		<header class="header header_album">
 	
 			<div class="header__container">		
 	
-				<div class="header__user">					
 					<div class="header__user">
 						<div class="header__avatar">
 							<div class="avatar">
@@ -15,6 +14,9 @@
 							</div>
 						</div>
 						<h1 class="header__title">Антон Черепов</h1>
+                        <div class="header__button-home">
+                            <a href="./index.html" class="round-button round-button_home"></a>
+                        </div>
 					</div>
 					<div class="header__album-desc">
 						<h2 class="header__album-title"> {{thisAlbumName}} </h2>
@@ -22,14 +24,67 @@
 					</div>
 					<div class="header__album-info">
 						<div class="header__album-info-wrapper">					
-							<button type="button" class="header__button header__button_photos"> {{myPhotos.length}} </button>
-							<button type="button" class="header__button header__button_likes"> {{myPhotos.reduce((sum, myPhoto) => sum + myPhoto.likes, 0)}} </button>
-							<button type="button" class="header__button header__button_comments"> {{myPhotos.reduce((sum, myPhoto) => sum + myPhoto.comments, 0)}} </button>
+							<div class="header__info-button header__info-button_photos"> {{myPhotos.length}} </div>
+							<div class="header__info-button header__info-button_likes"> {{myPhotos.reduce((sum, myPhoto) => sum + myPhoto.likes, 0)}} </div>
+							<div class="header__info-button header__info-button_comments"> {{myPhotos.reduce((sum, myPhoto) => sum + myPhoto.comments, 0)}} </div>
 						</div>
 					</div>
-				</div>
 
 			</div>
+
+            
+            <div class="header__edit-header" v-if="openEditHeader">
+
+                <div class="edit-header">
+
+                    <div class="edit-header__card">
+                    
+                            <div class="edit-header__user">
+                                <!-- <div class="form-edit-header__img-wrapper"> -->
+                                    <img class="edit-header__user-img" :src="urlAvatar" alt="avatar image">
+                                <!-- </div> -->
+                                    <div class="edit-header__user-name">Антон Черепов</div>
+                            </div>
+
+                        <div class="edit-header__form">                            
+
+                            <form class="form-edit-header">
+
+                                <label class="form-edit-header__label">
+                                    <input class="form-edit-header__input" type="text" placeholder="Антон Черепов">
+                                </label>
+
+
+                                <label class="form-edit-header__label">
+                                    <textarea class="form-edit-header__input form-edit-header__input_textarea" cols="20" rows="2" placeholder="Описание альбома"></textarea>
+                                </label>
+
+
+                                <div class="form-edit-header__load-cover">
+
+                                    <label for="load-bgcover-header" class="form-edit-header__label form-edit-header__label_file-load">
+                                        <input type="file" id="load-bgcover-header" class="form-edit-header__input-load">
+                                        <div class="form-edit-header__cover-img"></div>
+                                        <div class="form-edit-header__cover-img-text">Изменить фон</div>
+                                    </label>
+
+                                </div>
+
+
+                                
+                                <div class="form-edit-header__buttons">
+                                    <button class="site-button" type="submit">Сохранить</button>
+                                    <button class="site-button site-button_theme-just-text" type="button">Отменить</button>
+                                </div>
+
+                            </form>
+                        </div>      
+
+                    </div>
+
+                </div>
+
+            </div>
 		</header>
 	
 
@@ -198,8 +253,9 @@
             thisAlbumName: "Лесные прогулки",
 
             openEditPhoto: false,
-            openAddPhoto: !false,
-            isPhotosLoaded: !!false,
+            openAddPhoto: false,
+            isPhotosLoaded: false,
+            openEditHeader: false,
 
             urlAvatar: require('../img/anton.png').default,
             // urlInlineSvgSprite: require('../img/spriteIcons.svg').default,
@@ -267,26 +323,25 @@
         background-size: cover;
 
         min-width: 320px;
-        min-height: 210px;   
-
+         min-height: 230px;
         color: $color-white;
-
         position: relative;
 
 
         &__container {
             padding: 20px 0;
-            display: flex;
-            flex-direction: column;
             margin: 0 auto;
-            width: 95%;
+            width: 90%;
         }
 
-        &__top {
+        &__user {
             display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            margin-bottom: 15px;
+            align-items: center;
+            margin: 0 auto;
+        }
+
+        &__button-home {
+            margin-left: auto;
         }
 
         &__title {
@@ -307,21 +362,20 @@
         }
 
         &__avatar {
-            display: inline-block;		
-            vertical-align: middle;
+            margin-right: 10px;
+            height: 50px;
         }
 
-        &__edit-profile {
+        /* &__edit-profile {
             @include popup-container;
-        }
+        } */
 
         &__edit-header {
-            position: relative;
-            /* top: 0; */ 
+            position: absolute;
+            top: 0;
             width: 100%;
-            min-height: 210px;
+            min-height: 230px;
             margin: 0;
-            /* bottom: 0; */
             z-index: 12;
             background-repeat: no-repeat;
             background-size: cover;
@@ -368,12 +422,14 @@
                 text-align: center;
             }
 
-            .header__button {
+            .header__info-button {
+                display: inline-block;
                 text-align: center;
                 font-family: 'Panton Bold';
                 font-size: 16px;
                 color: $color-text;
                 padding-left: 30px;
+                margin-right: 5px;
         
                 background-repeat: no-repeat;
                 background-size: 20px;
@@ -394,6 +450,116 @@
         }
         // ---------------------
     }
+
+        
+    .edit-header {
+        width: 100%;        
+        min-width: 320px;
+        overflow: hidden;
+
+        &__card {
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            color: $color-text;
+            padding-top: 20px;
+        }
+
+        &__user {
+            display: flex;
+            align-items: center;
+            width: 90%;
+            margin: 0 auto;
+            margin-bottom: 10px;
+        }
+
+        &__user-name {
+            font-family: 'Panton Bold';
+            font-size: 16px;
+            color: $color-white;
+            margin-left: 18px;
+        }
+    }
+
+        
+    .form-edit-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        &__load-cover {
+            width: 90px;
+            min-height: 50px;
+            margin-bottom: 20px;
+            margin-top: 10px;
+        }
+
+        &__cover-img {
+            height: 32px;
+            background-repeat: no-repeat;
+            background-size: 32px;
+            background-position: top center;
+            background-image: svg-load('cam.svg', fill=rgba(#{$color-white}, 0.8));
+        }
+
+        &__cover-img-text {
+            font-family: 'Proxima Nova Semibold';
+            font-size: 12px;
+            color: rgba(#{$color-white}, 0.8);
+            text-align: center;
+        }
+
+        &__img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+
+        &__label {
+            font-family: 'Proxima Nova Semibold';
+            font-size: 14px;
+            display: block;
+            width: 90%;
+            
+            &_file-load {
+                width: 100%;
+                position: relative;
+            }
+        }
+
+        &__input-load {
+            cursor: pointer;
+            opacity: 0;    
+            width: 100%;    
+            height: 100%;    
+            position: absolute;
+            top: 0;
+            font-size: 0;
+        }
+
+        &__input {
+            @include popup-input;
+            margin-top: 5px;
+
+            &_textarea {
+                resize: none;
+            }
+        }
+
+        /* &__socials {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            width: 88%;
+        } */
+
+         &__buttons {
+            padding: 10px;
+            height: 60px;
+            background: $color-white;
+            width: 100%;
+            text-align: right;
+        }
+    }    
 
 
     .avatar {
@@ -872,6 +1038,7 @@
         background-image: url('/img/bg-main-footer.png');
         background-repeat: no-repeat;
         background-size: cover;
+        background-position: bottom center;
 
         min-width: 320px;
         padding: 15px;
@@ -886,7 +1053,7 @@
             display: flex;
             flex-direction: column;
             margin: 0 auto;
-            width: 95%;
+            width: 90%;
         }
 
         &__button-up {

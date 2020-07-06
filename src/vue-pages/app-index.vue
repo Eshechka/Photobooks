@@ -20,9 +20,7 @@
                         <h1 class="header__title">Антон Черепов</h1>
                     </div>
                     <div class="header__edit">
-                        <button type='button' class="round-button round-button_edit">
-                            
-                        </button>
+                        <button type='button' class="round-button round-button_edit"></button>
                     </div>
                 </div>
 
@@ -505,15 +503,11 @@
     @import '../styles/mixins.pcss';
     @import '../styles/layout.pcss';
 
-    /* @import '../styles/blocks/header.pcss'; */
     @import '../styles/blocks/avatar.pcss';
-    /* @import '../styles/blocks/socials.pcss'; */
     @import '../styles/blocks/form-search.pcss';
-    /* @import '../styles/blocks/new.pcss'; */
     @import '../styles/blocks/my-search.pcss';
     @import '../styles/blocks/site-button.pcss';
     @import '../styles/blocks/my-albums.pcss';
-    @import '../styles/blocks/footer.pcss';
 
 
     .header {
@@ -583,71 +577,6 @@
             background-image: linear-gradient(rgba($color-text, 0.95), rgba($color-text, 0.8)), url('/img/bg-main-header.png');
         }
 
-        // ---------------------
-        /* &_album {
-
-            position: relative;
-            padding-bottom: 45px;
-
-            .header__title {
-                display: inline-block;
-                vertical-align: middle;
-                font-family: 'Panton-Bold';
-                font-size: 16px;
-            }
-
-            .header__album-title {
-                font-family: 'ProximaNova Semibold';
-                font-size: 18px;
-                line-height: 24px;
-                text-align: center;
-                margin-bottom: 10px;
-            }
-            .header__text {
-                font-family: 'ProximaNova-Light';
-                font-size: 14px;
-                line-height: 21px;
-                text-align: center;
-            }
-            .header__album-info {
-                position: absolute;
-                bottom: 0;
-                right: 0;
-                left: 0;
-                background-color: rgba($color-white, 0.8);
-                height: 45px;
-                padding: 10px;
-                overflow: hidden;
-            }
-            .header__album-info-wrapper {
-                text-align: center;
-            }
-
-            .header__button {
-                text-align: center;
-                font-family: 'Panton Bold';
-                font-size: 16px;
-                color: $color-text;
-                padding-left: 30px;
-        
-                background-repeat: no-repeat;
-                background-size: 20px;
-                background-position: 0 50%;
-
-                &_comments {
-                    background-image: svg-load('comments.svg', fill=rgba(#{$color-text}, 0.9));
-                }
-                &_likes {
-                    background-image: svg-load('heart.svg', fill=rgba(#{$color-text}, 0.9));
-                }
-                &_photos {
-                    background-image: svg-load('cam.svg', fill=rgba(#{$color-text}, 0.9));
-                }
-            }
-
-
-        } */
-        // ---------------------
     }
 
         
@@ -689,10 +618,6 @@
             margin-top: 10px;
         }
 
-        &__input-load {
-            cursor: pointer;
-        }
-
         &__cover-img {
             height: 32px;
             background-repeat: no-repeat;
@@ -727,11 +652,13 @@
         }
 
         &__input-load {
+            cursor: pointer;
             opacity: 0;    
             width: 100%;    
             height: 100%;    
             position: absolute;
             top: 0;
+                font-size: 0;
         }
 
         &__input {
@@ -891,20 +818,39 @@
             background-size: 20px;
             background-position: 50%;
 
+            &:hover, &:active, &:focus {
+                background-size: 22px;;
+            }
+
             &_vk {		
                 background-image: svg-load('soc_vk.svg', fill=rgba(#{$color-white}, 0.8));
+                    &:hover, &:active, &:focus {
+                        background-image: svg-load('soc_vk.svg', fill=rgba(#{$color-white}, 0.95));
+                    }
             }
             &_tw {		
                 background-image: svg-load('soc_twitter.svg', fill=rgba(#{$color-white}, 0.8));
+                    &:hover, &:active, &:focus {
+                        background-image: svg-load('soc_twitter.svg', fill=rgba(#{$color-white}, 0.95));
+                    }
             }
             &_google {		
                 background-image: svg-load('social_google.svg', fill=rgba(#{$color-white}, 0.8));
+                    &:hover, &:active, &:focus {
+                        background-image: svg-load('social_google.svg', fill=rgba(#{$color-white}, 0.95));
+                    }
             }
             &_fb {		
                 background-image: svg-load('soc_fb.svg', fill=rgba(#{$color-white}, 0.8));
+                    &:hover, &:active, &:focus {
+                        background-image: svg-load('soc_fb.svg', fill=rgba(#{$color-white}, 0.95));
+                    }                
             }
             &_email {		
                 background-image: svg-load('soc_email.svg', fill=rgba(#{$color-white}, 0.8));
+                    &:hover, &:active, &:focus {
+                        background-image: svg-load('soc_email.svg', fill=rgba(#{$color-white}, 0.95));
+                    }                   
             }
 
             &_active {
@@ -1286,6 +1232,42 @@
             background-color: #f2f2f2;
             padding: 10px;
         }
+    }
+
+
+    .footer {
+        background-image: url('/img/bg-main-footer.png');
+        background-repeat: no-repeat;
+        background-size: cover;
+
+        min-width: 320px;
+        padding: 15px;
+
+        color: $color-white;
+        font-family: 'ProximaNova-Light';
+        text-align: center;
+        font-size: 14px;
+        line-height: 21px;
+
+        &__container {
+            display: flex;
+            flex-direction: column;
+            margin: 0 auto;
+            width: 95%;
+        }
+
+        &__button-up {
+            height: 60px;
+            width: 100%;
+        }
+
+        &__desc {
+            margin-bottom: 20px;
+        }
+        &__copyright {			
+            color: rgba($color-white, 0.6);
+        }
+
     }
 
 </style>
