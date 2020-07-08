@@ -12,9 +12,9 @@
 			</div>
 		</div>
 
-		<div class="my-photo__folder">
+		<div class="my-photo__name-wrapper">
 			<button type="button" class="my-photo__button my-photo__button_edit"></button>
-			<div class="my-photo__folder-name"> {{myPhotoObject.photoName}} </div>			
+			<div class="my-photo__name"> {{myPhotoObject.photoName}} </div>			
 		</div>
 
 	
@@ -156,7 +156,7 @@
         }
 
         
-        &__folder {
+        &__name-wrapper {
             text-align: right;	
             padding: 15px 10px;
             display: flex;
@@ -164,7 +164,7 @@
             align-items: center;
         }
 
-        &__folder-name {
+        &__name {
             padding-left: 30px;
             position: relative;
             font-family: 'Proxima Nova Semibold';

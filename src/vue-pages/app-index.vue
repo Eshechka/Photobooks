@@ -6,47 +6,52 @@
         <header class="header">
 
             <div class="header__container" v-if="!openEditHeader">		
-
-                <div class="header__top">
-                    <div class="header__logout">
-                        <button type='button' class="round-button round-button_logout">
-                            
-                        </button>
-                    </div>
-                    <div class="header__user">
-                        <div class="avatar">
-                            <img class="avatar__img" :src='urlAvatar' alt="avatar">
-                        </div>
-                        <h1 class="header__title">Антон Черепов</h1>
-                    </div>
-                    <div class="header__edit">
+                <div class="header__logout">
+                    <button type='button' class="round-button round-button_logout"></button>
+                </div>
+                <div class="header__edit">
+                    <button type='button' class="round-button round-button_edit"></button>
+                </div>
+                <!-- <div class="header__top"> -->
+                    <!-- <div class="header__logout">
+                        <button type='button' class="round-button round-button_logout"></button>
+                    </div> -->
+                <!-- <div class="header__user"> -->
+                <div class="header__avatar">
+                    <img class="header__avatar-img" :src='urlAvatar' alt="avatar">
+                </div>
+                <!-- </div> -->
+                <div class="header__info">
+                    <h1 class="header__title">Антон Черепов</h1>
+                    <!-- <div class="header__edit">
                         <button type='button' class="round-button round-button_edit"></button>
+                    </div> -->
+                <!-- </div> -->
+
+                    <div class="header__text">		
+                        Я веб разработчик. Мне 24 года. Люблю путешествия, кодинг, фриланс и активный отдых.		
                     </div>
-                </div>
 
-                <div class="header__text">		
-                    Я веб разработчик. Мне 24 года. Люблю путешествия, кодинг, фриланс и активный отдых.		
-                </div>
+                    <div class="header__socials">
+                        <ul class="socials__list">
+                            <li class="socials__item">
+                                <a href="/change__me" class="socials__link socials__link_vk">vk</a>
+                            </li>
+                            <li class="socials__item">
+                                <a href="/change__me" class="socials__link socials__link_fb">fb</a>
+                            </li>
+                            <li class="socials__item">
+                                <a href="/change__me" class="socials__link socials__link_tw">tw</a>
+                            </li>
+                            <li class="socials__item">
+                                <a href="/change__me" class="socials__link socials__link_google">g+</a>
+                            </li>
+                            <li class="socials__item">
+                                <a href="/change__me" class="socials__link socials__link_email">email</a>
+                            </li>
+                        </ul>
 
-                <div class="header__socials">
-                    <ul class="socials__list">
-                        <li class="socials__item">
-                            <a href="/change__me" class="socials__link socials__link_vk">vk</a>
-                        </li>
-                        <li class="socials__item">
-                            <a href="/change__me" class="socials__link socials__link_fb">fb</a>
-                        </li>
-                        <li class="socials__item">
-                            <a href="/change__me" class="socials__link socials__link_tw">tw</a>
-                        </li>
-                        <li class="socials__item">
-                            <a href="/change__me" class="socials__link socials__link_google">g+</a>
-                        </li>
-                        <li class="socials__item">
-                            <a href="/change__me" class="socials__link socials__link_email">email</a>
-                        </li>
-                    </ul>
-
+                    </div>
                 </div>
             </div>
 
@@ -131,9 +136,6 @@
 
                     </div>
 
-
-
-
                 </div>
 
             </div>
@@ -166,7 +168,6 @@
 
                                 <div class="form-edit-header__socials">
                                     <div class="socials">
-                                    <!-- <div @socialHandler="socialHandler" class="socials"> -->
 
                                         <ul class="socials__list">
                                             <li v-for="social in socials" :key="social.id" class="socials__item"> 
@@ -175,7 +176,6 @@
                                                     :class="[`socials__link socials__link_${social.text}`,
                                                             {'socials__link_active': social.isActive}]"
                                                 >{{social.text}}</a>
-                                                <!-- <a @click.prevent="$emit('socialHandler', e.taget)" class="socials__link socials__link_vk">vk</a> -->
                                             </li>
                                         </ul>
 
@@ -241,7 +241,6 @@
                     </svg>
                 </button>
             </form>
-            <!-- <div class="my-search__overlay" v-if="openEditHeader"></div> -->
         </div>
 
 
@@ -253,7 +252,9 @@
 
                 <ul class="new__card-list">
                     <li v-for="card in cards" :key="card.id" class="new__card-item">
-                        <appCard :cardObject="card">                            
+                        <appCard :cardObject="card"
+                            @clickCard="cardClickHandler"
+                        >
                         </appCard>
                     </li>
                 </ul> 
@@ -267,12 +268,18 @@
 
             <div class="new__big-card" v-if="openBigCard">
                 <div class="big-card">
+
+                    <div class="big-card__close"
+                        @click="openBigCard=false"
+                    >
+                        <button class="round-button round-button_close-transparent" type="button"></button>
+                    </div>
+
                     <div class="big-card__card">
 
                         <div class="big-card__card-img">
-                            <img class="big-card__img" :src="cards[0].photo" alt="big card image">
+                            <img class="big-card__img" :src="cards[idCurrentPhoto].photo" alt="big card image">
                         </div>
-
 
                         <div class="big-card__author-info">
 
@@ -413,7 +420,9 @@
             <div class="footer__container">	
 
                 <div class="footer__button-up">
-                    <button class="round-button round-button_up"></button>
+                    <button class="round-button round-button_up"
+                        @click="scrollToTop"
+                    ></button>
                 </div>
                 <div class="footer__desc">
                     Перед вами сервис, который поможет вам организовать свои фотографии в альбомы и поделиться ими со всем миром!
@@ -452,15 +461,19 @@
             isActiveSocial: false,
             activeSocialLink: '',
 
+            idCurrentPhoto: 0,
+
             cards: [
                 {   id: 1, title: 'Путешествие на лодке по озеру', avatarPhoto: '../img/card-avatar1.png', photo: '../img/card-img1.png', comments: '9', likes: '15', folderName: 'Прогулки по воде',  },
-                {   id: 2, title: 'Путешествие на лодке по озеру2', avatarPhoto: '../img/card-avatar1.png', photo: '../img/card-img1.png', comments: '9', likes: '15', folderName: 'Прогулки по воде2',  },
-                {   id: 3, title: 'Путешествие на лодке по озеру3', avatarPhoto: '../img/card-avatar1.png', photo: '../img/card-img1.png', comments: '9', likes: '15', folderName: 'Прогулки по воде3',  },
+                {   id: 2, title: 'Отдых в палатке', avatarPhoto: '../img/card-avatar1.png', photo: '../img/card-img2.png', comments: '9', likes: '15', folderName: 'Прогулки по воде2',  },
+                {   id: 3, title: 'Любимые лошадки', avatarPhoto: '../img/card-avatar1.png', photo: '../img/card-img3.png', comments: '9', likes: '15', folderName: 'Прогулки по воде3',  },
             ],
             myAlbums: [
-                {   id: 1, photo: '../img/album-img1.png', folderName: 'Поход в горы',  },
-                {   id: 2, photo: '../img/album-img1.png', folderName: 'Поход в горы2',  },
-                {   id: 3, photo: '../img/album-img1.png', folderName: 'Поход в горы3',  },
+                {   id: 1, photo: '../img/album-img1.png', folderName: 'Поход в горы', link: './album.html', desc: 'Фотографии природы леса, енотов и оленей...' },
+                {   id: 2, photo: '../img/album-img2.png', folderName: 'Животные', link: './album.html', desc: 'Фотографии животных...' },
+                {   id: 3, photo: '../img/album-img3.png', folderName: 'Прогулки на лодке', link: './album.html', desc: 'Фотографии ...' },
+                {   id: 4, photo: '../img/album-img3.png', folderName: 'Прогулки', link: './album.html', desc: 'Фотографии ...'  },
+                {   id: 5, photo: '../img/album-img3.png', folderName: 'Прогулки', link: './album.html', desc: 'Фотографии ...'  },
             ],
             socials: [
                 {   id: 'vk', icon: '../icons/soc_vk.svg', text: 'vk', isActive: false, link: 'https://vk.com/' },
@@ -489,6 +502,21 @@
             
            
         },
+
+        cardClickHandler(cardId, e) {
+            console.log('cardId', cardId);
+            console.log('this.idCurrentPhoto = ', this.idCurrentPhoto);
+            this.openBigCard = true;
+            this.idCurrentPhoto = cardId-1;
+            
+        },
+        
+        scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        }
     },
         
     }
@@ -503,11 +531,8 @@
     @import '../styles/mixins.pcss';
     @import '../styles/layout.pcss';
 
-    @import '../styles/blocks/avatar.pcss';
-    @import '../styles/blocks/form-search.pcss';
-    @import '../styles/blocks/my-search.pcss';
     @import '../styles/blocks/site-button.pcss';
-    @import '../styles/blocks/my-albums.pcss';
+
 
 
     .header {
@@ -519,28 +544,86 @@
         min-height: 210px;   
 
         color: $color-white;
-
         position: relative;
-
 
         &__container {
             padding: 20px 0;
             display: flex;
             flex-direction: column;
             margin: 0 auto;
-            width: 95%;
+            width: 90%;
+            position: relative;
+
+            @include tablets {
+                flex-direction: row;
+            }
         }
 
-        &__top {
+        &__logout {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            
+            @include tablets {
+                top: 70px;
+                right: 0;
+                left: unset;
+            }         
+        }
+
+        &__edit {
+            position: absolute;
+            top: 20px;
+            right: 0;
+        }
+        
+
+        &__avatar {
+            width: 100%;
+            text-align: center;
+            height: 50px;
+            flex-shrink: 0;
+            margin-right: 22px;
+
+            @include tablets {
+                width: 102px;
+                height: 102px;
+            }
+        }
+
+        &__avatar-img {
+            margin: 0 auto;
+            margin-bottom: 10px;
+            border-radius: 50%;
+            border: 3px solid $color-white;
+            height: 50px;
+            width: 50px;
+
+            @include tablets {
+                width: 102px;
+                height: 102px;
+            }	
+        }      
+
+        &__info {
             display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            margin-bottom: 15px;
+            flex-direction: column;
+            align-items: center;
+
+            @include tablets {
+                align-items: flex-start;
+            }
         }
 
         &__title {
             font-family: 'Panton-Bold';
             font-size: 21px;
+            /* text-align: center; */
+            margin-bottom: 15px;
+
+             @include tablets {
+                margin-bottom: 20px;
+             }
         }
 
         &__text {
@@ -549,10 +632,18 @@
             font-size: 14px;
             color: rgba(#{$color-white}, 0.8);
             margin-bottom: 18px;
+
+            @include tablets {
+                text-align: left;
+                padding-right: 120px;
+                font-size: 16px;
+                line-height: 24px;
+                margin-bottom: 30px;
+            }
         }
 
         &__socials {
-            text-align: center;		
+            /* text-align: center;		 */
         }
 
         &__avatar {
@@ -822,6 +913,10 @@
                 background-size: 22px;;
             }
 
+            @include tablets {
+                margin-right: 10px;
+            }
+
             &_vk {		
                 background-image: svg-load('soc_vk.svg', fill=rgba(#{$color-white}, 0.8));
                     &:hover, &:active, &:focus {
@@ -874,6 +969,81 @@
     }
 
 
+    .my-search {
+        min-width: 300px;
+        font-family: 'ProximaNova-Light';
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: #f1f1f1;
+        padding: 10px 5%;
+        position: relative;
+
+        height: 60px;
+        overflow: hidden;
+
+        @include tablets {
+            align-items: flex-end;
+        }
+        
+        &__show-new {
+            padding: 5px;
+            padding-top: 15px;
+        }
+    }
+
+
+    .form-search {
+        position: relative;
+        width: 350px;
+        height: 40px;
+        border-radius: 40px;
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        background: #fff;
+        transition: all 0.3s ease;
+
+        &__input {
+            position: absolute;
+            top: 0;
+            left: 38px;
+            font-size: 14px;
+            background: transparent;
+            color: $color-text;
+            width: 300px;
+            height: 40px;
+            border: none;
+            appearance: none;
+            outline: none;
+
+            &::-webkit-search-cancel-button {
+                appearance: none;
+            }
+        }
+
+        &__submit {
+            position: absolute;
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
+            height: 15px;
+            width: 15px;
+            padding: 0;
+            margin: 0;
+            border: none;
+            background: none;
+            outline: none!important;
+            cursor: pointer;
+
+            & svg {
+                width: 15px;
+                height: 15px;
+                fill: $color-text;
+            }
+        }
+    }
+
+
     .new {
         position: relative;
         min-width: 320px;
@@ -891,6 +1061,10 @@
             margin-bottom: 20px;
             width: 100%;
             text-align: center;
+
+            @include tablets {
+                text-align: left;
+            }
         }
 
         &__button-show-more {
@@ -898,8 +1072,22 @@
             padding: 10px;
         }
 
+        &__card-list {
+
+            @include tablets {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+        }
+
         &__card-item {
             margin-bottom: 10px;
+
+            @include tablets {
+                width: 48%;
+                margin-bottom: 20px;
+            }
         }
 
         &__big-card {
@@ -947,10 +1135,20 @@
 
     .big-card {
         @include popup;
+        overflow: unset;
 
         background-color: rgb(246, 246, 246);
+        position: relative;
+
+        &__close {
+            position: absolute;
+            right: -36px;
+            top: -36px;
+            z-index: 15;
+        }
 
         &__card {
+            overflow: hidden;
             min-width: 300px;
             background-color: $color-white;
             display: flex;
@@ -1120,11 +1318,15 @@
         }
 
         &__title {
-            font-family: 'Panton Bold';
+            font-family: 'Panton-Bold';
             font-size: 30px;
             margin-bottom: 20px;
             width: 100%;
             text-align: center;
+
+            {
+                text-align: left;
+            }
         }
 
         &__button-show-more {
@@ -1139,8 +1341,27 @@
             transform: translateY(-50%);
         }
 
+        &__albums-list {
+
+            @include tablets {
+                display: flex;
+                flex-wrap: wrap;
+            }
+        }
+
         &__albums-item {
             margin-bottom: 10px;
+
+            @include tablets {
+                width: 31%;
+                margin-bottom: 20px;
+                margin-right: 3.5%;
+
+                &:nth-child(3n) {
+                    margin-right: 0;
+                }
+
+            }
         }
         
     }
@@ -1253,19 +1474,41 @@
             display: flex;
             flex-direction: column;
             margin: 0 auto;
-            width: 95%;
+            width: 90%;
+            position: relative;
+
+            @include tablets {
+                flex-direction: row;
+                justify-content: space-between;
+            }
         }
 
         &__button-up {
             height: 60px;
-            width: 100%;
+            /* width: 100%; */
+
+            @include tablets {
+                position: absolute;
+                top: 0;
+                left: 50%;
+            }
         }
 
         &__desc {
             margin-bottom: 20px;
+            
+            @include tablets {
+                flex-basis: 40%;
+                text-align: left;
+            }
         }
         &__copyright {			
             color: rgba($color-white, 0.6);
+            
+            @include tablets {
+                flex-basis: 40%;
+                text-align: right;
+            }
         }
 
     }

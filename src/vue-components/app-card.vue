@@ -3,7 +3,9 @@
     <div class="card">
         <div class="card__img-card">
             <img  class="card__img" :src="cardObject.photo" alt="card image">
-            <div class="card__img-overlay"></div>
+            <div class="card__img-overlay"
+                @click="$emit('clickCard', cardObject.id, $event)"
+            ></div>
         </div>
 
         <div class="card__info">
@@ -54,10 +56,10 @@
 
 <style lang="postcss">
 
-    // @import 'normalize.css';
-    // @import '../fonts/fonts.pcss';
-    // @import '../styles/mixins.pcss';
-    // @import '../styles/layout.pcss';
+    @import 'normalize.css';
+    @import '../fonts/fonts.pcss';
+    @import '../styles/mixins.pcss';
+    @import '../styles/layout.pcss';
 
     .card {
         min-width: 300px;

@@ -5,31 +5,34 @@
 
 		<header class="header header_album">
 	
-			<div class="header__container">		
-	
-					<div class="header__user">
+			<div class="header__container"
+                ref='header-container'
+            >			
+					<div class="header__user" :class="{header__user_scrolled : isScrolledHeader}">
 						<div class="header__avatar">
 							<div class="avatar">
-								<img class="avatar__img" :src='urlAvatar' alt="avatar">
+								<img class="avatar__img" :src='userAvatarUrl' alt="avatar">
 							</div>
 						</div>
-						<h1 class="header__title">Антон Черепов</h1>
+						<h1 class="header__title" v-if="isScrolledHeader"> {{thisAlbumName}} </h1>
+						<h1 class="header__title" v-else > {{userName}} </h1>
+
                         <div class="header__button-home">
                             <a href="./index.html" class="round-button round-button_home"></a>
                         </div>
 					</div>
+
 					<div class="header__album-desc">
 						<h2 class="header__album-title"> {{thisAlbumName}} </h2>
-						<div class="header__text">Фотографии природы леса, енотов и оленей. Как прекрасно сойти на дальней станции и пройтись по полю босиком. И чтобы никто не беспокоил бродить влюбленным в тишину. Запах мёда, лесных оленей и енотов будоражит нутро.</div>
+						<div class="header__text"> {{thisAlbumDesc}} </div>
 					</div>
 					<div class="header__album-info">
 						<div class="header__album-info-wrapper">					
-							<div class="header__info-button header__info-button_photos"> {{myPhotos.length}} </div>
-							<div class="header__info-button header__info-button_likes"> {{myPhotos.reduce((sum, myPhoto) => sum + myPhoto.likes, 0)}} </div>
-							<div class="header__info-button header__info-button_comments"> {{myPhotos.reduce((sum, myPhoto) => sum + myPhoto.comments, 0)}} </div>
+							<div class="header__info-button header__info-button_photos"> {{thisAlbumPhotos.length}} </div>
+							<div class="header__info-button header__info-button_likes"> {{thisAlbumPhotos.reduce((sum, myPhoto) => sum + myPhoto.likes, 0)}} </div>
+							<div class="header__info-button header__info-button_comments"> {{thisAlbumPhotos.reduce((sum, myPhoto) => sum + myPhoto.comments, 0)}} </div>
 						</div>
 					</div>
-
 			</div>
 
             
@@ -40,9 +43,7 @@
                     <div class="edit-header__card">
                     
                             <div class="edit-header__user">
-                                <!-- <div class="form-edit-header__img-wrapper"> -->
-                                    <img class="edit-header__user-img" :src="urlAvatar" alt="avatar image">
-                                <!-- </div> -->
+                                    <img class="edit-header__user-img" :src="userAvatarUrl" alt="avatar image">
                                     <div class="edit-header__user-name">Антон Черепов</div>
                             </div>
 
@@ -92,13 +93,15 @@
 			<div class="my-photos__container">
 				<div class="my-photos__topgroup">
 					<div class="my-photos__button-plus">
-						<button class="round-button round-button_plus"></button>
+						<button class="round-button round-button_plus"
+                            @click="openAddPhoto = true"
+                        ></button>
 					</div>
 				</div>
 	
 				<ul class="my-photos__photos-list">
                     
-					<li class="my-photos__photos-item" v-for="myPhoto in myPhotos" :key="myPhoto.id">
+					<li class="my-photos__photos-item" v-for="myPhoto in thisAlbumPhotos" :key="myPhoto.id">
 						<appMyPhoto :myPhotoObject="myPhoto">
                         </appMyPhoto>
 					</li>
@@ -149,7 +152,9 @@
 
                                 <div class="add-photo__topgroup">
                                     <h4 class="add-photo__title">Добавить фотографии</h4>
-                                    <button type="button" class="add-photo__button add-photo__button_close"></button>
+                                    <button type="button" class="add-photo__button add-photo__button_close"
+                                        @click="openAddPhoto=false"
+                                    ></button>
                                 </div>
                                 
                                 <div class="add-photo__form">
@@ -203,13 +208,16 @@
 				</ul>
 			</div>
 		</section>
+
 	
 		<footer class="footer">
 	
 			<div class="footer__container">	
 	
 				<div class="footer__button-up">
-					<button class="round-button round-button_up"></button>
+					<button class="round-button round-button_up"
+                        @click="scrollToTop"
+                    ></button>
 				</div>
 				<div class="footer__desc">
 					Перед вами сервис, который поможет вам организовать свои фотографии в альбомы и поделиться ими со всем миром!
@@ -220,12 +228,13 @@
 	
 			</div>
 		</footer>
+
     </div>
 </template>
 
 
 <script>
-  import appMyPhoto from '../vue-components/app-my-photo.vue'
+    import appMyPhoto from '../vue-components/app-my-photo.vue'
 
     const renderer = file => {
         const reader = new FileReader();
@@ -242,65 +251,97 @@
         });
     }
 
-  export default {   
+    export default {   
 
-    components: {
-      appMyPhoto,
-    },
+        components: {
+        appMyPhoto,
+        },
 
-    data() {
-        return {
-            thisAlbumName: "Лесные прогулки",
+        data() {
+            return {
+                openEditPhoto: false,
+                openAddPhoto: false,
+                openEditHeader: false,
+                isScrolledHeader: false,
+                isPhotosLoaded: false,
 
-            openEditPhoto: false,
-            openAddPhoto: false,
-            isPhotosLoaded: false,
-            openEditHeader: false,
+                userAvatarUrl: require('../img/anton.png').default,
+                userName: "Антон Черепов",
 
-            urlAvatar: require('../img/anton.png').default,
-            // urlInlineSvgSprite: require('../img/spriteIcons.svg').default,
+                thisAlbumName: "Лесные прогулки",
+                thisAlbumDesc: "Фотографии природы леса, енотов и оленей. Как прекрасно сойти на дальней станции и пройтись по полю босиком. И чтобы никто не беспокоил бродить влюбленным в тишину. Запах мёда, лесных оленей и енотов будоражит нутро.",
 
+                thisAlbumPhotos: [
+                    {   id: 1, photo: '../img/photo-img1.png', comments: 9, likes: 15, photoName: 'Путешествие на лодке по озеру',  },
+                    {   id: 2, photo: '../img/photo-img2.png', comments: 9, likes: 16, photoName: 'Отдых в палатке',  },
+                    {   id: 3, photo: '../img/photo-img3.png', comments: 9, likes: 18, photoName: 'Путешествие на лодке по озеру',  },
+                    {   id: 4, photo: '../img/photo-img4.png', comments: 9, likes: 25, photoName: 'Мечтательный взгляд вдоль поверх...',  },
+                    {   id: 5, photo: '../img/photo-img5.png', comments: 9, likes: 5, photoName: 'Путешествие на лодке по озеру',  },
+                ],
 
-            myPhotos: [
-                {   id: 1, photo: '../img/photo-img1.png', comments: 9, likes: 15, photoName: 'Путешествие на лодке по озеру',  },
-                {   id: 2, photo: '../img/photo-img2.png', comments: 9, likes: 16, photoName: 'Отдых в палатке',  },
-                {   id: 3, photo: '../img/photo-img3.png', comments: 9, likes: 18, photoName: 'Путешествие на лодке по озеру',  },
-                {   id: 4, photo: '../img/photo-img4.png', comments: 9, likes: 25, photoName: 'Мечтательный взгляд вдоль поверх...',  },
-                {   id: 5, photo: '../img/photo-img5.png', comments: 9, likes: 5, photoName: 'Путешествие на лодке по озеру',  },
-            ],
-
-            renderedPhotos: [],
-        }
-    },
-
-    methods: {
-        loadPhotosFiles(e) {
-                       
-            let id=0;
-            let photosAmount = e.target.files.length;
-
-            let photos = [];
-            for (let i=0; i<photosAmount; i++) {
-                photos.push(e.target.files[i]);
-                this.renderedPhotos.push({pic: '', id: i,});
+                renderedPhotos: [],
             }
+        },
 
-            photos.forEach(photo => {
+        computed: {
+            headerContainer() {
+                return this.$refs['header-container'];
+            },
+        },
 
-                renderer(photo).then(pic => {
+        methods: {
+            loadPhotosFiles(e) {
+                        
+                let id=0;
+                let photosAmount = e.target.files.length;
+
+                let photos = [];
+                for (let i=0; i<photosAmount; i++) {
+                    photos.push(e.target.files[i]);
+                    this.renderedPhotos.push({pic: '', id: i,});
+                }
+
+                photos.forEach(photo => {
+
+                    renderer(photo).then(pic => {
+                        
+                        this.renderedPhotos[id].pic = pic;
+                        this.renderedPhotos[id].id = id;
+                        id++;
                     
-                    this.renderedPhotos[id].pic = pic;
-                    this.renderedPhotos[id].id = id;
-                    id++;
-                
-                    if (id === photosAmount) this.isPhotosLoaded = !this.isPhotosLoaded;
+                        if (id === photosAmount) this.isPhotosLoaded = !this.isPhotosLoaded;
+                        
+                    })
                     
                 })
                 
-            })
-            
+            },
+
+            scrollToTop() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            }, 
+
+            scrollHandle() {
+                let headerContainerStyles = getComputedStyle(this.headerContainer);
+                let scrollStart = parseFloat(headerContainerStyles.height);
+                this.headerContainer.style.minHeight = scrollStart+'px';
+                    if (pageYOffset >= scrollStart) {                        
+                        // console.log(pageYOffset);
+                        this.isScrolledHeader = true;
+                    }
+                    else {
+                        this.isScrolledHeader = false;
+                    }
+                    
+            },
         },
-    },
+
+        created() {
+            window.addEventListener('scroll', this.scrollHandle);    
+        },
         
     }
 
@@ -338,6 +379,19 @@
             display: flex;
             align-items: center;
             margin: 0 auto;
+
+            &_scrolled {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                padding: 5px 5%;
+                background-color: rgba($color-white, 0.85);
+                min-height: 45px;
+                color: $color-text;
+                overflow: hidden;
+                z-index: 15;
+            }
         }
 
         &__button-home {
@@ -366,10 +420,6 @@
             height: 50px;
         }
 
-        /* &__edit-profile {
-            @include popup-container;
-        } */
-
         &__edit-header {
             position: absolute;
             top: 0;
@@ -396,7 +446,7 @@
             }
 
             .header__album-title {
-                font-family: 'ProximaNova Semibold';
+                font-family: 'Proxima Nova Semibold';
                 font-size: 18px;
                 line-height: 24px;
                 text-align: center;

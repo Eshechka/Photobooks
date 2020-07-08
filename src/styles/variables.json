@@ -4,6 +4,13 @@
 "color-white": "#fff",
 "color-blue": "rgb(40, 187, 240)",
 "color-blue-hover": "#24b0e3",
-"color-carrot": "#ee4634"
+"color-carrot": "#ee4634", 
+
+
+
+"bp-desktop-hd": "1800px",
+"bp-desktop": "1200px",
+"bp-tablets": "768px",
+"bp-phones": "480px"
 
 }
