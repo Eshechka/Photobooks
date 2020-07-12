@@ -2,7 +2,7 @@
 
 	min-height: 38px;
 	padding: 10px 14px;
-
+	white-space: nowrap;
 	font-family: Panton-Bold;
 	background-color: $color-blue;
 	color: $color-white;
@@ -51,7 +51,7 @@
 // }
 
 .round-button.round-button {
-	display: block;
+	display: inline-block;
 	border-radius: 50%;
 	background-color: $color-white;
 	box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.22);
@@ -70,21 +70,82 @@
 		background-color: $color-carrot;
 		background-size: 12px;
 		background-image: svg-load('delete.svg', fill=rgba(#{$color-white}, 0.9));
-		margin-left: auto;
+		margin-left: auto;		
+		font-family: 'Panton-Bold';
+		font-size: 0px;
+		color: $color-white;
+		transition: background-position 0.7s ease;
 
 		&:hover {
 			background-size: 14px;
 		}
+
+		@include tablets {
+
+			&:hover {
+				font-size: 14px;
+				background-position: 16px;
+				min-height: 40px;
+				width: unset;
+				padding-right: 14px;
+				padding-left: 43px;
+				border-radius: 20px;
+			}
+		}
+
+
 	}
 	&_home {		
 		background-image: svg-load('home.svg', fill=rgba(#{$color-text}, 0.4));
 		background-size: 18px;
 	}
-	&_logout {		
+	&_logout {
+		font-family: 'Panton-Bold';
+		font-size: 0px;
+		color: $color-white;
 		background-image: svg-load('off.svg', fill=rgba(#{$color-text}, 0.6));
+		// transition: background-color 0.7s ease;
+		transition: background-position 0.7s ease;
+
+		@include tablets {
+
+			&:hover {
+				font-size: 14px;
+				background-color: rgb(40, 187, 240);
+				background-image: svg-load('off.svg', fill=rgba(#{$color-white}, 0.99));
+				background-position: 12px;
+				box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.22);
+				min-height: 40px;
+				width: unset;
+				padding-right: 14px;
+				padding-left: 43px;
+				border-radius: 20px;
+			}
+		}
 	}
 	&_edit {		
 		background-image: svg-load('edit.svg', fill=rgba(#{$color-text}, 0.6));
+		font-family: 'Panton-Bold';
+		font-size: 0px;
+		color: $color-white;
+		// transition: background-color 0.7s ease;
+		transition: background-position 0.7s ease;
+
+		@include tablets {
+
+			&:hover {
+				font-size: 14px;
+				background-color: rgb(40, 187, 240);
+				background-image: svg-load('edit.svg', fill=rgba(#{$color-white}, 0.99));
+				background-position: 12px;
+				box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.22);
+				min-height: 40px;
+				width: unset;
+				padding-right: 14px;
+				padding-left: 43px;
+				border-radius: 20px;
+			}
+		}
 	}
 	&_plus {		
 		background-image: svg-load('add.svg', fill=rgba(#{$color-text}, 0.4));

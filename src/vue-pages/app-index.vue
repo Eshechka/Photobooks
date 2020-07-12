@@ -7,10 +7,12 @@
 
             <div class="header__container" v-if="!openEditHeader">		
                 <div class="header__logout">
-                    <button type='button' class="round-button round-button_logout"></button>
+                    <button type='button' class="round-button round-button_logout">Выйти</button>
                 </div>
                 <div class="header__edit">
-                    <button type='button' class="round-button round-button_edit"></button>
+                    <button type='button' class="round-button round-button_edit"
+                        @click="openEditHeader=true"
+                    >Редактировать</button>
                 </div>
                 <!-- <div class="header__top"> -->
                     <!-- <div class="header__logout">
@@ -172,6 +174,8 @@
                                         <ul class="socials__list">
                                             <li v-for="social in socials" :key="social.id" class="socials__item"> 
                                                 <a
+                                                    @mouseenter="socialMouseHandler(social.id, $event)" 
+                                                    @mouseleave="socialMouseHandler(social.id, $event)" 
                                                     @click.prevent="socialClickHandler(social.id, $event)" 
                                                     :class="[`socials__link socials__link_${social.text}`,
                                                             {'socials__link_active': social.isActive}]"
@@ -179,15 +183,17 @@
                                             </li>
                                         </ul>
 
-
-                                        <div v-if="isActiveSocial" class="soc-edit">
-
+                                        <div class="soc-edit"
+                                            ref="soc-edit"
+                                            :class="{'soc-edit_showed' : isActiveSocial}" 
+                                            @mouseleave="socEditMouseLeaveHandler"                                             
+                                        >
                                             <div class="soc-edit__card">
 
                                                 <form class="soc-edit__form">
-                                                    <input 
+                                                    <input  type="text" class="soc-edit__input"
                                                         v-model="activeSocialLink"
-                                                    type="text" class="soc-edit__input">
+                                                    >
 
                                                     <div class="soc-edit__buttons">
                                                         <button type="submit" class="site-button site-button_theme_light">Сохранить</button>
@@ -197,8 +203,7 @@
                                                 </form>
 
                                             </div>
-                                        </div>
-
+                                        </div>  
 
                                     </div>
                                 </div>
@@ -217,7 +222,9 @@
                                 
                                 <div class="form-edit-header__buttons">
                                     <button class="site-button" type="submit">Сохранить</button>
-                                    <button class="site-button site-button_theme-just-text" type="button">Отменить</button>
+                                    <button class="site-button site-button_theme-just-text" type="button"
+                                        @click="openEditHeader=false"
+                                    >Отменить</button>
                                 </div>
 
                             </form>
@@ -314,28 +321,45 @@
                             </div>
                             
                             <div class="big-card__my-comment">
-                                <div class="big-card__my-comment-name">Антон Черепов</div>
-                            
-                                <form class="big-card__my-comment-form">
 
-                                    <textarea class="big-card__input" name="" id="" cols="10" rows="1" placeholder="Добавить комментарий"></textarea>
-                                    <div class="big-card__my-comment-submit">
-                                        <button class="site-button site-button_theme-light" type="submit">Добавить</button>
-                                    </div>
+                                 <div class="big-card__my-comment-avatar-wrapper">
+                                     <img class="big-card__my-comment-avatar" :src="urlAvatar" alt="my avatar">
+                                 </div>
+                                 <div class="big-card__my-comment-info">
+                                     
+                                    <div class="big-card__my-comment-name">Антон Черепов</div>
+                                
+                                    <form class="big-card__my-comment-form">
 
-                                </form>
+                                        <textarea class="big-card__my-comment-input" name="" id="" cols="10" rows="1" placeholder="Добавить комментарий"></textarea>
+                                        <div class="big-card__my-comment-submit">
+                                            <button class="site-button site-button_theme-light" type="submit">Добавить</button>
+                                        </div>
+
+                                    </form>
+                                 </div>
                             </div>
 
                             <div class="comment">
 
-                                <div class="comment__author">Виталий Виноградов</div>
-                                <div class="comment__text">Душа моя озарена неземной радостью, как эти чудесные весенние утра, которыми я наслаждаюсь от всего сердца. Я совсем один и блаженствую в здешнем краю, словно созданном для таких, как я. Я так счастлив, мой друг, так упоен ощущением. Душа моя озарена неземной радостью, как эти чудесные весенние утра, которыми я наслаждаюсь от всего сердца.</div>
+                                <div class="comment__avatar-wrapper">
+                                    <img class="comment__avatar" :src="comments[0].authorAvatar" alt="Avatar of comment's author">
+                                </div>
+                                <div class="comment__info-wrapper">
+                                    <div class="comment__author">{{comments[0].authorName}}</div>
+                                    <div class="comment__text">{{comments[0].text}}</div>
+                                </div>
 
                             </div>
                             <div class="comment">
 
-                                <div class="comment__author">Татьяна Литвинова</div>
-                                <div class="comment__text">Эти чудесные весенние утра, которыми я наслаждаюсь от всего сердца. Я совсем один и блаженствую в здешнем краю, словно созданном для таких, как я. Я так счастлив, мой друг, так упоен ощущением.</div>
+                                <div class="comment__avatar-wrapper">
+                                    <img class="comment__avatar" :src="comments[1].authorAvatar" alt="Avatar of comment's author">
+                                </div>
+                                <div class="comment__info-wrapper">
+                                    <div class="comment__author">{{comments[1].authorName}}</div>
+                                    <div class="comment__text">{{comments[1].text}}</div>
+                                </div>
 
                             </div>
         
@@ -397,6 +421,7 @@
 
                                     <div class="form-addAlbum__cover-button">
                                         <button class="site-button site-button_theme-light" type="button">Загрузить обложку</button>
+                                        <div class="form-addAlbum__notice-size">(файл должен быть размером не более 1024 КБ)</div>
                                     </div>
 
                                 </div>
@@ -404,6 +429,7 @@
                                 <div class="form-addAlbum__buttons">
                                     <button class="site-button" type="submit">Сохранить</button>
                                     <button class="site-button site-button_theme-just-text" type="button">Отменить</button>
+                                    <button class="round-button round-button_delete" type="button">Удалить</button>
                                 </div>
 
                             </form>
@@ -458,15 +484,17 @@
             urlCover: require('../img/bg-main-header.png').default,
             urlInlineSvgSprite: require('../img/spriteIcons.svg').default,
 
-            isActiveSocial: false,
+            isActiveSocial: false,            
+            currentSocialId: '',
+            windowWidth: 0,
             activeSocialLink: '',
 
             idCurrentPhoto: 0,
 
             cards: [
-                {   id: 1, title: 'Путешествие на лодке по озеру', avatarPhoto: '../img/card-avatar1.png', photo: '../img/card-img1.png', comments: '9', likes: '15', folderName: 'Прогулки по воде',  },
-                {   id: 2, title: 'Отдых в палатке', avatarPhoto: '../img/card-avatar1.png', photo: '../img/card-img2.png', comments: '9', likes: '15', folderName: 'Прогулки по воде2',  },
-                {   id: 3, title: 'Любимые лошадки', avatarPhoto: '../img/card-avatar1.png', photo: '../img/card-img3.png', comments: '9', likes: '15', folderName: 'Прогулки по воде3',  },
+                {   id: 1, title: 'Путешествие на лодке по озеру', avatarPhoto: '../img/card-avatar1.png', photo: '../img/card-img1.png', comments: '9', likes: '15', albumName: 'Прогулки по воде',  },
+                {   id: 2, title: 'Отдых в палатке', avatarPhoto: '../img/card-avatar1.png', photo: '../img/card-img2.png', comments: '9', likes: '15', albumName: 'Палаточный лагерь',  },
+                {   id: 3, title: 'Любимые лошадки', avatarPhoto: '../img/card-avatar1.png', photo: '../img/card-img3.png', comments: '9', likes: '15', albumName: 'Животные',  },
             ],
             myAlbums: [
                 {   id: 1, photo: '../img/album-img1.png', folderName: 'Поход в горы', link: './album.html', desc: 'Фотографии природы леса, енотов и оленей...' },
@@ -477,38 +505,122 @@
             ],
             socials: [
                 {   id: 'vk', icon: '../icons/soc_vk.svg', text: 'vk', isActive: false, link: 'https://vk.com/' },
-                {   id: 'fb', icon: '../icons/soc_fb.svg', text: 'fb', isActive: false, link: 'https://vk.com/' },
-                {   id: 'tw', icon: '../icons/soc_twitter.svg', text: 'tw', isActive: false, link: 'https://vk.com/' },
+                {   id: 'fb', icon: '../icons/soc_fb.svg', text: 'fb', isActive: false, link: 'https://fb.com/' },
+                {   id: 'tw', icon: '../icons/soc_twitter.svg', text: 'tw', isActive: false, link: 'https://tw.com/' },
                 {   id: 'google', icon: '../icons/social_google.svg', text: 'google', isActive: false, link: 'https://vk.com/' },
                 {   id: 'email', icon: '../icons/soc_email.svg', text: 'email', isActive: false, link: 'https://vk.com/' },
+            ],
+            comments: [
+                {   id: '1', authorAvatar: '../img/comment-author1.png', text: 'Душа моя озарена неземной радостью, как эти чудесные весенние утра, которыми я наслаждаюсь от всего сердца. Я совсем один и блаженствую в здешнем краю, словно созданном для таких, как я. Я так счастлив, мой друг, так упоен ощущением. Душа моя озарена неземной радостью, как эти чудесные весенние утра, которыми я наслаждаюсь от всего сердца.', authorName: 'Виталий Виноградов', },
+                {   id: '2', authorAvatar: '../img/comment-author2.png', text: 'Эти чудесные весенние утра, которыми я наслаждаюсь от всего сердца. Я совсем один и блаженствую в здешнем краю, словно созданном для таких, как я. Я так счастлив, мой друг, так упоен ощущением.', authorName: 'Татьяна Литвинова', },
             ]
         }
     },
 
-    methods: {
-        socialClickHandler(socialId, e) {
+    computed: {
+        socEdit() {
+            return this.$refs['soc-edit'];
+            },
+    },
 
-            this.socials.map(social => 
-                {
-                    if (social.id !== socialId) 
-                        social.isActive = false;
-                    else {
-                        social.isActive = !social.isActive;
-                        this.isActiveSocial = social.isActive;
-                        this.activeSocialLink = social.link;
-                    }
-                }
-            );
+    methods: {
+
+        socEditMouseLeaveHandler() {
+            if (this.windowWidth > 480) {
+                this.isActiveSocial = false;
+
+                this.socials.map(social => { 
+                    social.isActive = false;
+                });
+            }
+        },
+
+        socialClickHandler(socialId, e) {
             
+            if (this.windowWidth <= 480) {
+                
+                this.currentSocialId = socialId;
+
+                this.socials.map(social => { 
+                        if (this.currentSocialId) {
+                            if (social.id !== this.currentSocialId) {
+                                social.isActive = false;
+                            }
+                            else {
+                                social.isActive = !social.isActive;
+                                this.isActiveSocial = social.isActive;
+                                this.activeSocialLink = social.link;
+                            }
+                        }                        
+                    }
+                );
+
+            }
            
         },
 
+        socialMouseHandler(socialId, e) { 
+
+            if (this.windowWidth > 480) {
+                
+                if (e.type=='mouseenter') {
+
+                   this.currentSocialId = socialId; 
+
+                   this.socials.map(social => { 
+                        if (this.currentSocialId) {
+
+                            if (social.id !== this.currentSocialId) {
+                                social.isActive = false;
+                            }
+                            else {
+                                social.isActive = !social.isActive;
+                                this.isActiveSocial = social.isActive;
+                                this.activeSocialLink = social.link;
+                            }
+                        }
+                        
+                    });
+
+                } else if (e.type=='mouseleave') {
+
+                    let elem = e.relatedTarget;
+
+                    while(elem && elem != this.socEdit) {
+                        elem = elem.parentElement;
+                    }
+                    
+                    if (elem !== this.socEdit) {
+                        this.socials.map(social => { 
+                            social.isActive = false;
+                        });
+                        this.isActiveSocial = false;
+                    }
+
+                }
+
+            }
+        },
+
         cardClickHandler(cardId, e) {
-            console.log('cardId', cardId);
-            console.log('this.idCurrentPhoto = ', this.idCurrentPhoto);
+
             this.openBigCard = true;
             this.idCurrentPhoto = cardId-1;
             
+        },
+
+        checkWidth() {
+            this.windowWidth = window.innerWidth;
+
+            if (this.windowWidth > 480) {
+
+                this.isActiveSocial = false;
+                this.socials.map(social => 
+                    {
+                        social.isActive = false;
+                    }
+                );
+            }
         },
         
         scrollToTop() {
@@ -517,6 +629,14 @@
                 behavior: "smooth"
             });
         }
+    },
+
+    created() {
+        window.addEventListener('resize', this.checkWidth);        
+    },
+
+    mounted() {
+        this.windowWidth = window.innerWidth;
     },
         
     }
@@ -532,7 +652,6 @@
     @import '../styles/layout.pcss';
 
     @import '../styles/blocks/site-button.pcss';
-
 
 
     .header {
@@ -618,7 +737,6 @@
         &__title {
             font-family: 'Panton-Bold';
             font-size: 21px;
-            /* text-align: center; */
             margin-bottom: 15px;
 
              @include tablets {
@@ -749,7 +867,7 @@
             height: 100%;    
             position: absolute;
             top: 0;
-                font-size: 0;
+            font-size: 0;
         }
 
         &__input {
@@ -904,14 +1022,12 @@
             height: 20px;
             border-radius: 5px;
             margin-right: 5px;
+            margin-bottom: 10px;
 
             background-repeat: no-repeat;
             background-size: 20px;
             background-position: 50%;
 
-            &:hover, &:active, &:focus {
-                background-size: 22px;;
-            }
 
             @include tablets {
                 margin-right: 10px;
@@ -943,14 +1059,18 @@
             }
             &_email {		
                 background-image: svg-load('soc_email.svg', fill=rgba(#{$color-white}, 0.8));
-                    &:hover, &:active, &:focus {
+                    &:hover, &:active, &:focus,
+                    .socials__link_active {
                         background-image: svg-load('soc_email.svg', fill=rgba(#{$color-white}, 0.95));
                     }                   
             }
-
+            
             &_active {
-                background-color: rgba(#{$color-white}, 0.3);
                 position: relative;
+
+                box-sizing: content-box;
+                border-bottom: 10px solid transparent;
+                margin-bottom: 0px;
 
                 &::after {
                     content: '';
@@ -965,6 +1085,17 @@
                     border-bottom: 8px solid $color-white;
                 }
             }
+
+            &:hover {
+                box-sizing: content-box;
+                border-bottom: 10px solid transparent;
+                margin-bottom: 0px;
+                z-index: 20;
+            }
+            &:hover, &:active, &:focus {
+                background-size: 22px;
+            }
+
         }
     }
 
@@ -1099,11 +1230,36 @@
 
     .soc-edit {
         @include popup();
+
+        display: none;
         min-width: calc(320px * 0.88);
+        background-color: $color-white;
         position: absolute;
-        top: 100%;
+        top: calc(100% - 12px);
         z-index: 13;
-        overflow: unset;
+        /* overflow: unset; */
+
+        @include tablets {
+            min-width: unset;
+            width: 280px;
+        }
+
+        &::before {
+            content: '';
+            display: block;
+            position: absolute;
+            top: -10px;
+            width: 100%;
+            height: 10px;
+            background-color: transparent;
+        }
+
+        &_showed {
+            display: block;
+        }
+        /* &:hover {
+            display: block;
+        } */
 
         &__card {
             background-color: #fff;
@@ -1195,6 +1351,13 @@
             line-height: 18px;
         }
 
+        &__surname {
+
+            @include tablets {
+                display: inline-block;
+            }
+        }
+
         &__button {
             font-family: 'Panton-Bold';
             font-size: 16px;
@@ -1253,8 +1416,33 @@
             padding-right: 10px;
         }
 
+        &__my-comment-avatar-wrapper {
+            display: none;
+
+            @include tablets {
+                display: block;
+                width: 80px;
+                margin-right: 10px;
+            }
+        }
+
+        &__my-comment-avatar {
+            margin: auto;
+        }
+
+        &__my-comment-info {
+
+            @include tablets {
+                flex-grow: 1;
+            }
+        }
+
         &__my-comment {
             padding-bottom: 10px;
+
+            @include tablets {
+                display: flex;
+            }
         }
 
         &__my-comment-name {
@@ -1264,7 +1452,7 @@
             margin-bottom: 10px;
         }
 
-        &__input {
+        &__my-comment-input {
             @include popup-input();
 
             width: 80%;
@@ -1273,17 +1461,48 @@
             min-height: 48px;
             max-height: 150px;
             margin-bottom: 10px;
+
+            @include tablets {
+                width: 100%;
+            }
         }
 
     }
 
 
     .comment {
-        background-color: rgba(f6f6f6, 0.8);
         display: flex;
-        flex-direction: column;
+        background-color: rgba(f6f6f6, 0.8);
         padding: 20px 10px;
         border-top: 1px solid #f2f2f2;
+
+        @include tablets {
+            padding-left: 0;
+        }
+
+        &__avatar-wrapper {
+
+            display: none;
+
+            @include tablets {
+                display: block;
+                width: 80px;
+                flex-basis: 80px;
+                flex-shrink: 0;
+                margin-right: 10px;
+            }
+        }
+
+        &__avatar {
+            margin: auto;
+        }
+
+        &__my-comment-info {
+
+            @include tablets {
+                flex-grow: 1;
+            }
+        }
 
         &__author {
             font-family: 'Panton-Bold';
@@ -1293,9 +1512,9 @@
         }
 
         &__text {
-            font-family: 'Myriad Pro';
-            font-size: 14px;
-            line-height: 21px;
+            font-family: 'ProximaNova-Light';
+            font-size: 16px;
+            line-height: 24px;
         }
 
     }
@@ -1363,6 +1582,10 @@
 
             }
         }
+
+        &__add-album {
+            @include popup-container;
+        }
         
     }
 
@@ -1415,6 +1638,11 @@
             font-family: 'Proxima Nova Semibold';
             font-size: 14px;
             padding: 15px 10px 10px;
+
+            @include tablets {
+                margin-left: 80px;
+                margin-right: 20px;
+            }
         }
 
         &__input {
@@ -1431,6 +1659,12 @@
             display: flex;
             align-items: center;
             padding: 10px;
+
+            @include tablets {
+                margin-bottom: 20px;
+                margin-left: 50px;
+                margin-right: 20px;                
+            }
         }
 
         &__cover-img-wrapper {
@@ -1445,13 +1679,40 @@
             height: 100%;
         }
 
-         &__cover-button {
+        &__cover-button {
              margin-left: 18px;
+             display: flex;
+             align-items: center;
+
+            @include tablets {
+                margin-left: 20px;
+                margin-right: 20px;                
+            }
+        }
+
+        &__notice-size {
+            display: none;
+            width: 40%;
+            font-family: 'ProximaNova-LightIt';
+            font-size: 14px;
+            line-height: 14px;
+            padding: 10px 0;
+
+            @include tablets {
+                display: block;
+            }
+
         }
 
         &__buttons {
             background-color: #f2f2f2;
             padding: 10px;
+            display: flex;
+            align-items: center;
+
+            @include tablets {
+                font-size: 14px;
+            }
         }
     }
 

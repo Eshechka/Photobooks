@@ -26,7 +26,7 @@
         </div>
 
         <div class="card__folder">
-            <div class="card__folder-name">{{cardObject.folderName}}</div>
+            <div class="card__folder-name">{{cardObject.albumName}}</div>
         </div>
 
     </div>	

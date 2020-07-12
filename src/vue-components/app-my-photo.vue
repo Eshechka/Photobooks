@@ -45,10 +45,10 @@
 
 <style lang="postcss">
 
-    // @import 'normalize.css';
-    // @import '../fonts/fonts.pcss';
-    // @import '../styles/mixins.pcss';
-    // @import '../styles/layout.pcss';
+    @import 'normalize.css';
+    @import '../fonts/fonts.pcss';
+    @import '../styles/mixins.pcss';
+    @import '../styles/layout.pcss';
 
 
     .my-photo {
