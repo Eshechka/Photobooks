@@ -1,13 +1,24 @@
 <template>
     <div class="wrapper">
-        <div class="wrapper__overlay wrapper__overlay_black" v-if="openEditPhoto || openAddPhoto"></div>
+        <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigMyPhoto || openEditPhoto || openAddPhoto"></div>
         <div class="wrapper__overlay wrapper__overlay_white" v-if="openEditHeader"></div>
 
-		<header class="header header_album">
+		<header class="header">
 	
 			<div class="header__container"
                 ref='header-container'
-            >			
+            >
+
+                <div class="header__button-edit">
+                    <button type='button' class="round-button round-button_edit"
+                        @click="openEditHeader=true"
+                    >Редактировать</button>
+                </div>
+                <div class="header__button-home"
+                    :class="{'header__button-home_scrolled' : isScrolledHeader}">
+                    <a href="./index.html" class="round-button round-button_home">Выйти</a>
+                </div>
+
 					<div class="header__user" :class="{header__user_scrolled : isScrolledHeader}">
 						<div class="header__avatar">
 							<div class="avatar">
@@ -17,15 +28,16 @@
 						<h1 class="header__title" v-if="isScrolledHeader"> {{thisAlbumName}} </h1>
 						<h1 class="header__title" v-else > {{userName}} </h1>
 
-                        <div class="header__button-home">
+                        <!-- <div class="header__button-home">
                             <a href="./index.html" class="round-button round-button_home"></a>
-                        </div>
+                        </div> -->
 					</div>
 
 					<div class="header__album-desc">
 						<h2 class="header__album-title"> {{thisAlbumName}} </h2>
 						<div class="header__text"> {{thisAlbumDesc}} </div>
 					</div>
+			</div>
 					<div class="header__album-info">
 						<div class="header__album-info-wrapper">					
 							<div class="header__info-button header__info-button_photos"> {{thisAlbumPhotos.length}} </div>
@@ -33,7 +45,6 @@
 							<div class="header__info-button header__info-button_comments"> {{thisAlbumPhotos.reduce((sum, myPhoto) => sum + myPhoto.comments, 0)}} </div>
 						</div>
 					</div>
-			</div>
 
             
             <div class="header__edit-header" v-if="openEditHeader">
@@ -71,11 +82,12 @@
 
                                 </div>
 
-
                                 
                                 <div class="form-edit-header__buttons">
                                     <button class="site-button" type="submit">Сохранить</button>
-                                    <button class="site-button site-button_theme-just-text" type="button">Отменить</button>
+                                    <button class="site-button site-button_theme-just-text" type="button"
+                                        @click="openEditHeader=false"
+                                    >Отменить</button>
                                 </div>
 
                             </form>
@@ -101,9 +113,12 @@
 	
 				<ul class="my-photos__photos-list">
                     
-					<li class="my-photos__photos-item" v-for="myPhoto in thisAlbumPhotos" :key="myPhoto.id">
-						<appMyPhoto :myPhotoObject="myPhoto">
-                        </appMyPhoto>
+					<li v-for="myPhoto in thisAlbumPhotos" :key="myPhoto.id" class="my-photos__photos-item" >
+						<appMyPhoto 
+                            :myPhotoObject="myPhoto"
+                            @clickEditMyPhoto="openEditPhoto=true"
+                            @clickMyPhoto="myPhotoClickHandler"
+                        ></appMyPhoto>
 					</li>
 
 
@@ -114,7 +129,9 @@
 
                                 <div class="edit-photo__topgroup">
                                     <h4 class="edit-photo__title">Редактировать фотографию</h4>
-                                    <button type="button" class="edit-photo__button edit-photo__button_close"></button>
+                                    <button type="button" class="edit-photo__button edit-photo__button_close"
+                                        @click="openEditPhoto=false"
+                                    ></button>
                                 </div>
                                 
                                 <div class="edit-photo__form">
@@ -132,7 +149,7 @@
                                         <div class="form-editPhoto__buttons">
                                             <button class="site-button" type="submit">Сохранить</button>
                                             <button class="site-button site-button_theme-just-text" type="button">Отменить</button>
-                                            <button class="round-button round-button_delete" type="button"></button>
+                                            <button class="round-button round-button_delete" type="button">Удалить</button>
                                         </div>
 
                                     </form>
@@ -184,8 +201,16 @@
                                                 <input type="file" id="load-photo" multiple="multiple" class="form-addPhoto__input-load"
                                                     @change='loadPhotosFiles'
                                                 >
-                                                <div class="form-addPhoto__cover-img"></div>
-                                                <div class="form-addPhoto__cover-img-text">Выберите файл</div>
+                                                <div class="form-addPhoto__load-photo-img"></div>                                                
+
+                                                <div class="form-addPhoto__load-photo-text-button">
+                                                    Выберите файл
+                                                </div>
+                                                <div class="form-addPhoto__load-photo-text">
+                                                    <span class="form-addPhoto__load-photo-drag-text">Перетащите фото сюда или </span>
+                                                    выберите файл
+                                                </div>
+
                                             </label>
 
                                         </div>
@@ -207,6 +232,17 @@
 
 				</ul>
 			</div>
+
+            <div class="my-photos__big-card" v-if="openBigMyPhoto">
+
+                <appBigCard 
+                    :cardObject="thisAlbumPhotos[idCurrentClickedPhoto]"
+                    @clickCloseBigCard="openBigMyPhoto=false"
+                >
+                </appBigCard>
+
+            </div>
+
 		</section>
 
 	
@@ -235,6 +271,7 @@
 
 <script>
     import appMyPhoto from '../vue-components/app-my-photo.vue'
+    import appBigCard from '../vue-components/app-big-card.vue'
 
     const renderer = file => {
         const reader = new FileReader();
@@ -254,16 +291,20 @@
     export default {   
 
         components: {
-        appMyPhoto,
+            appMyPhoto, appBigCard,
         },
 
         data() {
             return {
-                openEditPhoto: false,
-                openAddPhoto: false,
-                openEditHeader: false,
-                isScrolledHeader: false,
-                isPhotosLoaded: false,
+                openEditPhoto: !!false,
+                openAddPhoto: !!false,
+                openEditHeader: !!false,
+                openBigMyPhoto: !!false,
+
+                isScrolledHeader: !!false,
+                isPhotosLoaded: !!false,
+
+                idCurrentClickedPhoto: 0,
 
                 userAvatarUrl: require('../img/anton.png').default,
                 userName: "Антон Черепов",
@@ -317,6 +358,14 @@
                 
             },
 
+            myPhotoClickHandler(myPhotoId) {
+                
+                this.openBigMyPhoto = true;
+                this.idCurrentClickedPhoto = myPhotoId-1;
+
+            },
+
+
             scrollToTop() {
                 window.scrollTo({
                     top: 0,
@@ -359,12 +408,12 @@
 
 
     .header {
-        background-image: url('/img/bg-main-header.png');
+        background-image: url('/img/bg-album-header.png');
         background-repeat: no-repeat;
         background-size: cover;
-
+        padding-bottom: 45px;
         min-width: 320px;
-         min-height: 230px;
+        min-height: 230px;
         color: $color-white;
         position: relative;
 
@@ -373,6 +422,7 @@
             padding: 20px 0;
             margin: 0 auto;
             width: 90%;
+            position: relative;
         }
 
         &__user {
@@ -395,20 +445,106 @@
         }
 
         &__button-home {
-            margin-left: auto;
+            /* margin-left: auto; */
+            position: absolute;
+            top: 20px;
+            left: 0;
+
+            @include tablets {
+                top: 70px;
+                right: 0;
+                left: unset;
+            }
+
+            &_scrolled {
+                position: fixed;
+                top: 15px;
+                right: 5%;
+                z-index: 16;
+            }
+            
         }
 
+
+        &__button-edit {
+            position: absolute;
+            top: 20px;
+            right: 0;
+        }
+
+
         &__title {
+            display: inline-block;
+            vertical-align: middle;
             font-family: 'Panton-Bold';
-            font-size: 21px;
+            font-size: 16px;
+        }
+
+        &__album-title {
+            font-family: 'Proxima Nova Semibold';
+            font-size: 18px;
+            line-height: 24px;
+            text-align: center;
+            margin-bottom: 10px;
+
+            @include tablets {
+                font-size: 21px;
+            }
         }
 
         &__text {
-            font-family: 'ProximaNova-Light';
-            text-align: center;
-            font-size: 14px;
-            color: rgba(#{$color-white}, 0.8);
+            color: rgba($color-white, 0.8);
             margin-bottom: 18px;
+            font-family: 'ProximaNova-Light';
+            font-size: 14px;
+            line-height: 21px;
+            text-align: center;
+
+            @include tablets {
+                font-size: 16px;
+                line-height: 24px;
+                width: 85%;
+                margin: auto;
+            }            
+        }
+
+        &__album-info {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            background-color: rgba($color-white, 0.8);
+            height: 45px;
+            padding: 10px;
+            overflow: hidden;
+        }
+
+        &__album-info-wrapper {
+            text-align: center;
+        }
+
+        &__info-button {
+            display: inline-block;
+            text-align: center;
+            font-family: 'Panton Bold';
+            font-size: 16px;
+            color: $color-text;
+            padding-left: 30px;
+            margin-right: 5px;
+    
+            background-repeat: no-repeat;
+            background-size: 20px;
+            background-position: 0 50%;
+
+            &_comments {
+                background-image: svg-load('comments.svg', fill=rgba(#{$color-text}, 0.9));
+            }
+            &_likes {
+                background-image: svg-load('heart.svg', fill=rgba(#{$color-text}, 0.9));
+            }
+            &_photos {
+                background-image: svg-load('cam.svg', fill=rgba(#{$color-text}, 0.9));
+            }
         }
 
         &__socials {
@@ -418,6 +554,10 @@
         &__avatar {
             margin-right: 10px;
             height: 50px;
+
+            @include tablets {
+                height: 60px;
+            }
         }
 
         &__edit-header {
@@ -431,74 +571,6 @@
             background-size: cover;
             background-image: linear-gradient(rgba($color-text, 0.95), rgba($color-text, 0.8)), url('/img/bg-main-header.png');
         }
-
-        // ---------------------
-        &_album {
-
-            position: relative;
-            padding-bottom: 45px;
-
-            .header__title {
-                display: inline-block;
-                vertical-align: middle;
-                font-family: 'Panton-Bold';
-                font-size: 16px;
-            }
-
-            .header__album-title {
-                font-family: 'Proxima Nova Semibold';
-                font-size: 18px;
-                line-height: 24px;
-                text-align: center;
-                margin-bottom: 10px;
-            }
-            .header__text {
-                font-family: 'ProximaNova-Light';
-                font-size: 14px;
-                line-height: 21px;
-                text-align: center;
-            }
-            .header__album-info {
-                position: absolute;
-                bottom: 0;
-                right: 0;
-                left: 0;
-                background-color: rgba($color-white, 0.8);
-                height: 45px;
-                padding: 10px;
-                overflow: hidden;
-            }
-            .header__album-info-wrapper {
-                text-align: center;
-            }
-
-            .header__info-button {
-                display: inline-block;
-                text-align: center;
-                font-family: 'Panton Bold';
-                font-size: 16px;
-                color: $color-text;
-                padding-left: 30px;
-                margin-right: 5px;
-        
-                background-repeat: no-repeat;
-                background-size: 20px;
-                background-position: 0 50%;
-
-                &_comments {
-                    background-image: svg-load('comments.svg', fill=rgba(#{$color-text}, 0.9));
-                }
-                &_likes {
-                    background-image: svg-load('heart.svg', fill=rgba(#{$color-text}, 0.9));
-                }
-                &_photos {
-                    background-image: svg-load('cam.svg', fill=rgba(#{$color-text}, 0.9));
-                }
-            }
-
-
-        }
-        // ---------------------
     }
 
         
@@ -621,7 +693,12 @@
             margin-bottom: 10px;
             border-radius: 50%;
             height: 50px;
-            width: 50px;		
+            width: 50px;
+
+            @include tablets {
+                height: 60px;
+                width: 60px;
+            }
         }
     }
 
@@ -630,6 +707,7 @@
         min-width: 320px;
         padding: 30px 0;
         background: $color-white;
+        position: relative;
         
         &__container {
             margin: 0 auto;
@@ -649,12 +727,24 @@
             z-index: 9;
         }
 
+
         &__photos-list {
             position: relative;
+
+            @include tablets {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
         }
 
         &__photos-item {
             margin-bottom: 10px;
+
+            @include tablets {
+                width: 48%;
+                margin-bottom: 20px;
+            }            
         }
 
         &__edit-photo, &__add-photo {
@@ -663,6 +753,10 @@
             top: 50%;
             left: 0;
             transform: translateY(-50%);
+        }
+
+        &__big-card {
+            @include popup-container;
         }
 
     }
@@ -781,6 +875,12 @@
             font-family: 'Proxima Nova Semibold';
             font-size: 14px;
             padding: 15px 10px 10px;
+
+            @include tablets {
+                display: flex;
+                align-items: center;
+                padding: 15px 20px 10px 50px;
+            }
         }
 
         &__input {
@@ -791,6 +891,11 @@
             &_textarea {
                 resize: none;
                 min-height: 120px;
+            }
+            
+            @include tablets {
+                margin-left: 15px;
+                flex-basis: 90%;
             }
         }
 
@@ -889,9 +994,20 @@
             overflow-y: scroll;
             position: relative;
 
-            &:hover .form-addPhoto__cover-img-text {
+            @include tablets {
+                min-height: 330px;
+            }
+
+            &:hover .form-addPhoto__load-photo-text-button {
+
                 background-color: $color-blue;
                 color: $color-white;
+            }
+            &:hover .form-addPhoto__load-photo-text {
+
+                @include tablets {
+                    color: $color-blue-hover;
+                }
             }
         }
 
@@ -901,6 +1017,11 @@
                 padding: 10px;
                 width: 100%;
                 position: relative;
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
             }
         }
 
@@ -919,26 +1040,75 @@
             height: 100%;
         }
 
-        &__cover-img {
+        &__load-photo-img {
             height: 32px;
+            width: 32px;
             background-repeat: no-repeat;
             background-size: 32px;
             background-position: top center;
             background-image: svg-load('cam.svg', fill=rgba(#{$color-text}, 0.2));
         }
 
-        &__cover-img-text {
+        &__load-photo-drag-text {
+            font-family: 'ProximaNova-Light';
+            font-size: 16px;
+            line-height: 21px;
+            color: rgba($color-text, 0.8);
+        }
+
+        &__load-photo-text-button {
             font-family: 'Proxima Nova Semibold';
             font-size: 12px;
-            color: rgba(#{$color-white}, 0.8);
             text-align: center;
             min-height: 38px;
+            max-width: 260px;
+            /* margin: auto; */
             padding: 10px 14px;
-            font-family: Panton-Bold;
             border-radius: 30px;
-            background-color: $color-white;
             color: $color-blue;
+            background-color: $color-white;
             border: 2px solid $color-blue;
+
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: center;
+
+            @include tablets {
+                display: none;
+            }
+        }
+
+        &__load-photo-drag-text {
+            display: none;            
+            font-family: 'ProximaNova-Light';
+            font-size: 16px;
+            line-height: 21px;
+
+            @include tablets {
+                display: inline;
+            }
+
+        }
+
+        &__load-photo-text {
+            display: none;
+
+            @include tablets {
+                display: inline-block;
+                font-family: 'Proxima Nova Semibold';
+                font-size: 16px;
+                line-height: 21px;
+                color: $color-blue;
+                /* margin-right: calc(50% - 100px);
+                margin-left: calc(50% - 100px);
+                text-align: center; */
+                width: 200px;
+                /* min-height: 38px; */
+                /* padding: 0;
+                border-radius: 0;
+                background-color: transparent;
+                border: none; */
+            }
         }
 
         &__buttons {
@@ -952,6 +1122,10 @@
         flex-wrap: wrap;
         padding: 10px;
 
+        @include tablets {
+            padding: 20px;
+        }
+
         &__item {
             position: relative;
             border-radius: 1px;
@@ -964,128 +1138,20 @@
             background-position: center;
             background-size: contain;
             background-repeat: no-repeat;
+
+            @include tablets {
+                width: 114px;
+                height: 114px;
+                margin-right: 20px;
+                margin-bottom: 20px;                
+            }
+
         }
     }
 
-    /* .edit-header {
-        width: 100%;        
-        min-width: 320px;
-        overflow: hidden;
-
-        &__card {
-            min-width: 300px;
-            display: flex;
-            flex-direction: column;
-            color: $color-text;
-
-        }
-    } */
-
-        
-    /* .form-edit-header {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
-         &__load-image {
-            padding-top: 20px;
-        }
-
-        &__img-wrapper {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            overflow: hidden;
-        }
-
-        &__load-cover {
-            width: 90px;
-            min-height: 50px;
-            margin-bottom: 20px;
-            margin-top: 10px;
-        }
-
-        &__input-load {
-            cursor: pointer;
-        }
-
-        &__cover-img {
-            height: 32px;
-            background-repeat: no-repeat;
-            background-size: 32px;
-            background-position: top center;
-            background-image: svg-load('cam.svg', fill=rgba(#{$color-white}, 0.8));
-        }
-
-        &__cover-img-text {
-            font-family: 'Proxima Nova Semibold';
-            font-size: 12px;
-            color: rgba(#{$color-white}, 0.8);
-            text-align: center;
-        }
-
-        &__img {
-            object-fit: cover;
-            width: 100%;
-            height: 100%;
-        }
-
-        &__label {
-            font-family: 'Proxima Nova Semibold';
-            font-size: 14px;
-            display: block;
-            width: 90%;
-            
-            &_file-load {
-                width: 100%;
-                position: relative;
-            }
-        }
-
-        &__input-load {
-            opacity: 0;    
-            width: 100%;    
-            height: 100%;    
-            position: absolute;
-            top: 0;
-        }
-
-        &__input {
-            @include popup-input;
-            margin-top: 5px;
-
-            &_textarea {
-                resize: none;
-            }
-        }
-
-        &__socials {
-            margin-top: 20px;
-            margin-bottom: 10px;
-            width: 88%;
-        }
-
-         &__buttons {
-            padding: 10px;
-            height: 60px;
-            background: $color-white;
-            width: 100%;
-            text-align: right;
-        }
-    } */
-
-/* 
-    .site-tag {
-        cursor: pointer;
-        color: $color-blue;
-        font-family: 'Proxima Nova Semibold';
-        font-size: 14px;
-        font-weight: bolder;
-    } */
-
 
     .footer {
-        background-image: url('/img/bg-main-footer.png');
+        background-image: linear-gradient(rgba(black, 0.2), rgba(black, 0.3)), url('/img/bg-album-header.png');
         background-repeat: no-repeat;
         background-size: cover;
         background-position: bottom center;
@@ -1104,18 +1170,39 @@
             flex-direction: column;
             margin: 0 auto;
             width: 90%;
+            position: relative;
+
+            @include tablets {
+                flex-direction: row;
+                justify-content: space-between;
+            }
         }
 
         &__button-up {
             height: 60px;
-            width: 100%;
+            /* width: 100%; */
+            @include tablets {
+                position: absolute;
+                top: 0;
+                left: 50%;
+            }
         }
 
         &__desc {
             margin-bottom: 20px;
+            
+            @include tablets {
+                flex-basis: 40%;
+                text-align: left;
+            }
         }
         &__copyright {			
             color: rgba($color-white, 0.6);
+            
+            @include tablets {
+                flex-basis: 40%;
+                text-align: right;
+            }
         }
 
     }

@@ -6,10 +6,10 @@
         <header class="header">
 
             <div class="header__container" v-if="!openEditHeader">		
-                <div class="header__logout">
+                <div class="header__button-logout">
                     <button type='button' class="round-button round-button_logout">Выйти</button>
                 </div>
-                <div class="header__edit">
+                <div class="header__button-edit">
                     <button type='button' class="round-button round-button_edit"
                         @click="openEditHeader=true"
                     >Редактировать</button>
@@ -259,7 +259,8 @@
 
                 <ul class="new__card-list">
                     <li v-for="card in cards" :key="card.id" class="new__card-item">
-                        <appCard :cardObject="card"
+                        <appCard
+                            :cardObject="card"
                             @clickCard="cardClickHandler"
                         >
                         </appCard>
@@ -274,99 +275,13 @@
 
 
             <div class="new__big-card" v-if="openBigCard">
-                <div class="big-card">
 
-                    <div class="big-card__close"
-                        @click="openBigCard=false"
-                    >
-                        <button class="round-button round-button_close-transparent" type="button"></button>
-                    </div>
+                <appBigCard 
+                    :cardObject="cards[idCurrentPhoto]"
+                    @clickCloseBigCard="openBigCard=false"
+                >
+                </appBigCard>
 
-                    <div class="big-card__card">
-
-                        <div class="big-card__card-img">
-                            <img class="big-card__img" :src="cards[idCurrentPhoto].photo" alt="big card image">
-                        </div>
-
-                        <div class="big-card__author-info">
-
-                            <div class="big-card__avatar">
-                                <img class="big-card__avatar-img" :src="cards[0].avatarPhoto" alt="card avatar">
-                            </div>
-                            
-                            <div class="big-card__name">Анна 
-                                <div class="big-card__surname">Богданова</div>
-                            </div>
-                            
-                            <div class="big-card__likes">
-                                <button type="button" class="big-card__button big-card__button_likes">16</button>
-                            </div>
-
-                        </div>
-
-
-                        <div class="big-card__desc">
-
-                            <h3 class="big-card__title">Путешествие на речном трамвайчике</h3>
-                        
-                            <div class="big-card__desc-text">Мы отправились в <span class='site-tag'>#путешествие</span> 2 дня назад, но уже сейчас такое ощущение, что мы посмотрели целый новый мир. Далее будет ещё одно описательное предложение. Возможно оно также будет с <span class='site-tag'>#тегами</span>. </div>
-        
-                        </div> 
-
-                        <div class="big-card__comments">
-
-                            <div class="big-card__comments-topgroup">
-                                <h4 class="big-card__comments-title">Комментарии</h4>
-                                <button type="button" class="big-card__button big-card__button_tick"></button>
-                            </div>
-                            
-                            <div class="big-card__my-comment">
-
-                                 <div class="big-card__my-comment-avatar-wrapper">
-                                     <img class="big-card__my-comment-avatar" :src="urlAvatar" alt="my avatar">
-                                 </div>
-                                 <div class="big-card__my-comment-info">
-                                     
-                                    <div class="big-card__my-comment-name">Антон Черепов</div>
-                                
-                                    <form class="big-card__my-comment-form">
-
-                                        <textarea class="big-card__my-comment-input" name="" id="" cols="10" rows="1" placeholder="Добавить комментарий"></textarea>
-                                        <div class="big-card__my-comment-submit">
-                                            <button class="site-button site-button_theme-light" type="submit">Добавить</button>
-                                        </div>
-
-                                    </form>
-                                 </div>
-                            </div>
-
-                            <div class="comment">
-
-                                <div class="comment__avatar-wrapper">
-                                    <img class="comment__avatar" :src="comments[0].authorAvatar" alt="Avatar of comment's author">
-                                </div>
-                                <div class="comment__info-wrapper">
-                                    <div class="comment__author">{{comments[0].authorName}}</div>
-                                    <div class="comment__text">{{comments[0].text}}</div>
-                                </div>
-
-                            </div>
-                            <div class="comment">
-
-                                <div class="comment__avatar-wrapper">
-                                    <img class="comment__avatar" :src="comments[1].authorAvatar" alt="Avatar of comment's author">
-                                </div>
-                                <div class="comment__info-wrapper">
-                                    <div class="comment__author">{{comments[1].authorName}}</div>
-                                    <div class="comment__text">{{comments[1].text}}</div>
-                                </div>
-
-                            </div>
-        
-                        </div> 
-
-                    </div>
-                </div>
             </div>
 
         </section>
@@ -465,12 +380,13 @@
 
 <script>
   import appCard from '../vue-components/app-card.vue'
+  import appBigCard from '../vue-components/app-big-card.vue'
   import appMyalbum from '../vue-components/app-my-album.vue'
 
   export default {   
 
     components: {
-      appCard, appMyalbum,
+      appCard, appBigCard, appMyalbum,
     },
 
     data() {
@@ -492,9 +408,9 @@
             idCurrentPhoto: 0,
 
             cards: [
-                {   id: 1, title: 'Путешествие на лодке по озеру', avatarPhoto: '../img/card-avatar1.png', photo: '../img/card-img1.png', comments: '9', likes: '15', albumName: 'Прогулки по воде',  },
-                {   id: 2, title: 'Отдых в палатке', avatarPhoto: '../img/card-avatar1.png', photo: '../img/card-img2.png', comments: '9', likes: '15', albumName: 'Палаточный лагерь',  },
-                {   id: 3, title: 'Любимые лошадки', avatarPhoto: '../img/card-avatar1.png', photo: '../img/card-img3.png', comments: '9', likes: '15', albumName: 'Животные',  },
+                {   id: 1, title: 'Путешествие на лодке по озеру', authorName: 'Анна', authorSurname: 'Богданова', authorPhoto: '../img/card-avatar1.png', photo: '../img/card-img1.png', comments: '9', likes: '15', albumName: 'Прогулки по воде',  },
+                {   id: 2, title: 'Отдых в палатке', authorName: 'Анна', authorSurname: 'Боданова', authorPhoto: '../img/card-avatar1.png', photo: '../img/card-img2.png', comments: '10', likes: '16', albumName: 'Палаточный лагерь',  },
+                {   id: 3, title: 'Любимые лошадки', authorName: 'Анна', authorSurname: 'Богнова', authorPhoto: '../img/card-avatar1.png', photo: '../img/card-img3.png', comments: '8', likes: '17', albumName: 'Животные',  },
             ],
             myAlbums: [
                 {   id: 1, photo: '../img/album-img1.png', folderName: 'Поход в горы', link: './album.html', desc: 'Фотографии природы леса, енотов и оленей...' },
@@ -510,10 +426,7 @@
                 {   id: 'google', icon: '../icons/social_google.svg', text: 'google', isActive: false, link: 'https://vk.com/' },
                 {   id: 'email', icon: '../icons/soc_email.svg', text: 'email', isActive: false, link: 'https://vk.com/' },
             ],
-            comments: [
-                {   id: '1', authorAvatar: '../img/comment-author1.png', text: 'Душа моя озарена неземной радостью, как эти чудесные весенние утра, которыми я наслаждаюсь от всего сердца. Я совсем один и блаженствую в здешнем краю, словно созданном для таких, как я. Я так счастлив, мой друг, так упоен ощущением. Душа моя озарена неземной радостью, как эти чудесные весенние утра, которыми я наслаждаюсь от всего сердца.', authorName: 'Виталий Виноградов', },
-                {   id: '2', authorAvatar: '../img/comment-author2.png', text: 'Эти чудесные весенние утра, которыми я наслаждаюсь от всего сердца. Я совсем один и блаженствую в здешнем краю, словно созданном для таких, как я. Я так счастлив, мой друг, так упоен ощущением.', authorName: 'Татьяна Литвинова', },
-            ]
+
         }
     },
 
@@ -609,6 +522,10 @@
             
         },
 
+        // cardClickCloseHandler(cardId, e) {
+        //     this.openBigCard=false;
+        // },
+
         checkWidth() {
             this.windowWidth = window.innerWidth;
 
@@ -678,7 +595,7 @@
             }
         }
 
-        &__logout {
+        &__button-logout {
             position: absolute;
             top: 20px;
             left: 0;
@@ -690,7 +607,7 @@
             }         
         }
 
-        &__edit {
+        &__button-edit {
             position: absolute;
             top: 20px;
             right: 0;
@@ -1280,15 +1197,15 @@
     }
 
 
-    .site-tag {
+    /* .site-tag {
         cursor: pointer;
         color: $color-blue;
         font-family: 'Proxima Nova Semibold';
         font-size: 14px;
         font-weight: bolder;
-    }
+    } */
 
-
+/* 
     .big-card {
         @include popup;
         overflow: unset;
@@ -1467,9 +1384,9 @@
             }
         }
 
-    }
+    } */
 
-
+/* 
     .comment {
         display: flex;
         background-color: rgba(f6f6f6, 0.8);
@@ -1517,7 +1434,7 @@
             line-height: 24px;
         }
 
-    }
+    } */
 
 
     .my-albums {

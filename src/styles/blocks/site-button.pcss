@@ -82,9 +82,38 @@
 
 		@include tablets {
 
-			&:hover {
+			// &:hover {
 				font-size: 14px;
 				background-position: 16px;
+				min-height: 40px;
+				width: unset;
+				padding-right: 14px;
+				padding-left: 43px;
+				border-radius: 20px;
+			// }
+		}
+
+
+	}
+	&_home {		
+		background-image: svg-load('home.svg', fill=rgba(#{$color-text}, 0.6));
+		background-size: 18px;
+		font-family: 'Panton-Bold';
+		font-size: 0px;
+		color: $color-white;
+		transition: background-position 0.7s ease;
+		text-decoration: none;
+		display: inline-flex;
+		align-items: center;
+
+		@include tablets {
+
+			&:hover {
+				font-size: 14px;
+				background-color: rgb(40, 187, 240);
+				background-image: svg-load('off.svg', fill=rgba(#{$color-white}, 0.99));
+				background-position: 12px;
+				box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.22);
 				min-height: 40px;
 				width: unset;
 				padding-right: 14px;
@@ -93,18 +122,12 @@
 			}
 		}
 
-
-	}
-	&_home {		
-		background-image: svg-load('home.svg', fill=rgba(#{$color-text}, 0.4));
-		background-size: 18px;
 	}
 	&_logout {
 		font-family: 'Panton-Bold';
 		font-size: 0px;
 		color: $color-white;
 		background-image: svg-load('off.svg', fill=rgba(#{$color-text}, 0.6));
-		// transition: background-color 0.7s ease;
 		transition: background-position 0.7s ease;
 
 		@include tablets {
@@ -128,7 +151,6 @@
 		font-family: 'Panton-Bold';
 		font-size: 0px;
 		color: $color-white;
-		// transition: background-color 0.7s ease;
 		transition: background-position 0.7s ease;
 
 		@include tablets {
@@ -175,7 +197,6 @@
 		background-position: center;
 		background-image: svg-load('close.svg', fill=rgba(#{$color-white}, 0.9));
 		border-radius: 50%;
-		// border: 2px solid $color-white;
 		box-shadow: 0 0 0 2px white;
 		overflow: hidden;
 		transition: transform 0.3s ease;
@@ -183,7 +204,19 @@
 		&:hover {
 			background-size: 6px;
 			transform: translate(30%, -30%) rotate(90deg);
-
 		}
+
+		@include tablets {
+			width: 24px;
+			height: 24px;
+			background-size: 12px;
+			box-shadow: 0 0 0 3px white;
+			transition: transform 0.5s ease;
+
+			&:hover {
+				background-size: 12px;
+			}
+		}
+
 	}
   }

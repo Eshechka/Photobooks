@@ -122,7 +122,7 @@
                         </label>
                                     
 
-                        <div class="forgot__wrapper">
+                        <div class="forgot__wrapper forgot__wrapper_bottom">
                             
                             <div class="forgot__submit">
                                 <button class="site-button site-button_min_width" type="submit">Восстановить пароль</button>
@@ -166,7 +166,6 @@
             stateRegistration: !!false,
             stateForgotPassword: !false,
             
-
             // urlAvatar: require('../img/anton.png').default,
             urlInlineSvgSprite: require('../img/spriteIcons.svg').default,
 
@@ -203,7 +202,7 @@
 .login {
 	min-height: 100vh;
 	min-width: 320px;
-	font-family: 'ProximaNova-Light';
+	font-family: 'Proxima Nova-Light';
 	color: $color-white;	
 
 
@@ -217,8 +216,8 @@
 		display: grid;
 		grid-template-columns: 1fr;
 		grid-template-rows: 
-								20%
-								1fr 
+								0.5fr
+								2fr 
 								75px;
 
 		grid-template-areas: 	'greeting'
@@ -226,6 +225,13 @@
 								'footer';
 		
 		align-items: end;
+
+        @include tablets {
+            grid-template-rows: 
+                        1fr
+                        2fr 
+                        75px;
+        }
 	}
 
 	&__greeting {
@@ -237,7 +243,24 @@
 
 	&__title {
 		font-family: 'Panton-Bold';		
-		color: $color-white;		
+		color: $color-white;
+
+        @include tablets {
+            margin-bottom: 15px;
+        }		
+	}
+
+	&__text {
+		font-family: 'Proxima Nova-Light';
+		color: $color-white;
+        font-size: 16px;
+        line-height: 24px;
+        margin: 0 auto;
+        width: 90%;
+
+        @include tablets {
+            width: 80%;
+        }
 	}
 
 	&__form {
@@ -265,6 +288,11 @@
 	min-height: 200px;
 	border-radius: 20px;
 	overflow: hidden;
+
+    @include tablets {
+        width: 273px;
+        min-height: 200px;
+    }
 
 
 	&__label {
@@ -310,6 +338,13 @@
 		padding: 20px 20px 0;
 		display: flex;
 		flex-direction: column;
+        font-size: 14px;
+
+        &_bottom {
+            @include tablets {
+                align-items: center;
+            }
+        }
 	}
 
 	&__toanotherform {
@@ -321,14 +356,29 @@
 	}
 	
 
+	&__title {
+        font-family: 'Proxima Nova Semibold';
+        font-size: 16px;
+		margin-bottom: 5px;
+        color: rgba($color-text, 0.9);
+	}
+
 	&__text {
+        font-family: 'Proxima Nova-Light';
+        font-size: 14px;
+        line-height: 14px;
 		display: inline-block;
 		margin-top: 10px;
 		margin-bottom: 16px;
+        color: rgba($color-text, 0.8);
 	}
 
 	&__submit {
 		align-self: center;
+        
+        @include tablets {
+            align-self: auto;
+        }
 	}
 
 }
@@ -346,6 +396,11 @@
 	min-height: 200px;
 	border-radius: 20px;
 	overflow: hidden;
+
+    @include tablets {
+        width: 273px;
+        min-height: 200px;
+    }
 
 
 	&__label {
@@ -384,7 +439,8 @@
 
 
 	&__wrapper {
-		padding: 0px 20px;
+		padding: 10px 20px;
+        font-size: 14px;
 		display: flex;
 		flex-direction: column;
 	}
@@ -395,6 +451,10 @@
 	
 
 	&__text {
+        font-family: 'Proxima Nova-Light';
+        font-size: 14px;
+        line-height: 14px;
+        color: rgba($color-text, 0.8);
 		display: inline-block;
 		margin-top: 10px;
 		margin-bottom: 16px;
@@ -402,6 +462,11 @@
 
 	&__submit {
 		align-self: center;
+        padding-top: 10px;
+
+        @include tablets {
+            align-self: auto;
+        }
 	}
 
 }
@@ -419,6 +484,11 @@
 	min-height: 200px;
 	border-radius: 20px;
 	overflow: hidden;
+
+    @include tablets {
+        width: 273px;
+        min-height: 200px;
+    }
 
 
 	&__label {
@@ -463,11 +533,16 @@
 	}
 
 	&__toenter {
+        font-size: 14px;
 		flex-direction: row;
 	}
 	
 
 	&__text {
+        font-family: 'Proxima Nova-Light';
+        font-size: 14px;
+        line-height: 14px;
+        color: rgba($color-text, 0.8);
 		display: inline-block;
 		margin-top: 10px;
 		margin-bottom: 16px;
@@ -475,6 +550,10 @@
 
 	&__submit {
 		align-self: center;
+
+        @include tablets {
+            align-self: auto;
+        }
 	}
 
 }

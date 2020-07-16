@@ -11,7 +11,7 @@
         <div class="card__info">
 
             <div class="card__avatar">
-                <img class="card__avatar-img" :src="cardObject.avatarPhoto" alt="card avatar">
+                <img class="card__avatar-img" :src="cardObject.authorPhoto" alt="card avatar">
                 <div class="card__avatar-overlay"></div>
             </div>
 

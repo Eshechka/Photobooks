@@ -58,9 +58,9 @@ module.exports = {
 		port: 4300,
 		stats: 'errors-only',
 		
-		// index: 'album.html',
+		index: 'album.html',
 		// index: 'search.html',
-		index: 'login.html',
+		// index: 'login.html',
 		
 		// openPage: '',
 		historyApiFallback: true,
@@ -166,7 +166,7 @@ module.exports = {
 
 			loader: 'file-loader',
 			options: {
-				name: './img/[name].[ext]',
+				name: 'img/[name].[ext]',
 			},
 		},
 
@@ -178,7 +178,7 @@ module.exports = {
 			loader: 'file-loader',
 			options: {
 
-				name: isProd ? '../fonts/[name]/[name].[ext]' : '../fonts/[name]/[name].[ext]',
+				name: '../fonts/[name]/[name].[ext]',
 				// name: isProd ? '../fonts/[name]/[name].[ext]' : '../../../fonts/[name]/[name].[ext]',
 
 			},

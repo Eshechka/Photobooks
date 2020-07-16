@@ -4,7 +4,9 @@
 		<div class="my-photo__img-my-photo">
 
 			<img class="my-photo__img" :src="myPhotoObject.photo" alt="photo image">
-            <div class="my-photo__img-overlay"></div>
+            <div class="my-photo__img-overlay"
+                 @click="$emit('clickMyPhoto', myPhotoObject.id, $event)"
+            ></div>
 		
 			<div class="my-photo__comments-likes-wrapper">					
 				<div class="my-photo__info-button my-photo__info-button_comments">{{myPhotoObject.comments}}</div>
@@ -13,7 +15,9 @@
 		</div>
 
 		<div class="my-photo__name-wrapper">
-			<button type="button" class="my-photo__button my-photo__button_edit"></button>
+			<button type="button" class="my-photo__button my-photo__button_edit"
+                @click="$emit('clickEditMyPhoto', myPhotoObject.id)"
+            ></button>
 			<div class="my-photo__name"> {{myPhotoObject.photoName}} </div>			
 		</div>
 
