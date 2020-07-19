@@ -12,7 +12,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "normalize.css": "^8.0.1"
+    "normalize.css": "^8.0.1",
+    "vue-router": "^3.3.4",
+    "vuex": "^3.5.1"
   },
   "devDependencies": {
     "autoprefixer": "^9.8.2",

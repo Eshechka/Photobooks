@@ -300,7 +300,8 @@
 
                 <ul class="my-albums__albums-list">
                     <li v-for="myAlbum in myAlbums" :key="myAlbum.id" class="my-albums__albums-item">
-                        <appMyalbum :myAlbumObject="myAlbum">                            
+                        <appMyalbum 
+                            :myAlbumObject="myAlbum">                            
                         </appMyalbum>
                     </li>
                 </ul> 
@@ -383,6 +384,10 @@
   import appBigCard from '../vue-components/app-big-card.vue'
   import appMyalbum from '../vue-components/app-my-album.vue'
 
+  import dataJSON_cards from '../json/cards.json'
+  import dataJSON_albums from '../json/albums.json'
+  import dataJSON_socials from '../json/socials.json'
+
   export default {   
 
     components: {
@@ -407,25 +412,9 @@
 
             idCurrentPhoto: 0,
 
-            cards: [
-                {   id: 1, title: 'Путешествие на лодке по озеру', authorName: 'Анна', authorSurname: 'Богданова', authorPhoto: '../img/card-avatar1.png', photo: '../img/card-img1.png', comments: '9', likes: '15', albumName: 'Прогулки по воде',  },
-                {   id: 2, title: 'Отдых в палатке', authorName: 'Анна', authorSurname: 'Боданова', authorPhoto: '../img/card-avatar1.png', photo: '../img/card-img2.png', comments: '10', likes: '16', albumName: 'Палаточный лагерь',  },
-                {   id: 3, title: 'Любимые лошадки', authorName: 'Анна', authorSurname: 'Богнова', authorPhoto: '../img/card-avatar1.png', photo: '../img/card-img3.png', comments: '8', likes: '17', albumName: 'Животные',  },
-            ],
-            myAlbums: [
-                {   id: 1, photo: '../img/album-img1.png', folderName: 'Поход в горы', link: './album.html', desc: 'Фотографии природы леса, енотов и оленей...' },
-                {   id: 2, photo: '../img/album-img2.png', folderName: 'Животные', link: './album.html', desc: 'Фотографии животных...' },
-                {   id: 3, photo: '../img/album-img3.png', folderName: 'Прогулки на лодке', link: './album.html', desc: 'Фотографии ...' },
-                {   id: 4, photo: '../img/album-img3.png', folderName: 'Прогулки', link: './album.html', desc: 'Фотографии ...'  },
-                {   id: 5, photo: '../img/album-img3.png', folderName: 'Прогулки', link: './album.html', desc: 'Фотографии ...'  },
-            ],
-            socials: [
-                {   id: 'vk', icon: '../icons/soc_vk.svg', text: 'vk', isActive: false, link: 'https://vk.com/' },
-                {   id: 'fb', icon: '../icons/soc_fb.svg', text: 'fb', isActive: false, link: 'https://fb.com/' },
-                {   id: 'tw', icon: '../icons/soc_twitter.svg', text: 'tw', isActive: false, link: 'https://tw.com/' },
-                {   id: 'google', icon: '../icons/social_google.svg', text: 'google', isActive: false, link: 'https://vk.com/' },
-                {   id: 'email', icon: '../icons/soc_email.svg', text: 'email', isActive: false, link: 'https://vk.com/' },
-            ],
+            cards: dataJSON_cards,
+            myAlbums: dataJSON_albums,
+            socials: dataJSON_socials,
 
         }
     },
@@ -521,10 +510,6 @@
             this.idCurrentPhoto = cardId-1;
             
         },
-
-        // cardClickCloseHandler(cardId, e) {
-        //     this.openBigCard=false;
-        // },
 
         checkWidth() {
             this.windowWidth = window.innerWidth;

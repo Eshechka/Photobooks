@@ -1,0 +1,36 @@
+[
+  {
+    "id": 1, 
+    "title": "Путешествие на лодке по озеру", 
+    "authorName": "Анна", 
+    "authorSurname": "Богданова", 
+    "authorPhoto": "../img/card-avatar1.png", 
+    "photo": "../img/card-img1.png", 
+    "comments": 9, 
+    "likes": 15, 
+    "albumName": "Прогулки по воде"
+  },
+  {
+    "id": 2, 
+    "title": "Отдых в палатке", 
+    "authorName": "Анна", 
+    "authorSurname": "Боданова", 
+    "authorPhoto": "../img/card-avatar1.png", 
+    "photo": "../img/card-img2.png", 
+    "comments": 10, 
+    "likes": 16, 
+    "albumName": "Палаточный лагерь"
+  },
+  {
+    "id": 3, 
+    "title": "Любимые лошадки", 
+    "authorName": "Анна", 
+    "authorSurname": "Богнова", 
+    "authorPhoto": "../img/card-avatar1.png", 
+    "photo": "../img/card-img3.png", 
+    "comments": 8, 
+    "likes": 17, 
+    "albumName": "Животные"
+  }
+
+  ]

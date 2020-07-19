@@ -1,0 +1,145 @@
+[
+    {
+      "id": 1,
+      "name": "Лесные прогулки",
+      "desc": "Фотографии природы леса, енотов и оленей. Как прекрасно сойти на дальней станции и пройтись по полю босиком. И чтобы никто не беспокоил бродить влюбленным в тишину. Запах мёда, лесных оленей и енотов будоражит нутро.",
+      "previewId": 2,
+      "photos": [
+        {
+            "id": 1,
+            "photo": "../img/photo-img1.png",
+            "authorName": "Анна",
+            "authorPhoto": "../img/card-avatar1.png",
+            "authorSurname": "Богданова",
+            "comments": 9,
+            "likes": 15,
+            "photoName": "Путешествие на лодке по озеру"
+        },
+        {
+            "id": 2,
+            "photo": "../img/photo-img2.png",
+            "authorName": "Анна",
+            "authorPhoto": "../img/card-avatar2.png",
+            "authorSurname": "Богданова",
+            "comments": 9,
+            "likes": 15,
+            "photoName": "Отдых в палатке"
+        },
+        {
+            "id": 3,
+            "photo": "../img/photo-img3.png",
+            "authorName": "Анна",
+            "authorPhoto": "../img/card-avatar3.png",
+            "authorSurname": "Богданова",
+            "comments": 9,
+            "likes": 15,
+            "photoName": "Путешествие на лодке по озеру"
+        },
+        {
+            "id": 4,
+            "photo": "../img/photo-img4.png",
+            "authorName": "Анна",
+            "authorPhoto": "../img/card-avatar1.png",
+            "authorSurname": "Богданова",
+            "comments": 9,
+            "likes": 15,
+            "photoName": "Мечтательный взгляд вдоль поверх..."
+        },
+        {
+            "id": 5,
+            "photo": "../img/photo-img5.png",
+            "authorName": "Анна",
+            "authorPhoto": "../img/card-avatar1.png",
+            "authorSurname": "Богданова",
+            "comments": 9,
+            "likes": 15,
+            "photoName": "Путешествие на лодке"
+        }
+      ]
+    },
+    {      
+      "id": 2,
+      "name": "Животные",
+      "desc": "Фотографии животных...",
+      "previewId": 1,
+      "photos": [
+        {
+            "id": 1,
+            "photo": "../img/photo-img1.png",
+            "authorName": "Анна",
+            "authorPhoto": "../img/card-avatar1.png",
+            "authorSurname": "Богданова",
+            "comments": 9,
+            "likes": 15,
+            "photoName": "Путешествие на лодке по озеру"
+        },
+        {
+            "id": 2,
+            "photo": "../img/photo-img2.png",
+            "authorName": "Анна",
+            "authorPhoto": "../img/card-avatar1.png",
+            "authorSurname": "Богданова",
+            "comments": 9,
+            "likes": 15,
+            "photoName": "Отдых в палатке"
+        },
+        {
+            "id": 3,
+            "photo": "../img/photo-img3.png",
+            "authorName": "Анна",
+            "authorPhoto": "../img/card-avatar1.png",
+            "authorSurname": "Богданова",
+            "comments": 9,
+            "likes": 15,
+            "photoName": "Путешествие на лодке по озеру"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Прогулки на лодке",
+      "desc": "Вода...",
+      "previewId": 1,
+      "photos": [
+        {
+            "id": 1,
+            "photo": "../img/photo-img1.png",
+            "authorName": "Анна",
+            "authorPhoto": "../img/card-avatar1.png",
+            "authorSurname": "Богданова",
+            "comments": 9,
+            "likes": 15,
+            "photoName": "Путешествие на лодке по озеру"
+        },
+        {
+            "id": 2,
+            "photo": "../img/photo-img2.png",
+            "authorName": "Анна",
+            "authorPhoto": "../img/card-avatar1.png",
+            "authorSurname": "Богданова",
+            "comments": 9,
+            "likes": 15,
+            "photoName": "Отдых в палатке"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Море и серфинг",
+      "desc": "Море...",
+      "previewId": 1,
+      "photos": [
+        {
+            "id": 1,
+            "photo": "../img/photo-img3.png",
+            "authorName": "Анна",
+            "authorPhoto": "../img/card-avatar1.png",
+            "authorSurname": "Богданова",
+            "comments": 9,
+            "likes": 15,
+            "photoName": "Путешествие на лодке по озеру"
+        }
+      ]
+    }
+
+  ]

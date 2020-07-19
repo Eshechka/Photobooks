@@ -1,0 +1,34 @@
+[
+  {   
+    "id": "vk", 
+    "icon": "../icons/soc_vk.svg", 
+    "text": "vk", 
+    "isActive": false, 
+    "link": "https://vk.com/" 
+  },
+  {   
+    "id": "fb", 
+    "icon": "../icons/soc_fb.svg", 
+    "text": "fb", 
+    "isActive": false, 
+    "link": "https://fb.com/" 
+  },
+  {   
+    "id": "tw", 
+    "icon": "../icons/soc_twitter.svg", 
+    "text": "tw", "isActive": false, 
+    "link": "https://tw.com/" 
+  },
+  {   
+    "id": "google", 
+    "icon": "../icons/social_google.svg", 
+    "text": "google", "isActive": false, 
+    "link": "https://vk.com/" 
+  },
+  {   
+    "id": "email", 
+    "icon": "../icons/soc_email.svg", 
+    "text": "email", "isActive": false, 
+    "link": "https://vk.com/" 
+  }
+]

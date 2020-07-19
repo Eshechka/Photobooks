@@ -2,7 +2,7 @@
 
     <div class="my-album">
         <div class="my-album__img-my-album">
-            <img class="my-album__img" :src="myAlbumObject.photo" alt="album image">
+            <img class="my-album__img" :src="myAlbumObject.photos[myAlbumObject.previewId].photo" alt="album image">
             <div class="my-album__img-overlay"
 
 			>{{myAlbumObject.desc}}</div>
@@ -11,7 +11,8 @@
         
         <div class="my-album__folder">
             <button type="button" class="my-album__button my-album__button_edit"></button>
-            <a :href="myAlbumObject.link" class="my-album__folder-name"> {{myAlbumObject.folderName}} </a>
+            <a :href="'./album.html#/'+myAlbumObject.id" class="my-album__folder-name"> {{myAlbumObject.name}} </a>
+
         </div>
 
     </div>		
@@ -21,20 +22,12 @@
 
 
 <script >
+
     export default {
         props: {
           myAlbumObject: Object,
         },
 
-        data() {
-          return {
-            
-          }
-        },
-
-        methods: {
-
-        },
     }
 </script>
 
