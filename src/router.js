@@ -4,19 +4,22 @@ import VueRouter from 'vue-router';
 Vue.use(VueRouter);
 
 const routes = [
-    // {    
-    //     path: '/',
-    //     component: () => import('./vue-pages/app-index.vue'),
-    // },
-    // {    
-    //     path: '/album',
-    //     component: () => import('./vue-pages/app-album.vue'),
+    {
+        path: '/',
+        component: () => import('./vue-pages/app-index.vue'),
+    },
+    // {
+    //     path: '/login',
+    //     component: () => import('./vue-pages/app-login.vue'),
     // },
     { 
         path: '/:id',
-        component: () => import('./vue-components/app-one-album.vue'),
-    }
-
+        component: () => import('./vue-components/app-user.vue'),
+    },
+    { 
+        path: '/album/:albumid',
+        component: () => import('./vue-components/app-album.vue'),
+    },
 ];
 
 

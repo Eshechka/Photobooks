@@ -1,0 +1,84 @@
+[
+  {   
+    "id": 1, 
+    "urlAvatar": "../img/anton.png", 
+    "urlCover": "../img/bg-main-header.png", 
+    "name": "Антон Черепов",
+    "email": "some@mail.com",
+    "isThisUser": true,
+    "userDesc": "Я веб разработчик. Мне 24 года. Люблю путешествия, кодинг, фриланс и активный отдых.",
+    "userSocials": [
+      {   
+        "id": "vk", 
+        "icon": "../icons/soc_vk.svg", 
+        "text": "vk", 
+        "isActive": false, 
+        "link": "https://vk.com/" 
+      },
+      {   
+        "id": "fb", 
+        "icon": "../icons/soc_fb.svg", 
+        "text": "fb", 
+        "isActive": false, 
+        "link": "https://fb.com/" 
+      },
+      {   
+        "id": "tw", 
+        "icon": "../icons/soc_twitter.svg", 
+        "text": "tw", 
+        "isActive": false, 
+        "link": "https://tw.com/" 
+      },
+      {   
+        "id": "google", 
+        "icon": "../icons/social_google.svg", 
+        "text": "g+", 
+        "isActive": false, 
+        "link": "https://vk.com/" 
+      },
+      {   
+        "id": "email", 
+        "icon": "../icons/soc_email.svg", 
+        "text": "email", 
+        "isActive": false, 
+        "link": "https://vk.com/" 
+      }
+    ]
+  },
+  {   
+    "id": 2, 
+    "urlAvatar": "../img/aleksandra.png", 
+    "urlCover": "../img/bg-main-aleksandra.png", 
+    "name": "Александра Соколова",
+    "email": "sasha@mail.com",
+    "isThisUser": false,
+    "userDesc": "Я разработчик. Мне 22 года. Люблю кодинг и маникюр.",
+    "userSocials": [
+      {   
+        "id": "google", 
+        "icon": "../icons/social_google.svg", 
+        "text": "google", 
+        "isActive": false, 
+        "link": "https://vk.com/" 
+      },
+      {   
+        "id": "email", 
+        "icon": "../icons/soc_email.svg", 
+        "text": "email", 
+        "isActive": false, 
+        "link": "https://vk.com/" 
+      }
+    ]
+  },
+  {   
+    "id": 3, 
+    "urlAvatar": "../img/dima.jpg", 
+    "urlCover": "", 
+    "name": "Дима Ковальчук",
+    "email": "some@mail.com",
+    "isThisUser": false,
+    "userDesc": "Я Дима. Руковожу школой LoftSchool.",
+    "userSocials": []
+  }
+ 
+]

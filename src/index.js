@@ -1,5 +1,3 @@
-// import '../src/styles/pages/index/index.pcss'
-
 function importAll (r) {
   r.keys().forEach(r);
 }

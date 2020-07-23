@@ -1,5 +1,5 @@
 const path = require('path');
-const webpack = require("webpack");
+const webpack = require('webpack');
 
 const HTMLWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -41,10 +41,7 @@ const optimization = () => {
 module.exports = {
 
 	entry: {
-		login: './src/login.js',
 		index: './src/index.js',
-		album: './src/album.js',
-		search: './src/search.js',
 	},
 
 	output: {
@@ -58,10 +55,6 @@ module.exports = {
 		port: 4300,
 		stats: 'errors-only',
 		
-		index: 'album.html',
-		// index: 'search.html',
-		// index: 'login.html',
-		
 		// openPage: '',
 		historyApiFallback: true,
 		noInfo: false,
@@ -70,33 +63,12 @@ module.exports = {
 
 	plugins: [
 
-	// ...PAGES.map((page) => new HtmlWebpackPlugin({
-	//   template: `${PAGES_DIR}/${page}`,
-	//   filename: `./${page}`,
-	//   inject: true,
-	// })),
 
 		new HTMLWebpackPlugin({ 
 			template: 'src/markup/index.html',
 			filename: 'index.html',
 			chunks: ['index'],
 		 }),
-		new HTMLWebpackPlugin({ 
-			template: 'src/markup/login.html',
-			filename: 'login.html',
-			chunks: ['login'],
-		}),
-		new HTMLWebpackPlugin({ 
-			template: 'src/markup/album.html',			
-			filename: 'album.html',
-			chunks: ['album'],
-		}),
-		new HTMLWebpackPlugin({ 
-			template: 'src/markup/search.html',			
-			filename: 'search.html',
-			chunks: ['search'],
-		}),
-
 
 		new CleanWebpackPlugin(),
 
@@ -125,25 +97,6 @@ module.exports = {
 
 	module: {
 		rules: [
-		// {
-		// 	test: /\.s[ac]ss$/,
-		// 	use: [
-		// 		// isDev ? 'vue-style-loader' :
-		// 		{
-		// 			loader: MiniCssExtractPlugin.loader, 
-		// 			options: {
-		// 				// hmr: isDev,
-		// 				// reloadAll: true
-		// 			},
-		// 		},
-
-		// 		{loader: 'css-loader'},
-		// 		{loader: 'resolve-url-loader'},
-		// 		{loader: 'sass-loader'},
-
-		// 	]
-		// },
-
 		{
 			test: /\.(p|post|)css$/,
 			use: [
@@ -155,7 +108,7 @@ module.exports = {
 
 		{
 			test: /\.vue$/,
-			loader: "vue-loader"
+			loader: 'vue-loader'
 		},
 
 		{
@@ -183,41 +136,6 @@ module.exports = {
 
 			},
 		},
-
-	// 	{
-	// test: /\.svg$/,
-	// include: [
-	// 	path.resolve(__dirname, 'src/icons/'),
-	// ],
-	// use: [
-	// 	{
-	// 		loader: "svg-sprite-loader",
-	// 		options: {
-	// 			extract: true,
-	// 			spriteFilename: 'img/spriteIcons'
-	// 		}
-	// 	},
-	// 	"svg-transform-loader",
-	// 	{
-	// 		loader: "svgo-loader",
-	// 		options: {
-	// 			plugins: [
-	// 				{ removeTitle: true },
-	// 				{
-	// 					removeAttrs: {
-	// 						attrs: "(fill|stroke)"
-	// 					}
-	// 				}
-	// 			]
-	// 		}
-	// 	}
-	// ]
-	// 	},
-
-		// {	
-		// 	test: /\.vue$/,
-		// 	loader: "vue-loader"
-		// },
 
 		]
 	}

@@ -26,22 +26,22 @@
 								<img class="avatar__img" :src='userAvatarUrl' alt="avatar">
 							</div>
 						</div>
-						<h1 class="header__title" v-if="isScrolledHeader"> {{albums[$route.params.id-1].name}} </h1>
+						<h1 class="header__title" v-if="isScrolledHeader"> {{albums[idCurrentAlbum].name}} </h1>
 						<h1 class="header__title" v-else > {{userName}} </h1>
 
 					</div>
 
 					<div class="header__album-desc">
-						<h2 class="header__album-title"> {{albums[$route.params.id-1].name}} </h2>
+						<h2 class="header__album-title"> {{albums[idCurrentAlbum].name}} </h2>
                         
-						<div class="header__text"> {{albums[$route.params.id-1].desc}} </div>
+						<div class="header__text"> {{albums[idCurrentAlbum].desc}} </div>
 					</div>
 			</div>
 					<div class="header__album-info">
 						<div class="header__album-info-wrapper">					
-							<div class="header__info-button header__info-button_photos"> {{albums[$route.params.id-1].photos.length}} </div>
-							<div class="header__info-button header__info-button_likes"> {{albums[$route.params.id-1].photos.reduce((sum, myPhoto) => sum + myPhoto.likes, 0)}} </div>
-							<div class="header__info-button header__info-button_comments"> {{albums[$route.params.id-1].photos.reduce((sum, myPhoto) => sum + myPhoto.comments, 0)}} </div>
+							<div class="header__info-button header__info-button_photos"> {{albums[idCurrentAlbum].photos.length}} </div>
+							<div class="header__info-button header__info-button_likes"> {{albums[idCurrentAlbum].photos.reduce((sum, myPhoto) => sum + myPhoto.likes, 0)}} </div>
+							<div class="header__info-button header__info-button_comments"> {{albums[idCurrentAlbum].photos.reduce((sum, myPhoto) => sum + myPhoto.comments, 0)}} </div>
 						</div>
 					</div>
 
@@ -112,7 +112,7 @@
 	
 				<ul class="my-photos__photos-list">
                     
-					<li v-for="myPhoto in albums[$route.params.id-1].photos" :key="myPhoto.id" class="my-photos__photos-item" >
+					<li v-for="myPhoto in albums[idCurrentAlbum].photos" :key="myPhoto.id" class="my-photos__photos-item" >
 						<appMyPhoto 
                             :myPhotoObject="myPhoto"
                             @clickEditMyPhoto="openEditPhoto=true"
@@ -235,7 +235,7 @@
             <div class="my-photos__big-card" v-if="openBigMyPhoto">
 
                 <appBigCard 
-                    :cardObject="albums[$route.params.id-1].photos[idCurrentClickedPhoto]"
+                    :cardObject="albums[idCurrentAlbum].photos[idCurrentClickedPhoto]"
                     @clickCloseBigCard="openBigMyPhoto=false"
                 >
                 </appBigCard>
@@ -288,7 +288,7 @@
         });
     }
 
-    export default {   
+    export default {
 
         components: {
             appMyPhoto, appBigCard,
@@ -320,6 +320,9 @@
         computed: {
             headerContainer() {
                 return this.$refs['header-container'];
+            },
+            idCurrentAlbum() {
+                return this.$route.params.albumid-1;
             },
         },
 
@@ -378,10 +381,10 @@
             },
         },
 
-        created() {
+        mounted() {
             window.addEventListener('scroll', this.scrollHandle);
         },
-        
+       
     }
 
 </script>

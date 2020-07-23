@@ -2,7 +2,7 @@
 
     <div class="my-album">
         <div class="my-album__img-my-album">
-            <img class="my-album__img" :src="myAlbumObject.photos[myAlbumObject.previewId].photo" alt="album image">
+			<img class="my-album__img" :src="previewUrl" alt="album image">
             <div class="my-album__img-overlay"
 
 			>{{myAlbumObject.desc}}</div>
@@ -11,8 +11,11 @@
         
         <div class="my-album__folder">
             <button type="button" class="my-album__button my-album__button_edit"></button>
-            <a :href="'./album.html#/'+myAlbumObject.id" class="my-album__folder-name"> {{myAlbumObject.name}} </a>
-
+            <!-- <a :href="'./album.html#/'+myAlbumObject.id" class="my-album__folder-name"> {{myAlbumObject.name}} </a> -->
+			<router-link  class="my-album__folder-name" 
+				:to="'/album/'+myAlbumObject.id"
+				@click.prevent
+			>{{myAlbumObject.name}}</router-link>
         </div>
 
     </div>		
@@ -26,8 +29,26 @@
     export default {
         props: {
           myAlbumObject: Object,
-        },
+		},
 
+		data() {
+			return {
+				previewUrl: this.getPreviewUrl(),
+			}
+		},
+		methods: {
+				getPreviewUrl() {
+					let previewPhoto = this.myAlbumObject.photos.find(item => item.id === this.myAlbumObject.previewId);
+					let previewUrl = '';
+
+					if (!previewPhoto)
+						previewUrl = this.myAlbumObject.photos[0].photo;
+					else
+						previewUrl = previewPhoto.photo;
+					return previewUrl;
+				},
+			},
+		
     }
 </script>
 
