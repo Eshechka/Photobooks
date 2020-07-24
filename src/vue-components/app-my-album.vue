@@ -1,17 +1,19 @@
 <template>    
 
     <div class="my-album">
-        <div class="my-album__img-my-album">
+        <router-link class="my-album__img-my-album"
+				tag="div"
+				:to="'/album/'+myAlbumObject.id"
+		>
 			<img class="my-album__img" :src="previewUrl" alt="album image">
             <div class="my-album__img-overlay"
 
 			>{{myAlbumObject.desc}}</div>
-        </div>
+        </router-link>
 
         
         <div class="my-album__folder">
             <button type="button" class="my-album__button my-album__button_edit"></button>
-            <!-- <a :href="'./album.html#/'+myAlbumObject.id" class="my-album__folder-name"> {{myAlbumObject.name}} </a> -->
 			<router-link  class="my-album__folder-name" 
 				:to="'/album/'+myAlbumObject.id"
 				@click.prevent
@@ -37,17 +39,17 @@
 			}
 		},
 		methods: {
-				getPreviewUrl() {
-					let previewPhoto = this.myAlbumObject.photos.find(item => item.id === this.myAlbumObject.previewId);
-					let previewUrl = '';
+			getPreviewUrl() {
+				let previewPhoto = this.myAlbumObject.photos.find(item => item.id === this.myAlbumObject.previewId);
+				let previewUrl = '';
 
-					if (!previewPhoto)
-						previewUrl = this.myAlbumObject.photos[0].photo;
-					else
-						previewUrl = previewPhoto.photo;
-					return previewUrl;
-				},
+				if (!previewPhoto)
+					previewUrl = this.myAlbumObject.photos[0].photo;
+				else
+					previewUrl = previewPhoto.photo;
+				return previewUrl;
 			},
+		},
 		
     }
 </script>

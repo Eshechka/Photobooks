@@ -22,7 +22,7 @@
                 
                 <!-- // ПЕРЕДЕЛАТЬ!!!!!!!!!!!! -->
                 <div class="big-card__name">{{cardObject.authorName}} 
-                    <div class="big-card__surname">{{cardObject.authorSurname}}</div>
+                    <!-- <div class="big-card__surname">{{cardObject.authorSurname}}</div> -->
                 </div>
                 
                 <div class="big-card__likes">
@@ -188,6 +188,10 @@
 
         &__avatar {
             margin-right: 10px;
+            border-radius: 50%;
+            overflow: hidden;
+            width: 50px;
+            height: 50px;
         }
 
         &__likes {
@@ -205,14 +209,15 @@
             font-family: 'Panton-Bold';
             font-size: 14px;
             line-height: 18px;
+            width: 25%;
         }
 
-        &__surname {
+        /* &__surname {
 
             @include tablets {
                 display: inline-block;
             }
-        }
+        } */
 
         &__button {
             font-family: 'Panton-Bold';

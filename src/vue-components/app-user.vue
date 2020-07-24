@@ -285,7 +285,9 @@
                 <div class="my-albums__topgroup">
                     <h2 class="my-albums__title">Мои альбомы</h2>
                     <div class="my-albums__button-plus">
-                        <button class="round-button round-button_plus"></button>
+                        <button class="round-button round-button_plus"
+                            @click="openAddAlbum=true"
+                        ></button>
                     </div>
                 </div>
 
@@ -305,7 +307,9 @@
 
                         <div class="add-album__topgroup">
                             <h4 class="add-album__title">Добавить альбом</h4>
-                            <button type="button" class="add-album__button add-album__button_close"></button>
+                            <button type="button" class="add-album__button add-album__button_close"
+                                @click="openAddAlbum=false"
+                            ></button>
                         </div>
                         
                         <div class="add-album__form">
@@ -335,7 +339,9 @@
                                 
                                 <div class="form-addAlbum__buttons">
                                     <button class="site-button" type="submit">Сохранить</button>
-                                    <button class="site-button site-button_theme-just-text" type="button">Отменить</button>
+                                    <button class="site-button site-button_theme-just-text" type="button"
+                                        @click="openAddAlbum=false"
+                                    >Отменить</button>
                                     <button class="round-button round-button_delete" type="button">Удалить</button>
                                 </div>
 
@@ -547,7 +553,7 @@
 </script>
 
 
-<style lang="postcss">
+<style scoped lang="postcss">
 
     @import 'normalize.css';
     @import '../fonts/fonts.pcss';
@@ -1189,6 +1195,7 @@
         padding: 30px 0;
         background: rgb(246,246,246);
         background: linear-gradient(0deg, rgba(246,246,246,1) 0%, $color-white 100%);
+        position: relative;
         
         &__container {
             margin: 0 auto;

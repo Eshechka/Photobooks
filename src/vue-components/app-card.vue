@@ -10,10 +10,13 @@
 
         <div class="card__info">
 
-            <div class="card__avatar">
+            <router-link class="card__avatar"
+                tag="div"
+                :to="'/'+cardObject.authorId"
+            >
                 <img class="card__avatar-img" :src="cardObject.authorPhoto" alt="card avatar">
                 <div class="card__avatar-overlay"></div>
-            </div>
+            </router-link>
 
             <div class="card__desc">
                 <div class="card__desc-title"> {{cardObject.title}} </div>
@@ -126,6 +129,7 @@
             height: 50px;
             border-radius: 50%;
             position: relative;
+            overflow: hidden;
         }
 
         &__avatar-overlay {

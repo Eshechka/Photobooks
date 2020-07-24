@@ -359,7 +359,6 @@
 
             },
 
-
             scrollToTop() {
                 window.scrollTo({
                     top: 0,
@@ -390,7 +389,7 @@
 </script>
 
 
-<style lang="postcss">
+<style scoped lang="postcss">
 
     @import 'normalize.css';
     @import '../fonts/fonts.pcss';
