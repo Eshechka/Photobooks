@@ -354,7 +354,9 @@
         </section>
 
 
-        <footer class="footer">
+        <footer class="footer"
+            :style="bgCurrentUser"
+        >
 
             <div class="footer__container">	
 

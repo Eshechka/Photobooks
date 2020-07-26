@@ -7,7 +7,8 @@
     "authorPhoto": "../img/anton.png", 
     "photo": "../img/card-img1.png", 
     "comments": 9, 
-    "likes": 15, 
+    "likes": 15,
+    "isLikedByMe": true,
     "albumName": "Прогулки по воде"
   },
   {
@@ -18,7 +19,8 @@
     "authorPhoto": "../img/aleksandra.png", 
     "photo": "../img/card-img2.png", 
     "comments": 10, 
-    "likes": 16, 
+    "likes": 16,
+    "isLikedByMe": false,
     "albumName": "Палаточный лагерь"
   },
   {
@@ -29,7 +31,8 @@
     "authorPhoto": "../img/dima.jpg", 
     "photo": "../img/card-img3.png", 
     "comments": 8, 
-    "likes": 17, 
+    "likes": 17,
+    "isLikedByMe": false,
     "albumName": "Животные"
   }
 

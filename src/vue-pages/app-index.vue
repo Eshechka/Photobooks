@@ -7,14 +7,7 @@
 
 <script>
     export default {
-        watch: {
-            '$route.params.id'() {
-                console.log('$route.params.id!!!!!');
-                window.scrollTo({
-                    top: 0,
-                });
-            },
-        },
+
     }
 </script>
 

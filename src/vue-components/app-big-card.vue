@@ -20,13 +20,12 @@
                     <img class="big-card__avatar-img" :src="cardObject.authorPhoto" alt="card avatar">
                 </div>
                 
-                <!-- // ПЕРЕДЕЛАТЬ!!!!!!!!!!!! -->
-                <div class="big-card__name">{{cardObject.authorName}} 
-                    <!-- <div class="big-card__surname">{{cardObject.authorSurname}}</div> -->
-                </div>
-                
+                <div class="big-card__name">{{cardObject.authorName}}</div>
                 <div class="big-card__likes">
-                    <button type="button" class="big-card__button big-card__button_likes">{{cardObject.likes}}</button>
+                    <button type="button" class="big-card__button-likes"
+                        @click="plusMyLike()"
+                        :class="{'big-card__button-likes_active' : isActiveLike}"
+                    >{{cardObject.likes}}</button>
                 </div>
 
             </div>
@@ -44,7 +43,7 @@
 
                 <div class="big-card__comments-topgroup">
                     <h4 class="big-card__comments-title">Комментарии</h4>
-                    <button type="button" class="big-card__button big-card__button_tick"></button>
+                    <button type="button" class="big-card__button-tick"></button>
                 </div>
                 
                 <div class="big-card__my-comment">
@@ -109,7 +108,7 @@
             userAvatarUrl: require('../img/anton.png').default,
             userName: "Антон Черепов",
             comments: dataJSON_comments,
-
+            isActiveLike: this.cardObject.isLikedByMe,
           }
 
         },
@@ -130,7 +129,12 @@
         },
 
         methods: {
-
+            plusMyLike() {
+                this.isActiveLike = !this.isActiveLike;
+                if (this.isActiveLike) this.cardObject.likes++;
+                else this.cardObject.likes--;
+                // запись в cards значения  this.cardObject.likes !!!!!
+            },
         },
     }
 </script>
@@ -148,8 +152,7 @@
     .big-card {
         @include popup;
         overflow: unset;
-
-        background-color: rgb(246, 246, 246);
+        background-color: transparent;
         position: relative;
 
         &__close {
@@ -162,15 +165,20 @@
         &__card {
             overflow: hidden;
             min-width: 300px;
-            background-color: $color-white;
+            /* background-color: $color-white; */
             display: flex;
             flex-direction: column;
+
+            background-color: transparent;
         }
 
         &__card-img {
             width: 100%;
             height: 200px;
             position: relative;
+
+            border-radius: 3px 3px 0 0;
+            overflow: hidden;
         }
 
         &__img {
@@ -184,6 +192,7 @@
             justify-content: flex-start;
             align-items: center;
             padding: 10px;
+            background-color: $color-white;
         }
 
         &__avatar {
@@ -212,14 +221,24 @@
             width: 25%;
         }
 
-        /* &__surname {
 
-            @include tablets {
-                display: inline-block;
-            }
-        } */
 
-        &__button {
+            
+        &__button-tick {
+            font-family: 'Panton-Bold';
+            font-size: 16px;
+            color: $color-white;
+            background-repeat: no-repeat;
+            background-image: svg-load('arrow_left.svg', fill=rgba(#{$color-text}, 0.2));
+            background-position: 50%;
+            padding: 0px;
+            height: 20px;
+            width: 20px;
+            background-size: 8px;
+            transform: rotate(90deg);
+        }
+
+        &__button-likes {
             font-family: 'Panton-Bold';
             font-size: 16px;
             color: $color-white;
@@ -228,25 +247,24 @@
             background-repeat: no-repeat;
             background-size: 20px;
             background-position: 18px 50%;
+            background-image: svg-load('heart.svg', viewBox='53 56 22 17', height='18px', fill=rgb(238, 70, 52), stroke-width=2px, stroke=rgba(#{$color-white}, 0.95));
 
-            &_tick {
-                background-image: svg-load('arrow_left.svg', fill=rgba(#{$color-text}, 0.2));
-                background-position: 50%;
-                padding: 0px;
-                height: 20px;
-                width: 20px;
-                background-size: 8px;
-                transform: rotate(90deg);
+            &_active {
+                background-image: svg-load('heart.svg', viewBox='53 56 22 17', height='18px', fill=rgba(#{$color-white}, 0.95), stroke-width=2px, stroke=rgb(238, 70, 52));
             }
 
-            &_likes {
-                background-image: svg-load('heart.svg', viewBox='53 56 22 17', height='18px', fill=rgb(238, 70, 52), stroke-width=2px, stroke=rgba(#{$color-white}, 0.95));
+            &:active, &:focus {
+                outline: none;
             }
+
         }
+
+
 
         &__desc {
             padding: 10px;
             padding-bottom: 30px;
+            background-color: $color-white;
         }
 
         &__title {
@@ -262,6 +280,8 @@
             display: flex;
             flex-direction: column;
             padding: 20px 10px;
+            background-color: rgb(246, 246, 246);
+            border-radius: 0 0 3px 3px;
         }
 
         &__comments-topgroup {

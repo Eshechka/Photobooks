@@ -17,7 +17,11 @@
                 </div>
                 <div class="header__button-home"
                     :class="{'header__button-home_scrolled' : isScrolledHeader}">
-                    <a href="./index.html" class="round-button round-button_home">На главную</a>
+                    <router-link class="round-button round-button_home"
+                        to="/1"
+                        @click.prevent
+                    >На главную</router-link>
+                    <!-- ПОТОМ ИСПРАВИТЬ НА to="/" -->
                 </div>
 
 					<div class="header__user" :class="{header__user_scrolled : isScrolledHeader}">
@@ -178,7 +182,7 @@
                                     <form class="form-addPhoto">
 
                                         <div class="form-addPhoto__album-name-label">Название
-                                            <span class="form-addPhoto__album-name" type="text"> {{thisAlbumName}} </span>
+                                            <span class="form-addPhoto__album-name" type="text"> {{this.albums[idCurrentAlbum].name}} </span>
                                         </div>
 
                                         <div class="form-addPhoto__load-cover">
@@ -216,7 +220,9 @@
                                 
                                         <div class="form-addPhoto__buttons">
                                             <button class="site-button" type="submit">Сохранить</button>
-                                            <button class="site-button site-button_theme-just-text" type="button">Отменить</button>
+                                            <button class="site-button site-button_theme-just-text" type="button"
+                                                @click="openAddPhoto=false"
+                                            >Отменить</button>
                                         </div>
 
                                     </form>
@@ -313,7 +319,6 @@
                 userName: "Антон Черепов",
 
                 renderedPhotos: [],
-
             }
         },
 
