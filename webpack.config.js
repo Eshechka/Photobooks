@@ -67,7 +67,7 @@ module.exports = {
 		new HTMLWebpackPlugin({ 
 			template: 'src/markup/index.html',
 			filename: 'index.html',
-			chunks: ['index'],
+			// chunks: ['index'],
 		 }),
 
 		new CleanWebpackPlugin(),

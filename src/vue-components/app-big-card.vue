@@ -1,107 +1,101 @@
-<template>    
+<template>
+        
+            <div class="big-card">
+                <div class="big-card__card">
 
-    <div class="big-card">
+                    <div class="big-card__card-img">
+                        <img class="big-card__img" :src="cardObject.photo" alt="big card image">
+                    </div>
 
-        <div class="big-card__close"
-            @click="$emit('clickCloseBigCard', cardObject.id, $event)"
-        >
-            <button class="round-button round-button_close-transparent" type="button"></button>
-        </div>
+                    <div class="big-card__author-info">
 
-        <div class="big-card__card">
-
-            <div class="big-card__card-img">
-                <img class="big-card__img" :src="cardObject.photo" alt="big card image">
-            </div>
-
-            <div class="big-card__author-info">
-
-                <div class="big-card__avatar">
-                    <img class="big-card__avatar-img" :src="cardObject.authorPhoto" alt="card avatar">
-                </div>
-                
-                <div class="big-card__name">{{cardObject.authorName}}</div>
-                <div class="big-card__likes">
-                    <button type="button" class="big-card__button-likes"
-                        @click="plusMyLike()"
-                        :class="{'big-card__button-likes_active' : isActiveLike}"
-                    >{{cardObject.likes}}</button>
-                </div>
-
-            </div>
-
-
-            <div class="big-card__desc">
-
-                <h3 class="big-card__title">Путешествие на речном трамвайчике</h3>
-            
-                <div class="big-card__desc-text">Мы отправились в <span class='site-tag'>#путешествие</span> 2 дня назад, но уже сейчас такое ощущение, что мы посмотрели целый новый мир. Далее будет ещё одно описательное предложение. Возможно оно также будет с <span class='site-tag'>#тегами</span>. </div>
-
-            </div> 
-
-            <div class="big-card__comments">
-
-                <div class="big-card__comments-topgroup">
-                    <h4 class="big-card__comments-title">Комментарии</h4>
-                    <button type="button" class="big-card__button-tick"></button>
-                </div>
-                
-                <div class="big-card__my-comment">
-
-                        <div class="big-card__my-comment-avatar-wrapper">
-                            <img class="big-card__my-comment-avatar" :src="userAvatarUrl" alt="my avatar">
+                        <div class="big-card__avatar">
+                            <img class="big-card__avatar-img" :src="cardObject.authorPhoto" alt="card avatar">
                         </div>
-                        <div class="big-card__my-comment-info">
-                            
-                        <div class="big-card__my-comment-name">{{userName}}</div>
+                        
+                        <div class="big-card__name">{{cardObject.authorName}}</div>
+
+                        <div class="big-card__likes">
+                            <button type="button" class="big-card__button-likes"
+                                @click="plusMyLike()"
+                                :class="{'big-card__button-likes_active' : isActiveLike}"
+                            >{{cardObject.likes}}</button>
+                        </div>
+
+                    </div>
+
+                    <div class="big-card__desc">
+
+                        <h3 class="big-card__title">{{cardObject.title}}</h3>
                     
-                        <form class="big-card__my-comment-form">
+                        <div class="big-card__desc-text">{{cardObject.desc}}</div>
 
-                            <textarea class="big-card__my-comment-input" name="" id="" cols="10" rows="1" placeholder="Добавить комментарий"></textarea>
-                            <div class="big-card__my-comment-submit">
-                                <button class="site-button site-button_theme-light" type="submit">Добавить</button>
-                            </div>
+                    </div> 
 
-                        </form>
+                    <div class="big-card__comments">
+
+                        <div class="big-card__comments-topgroup">
+                            <h4 class="big-card__comments-title">Комментарии</h4>
+                            <button type="button" class="big-card__button-tick"></button>
                         </div>
+                        
+                        <div class="big-card__my-comment">
+
+                                <div class="big-card__my-comment-avatar-wrapper">
+                                    <img class="big-card__my-comment-avatar" :src="userAvatarUrl" alt="my avatar">
+                                </div>
+                                <div class="big-card__my-comment-info">
+                                    
+                                <div class="big-card__my-comment-name">{{userName}}</div>
+                            
+                                <form class="big-card__my-comment-form">
+
+                                    <textarea class="big-card__my-comment-input" name="" id="" cols="10" rows="1" placeholder="Добавить комментарий"></textarea>
+                                    <div class="big-card__my-comment-submit">
+                                        <button class="site-button site-button_theme-light" type="submit">Добавить</button>
+                                    </div>
+
+                                </form>
+                                </div>
+                        </div>
+
+                        <div class="big-card__users-comments">
+
+                            <ul class="users-comments">
+                                <li
+                                    v-for="comment in filteredComments" :key="comment.id"
+                                class="users-comments__item">
+
+                                    <div class="users-comments__avatar-wrapper">
+                                        <img class="users-comments__avatar" :src="comment.authorAvatar" alt="Avatar of comment's author">
+                                    </div>
+                                    <div class="users-comments__info-wrapper">
+                                        <div class="users-comments__author">{{comment.authorName}}</div>
+                                        <div class="users-comments__text">{{comment.text}}</div>
+                                    </div>
+
+                                </li>
+                            </ul>
+
+                        </div>
+
+                    </div> 
                 </div>
-
-                <div class="big-card__users-comments">
-
-                    <ul class="users-comments">
-                        <li
-                            v-for="comment in filteredComments" :key="comment.id"
-                        class="users-comments__item">
-
-                            <div class="users-comments__avatar-wrapper">
-                                <img class="users-comments__avatar" :src="comment.authorAvatar" alt="Avatar of comment's author">
-                            </div>
-                            <div class="users-comments__info-wrapper">
-                                <div class="users-comments__author">{{comment.authorName}}</div>
-                                <div class="users-comments__text">{{comment.text}}</div>
-                            </div>
-
-                        </li>
-                    </ul>
-
-                </div>
-
-            </div> 
-
-        </div>
-    </div>
+            </div>
 
 </template>
 
 
+
 <script >
 
-    import dataJSON_comments from '../json/comments.json'
+    import dataJSON_comments from '../json/comments.json';
 
     export default {
         props: {
             cardObject: Object,
         },
+
 
         data() {
           return {
@@ -109,6 +103,7 @@
             userName: "Антон Черепов",
             comments: dataJSON_comments,
             isActiveLike: this.cardObject.isLikedByMe,
+
           }
 
         },
@@ -135,6 +130,7 @@
                 else this.cardObject.likes--;
                 // запись в cards значения  this.cardObject.likes !!!!!
             },
+
         },
     }
 </script>
@@ -149,26 +145,14 @@
 
     @import '../styles/blocks/site-button.pcss';
 
-    .big-card {
-        @include popup;
-        overflow: unset;
-        background-color: transparent;
-        position: relative;
-
-        &__close {
-            position: absolute;
-            right: -36px;
-            top: -36px;
-            z-index: 15;
-        }
+    .big-card {   
+        width: 100%;    
 
         &__card {
             overflow: hidden;
             min-width: 300px;
-            /* background-color: $color-white; */
             display: flex;
             flex-direction: column;
-
             background-color: transparent;
         }
 
@@ -176,9 +160,12 @@
             width: 100%;
             height: 200px;
             position: relative;
-
             border-radius: 3px 3px 0 0;
             overflow: hidden;
+
+            @include tablets {
+                height: 398px;
+            }
         }
 
         &__img {
@@ -221,8 +208,6 @@
             width: 25%;
         }
 
-
-
             
         &__button-tick {
             font-family: 'Panton-Bold';
@@ -256,9 +241,7 @@
             &:active, &:focus {
                 outline: none;
             }
-
         }
-
 
 
         &__desc {
@@ -274,6 +257,9 @@
             margin-bottom: 10px;
         }
 
+        &__desc-text {
+            height: 70px;
+        }
 
         &__comments {
             background-color: rgba(f6f6f6, 0.8);
@@ -350,7 +336,7 @@
 
         &__users-comments {
             overflow-y: scroll;
-            max-height: 80vh;
+            height: 280px;
         }
 
     }

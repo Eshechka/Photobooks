@@ -2,7 +2,7 @@ function importAll (r) {
   r.keys().forEach(r);
 }
 
-importAll(require.context('', true, /\.(eot|woff|svg|ttf|png|jpe?g)$/));
+importAll(require.context('', true, /\.(eot|woff|svg|ttf|png|jpe?g|gif)$/));
 
 import Vue from 'vue';
 

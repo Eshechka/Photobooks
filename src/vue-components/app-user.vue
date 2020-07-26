@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
 
-        <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigCard || openAddAlbum || openEditProfile"></div>
+        <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigCardSlider || openAddAlbum || openEditProfile"></div>
         <div class="wrapper__overlay wrapper__overlay_white" v-if="openEditHeader"></div>
 
         <header class="header"
@@ -265,15 +265,34 @@
             </div>
 
 
-            <div class="new__big-card" v-if="openBigCard">
+            <div class="new__big-card-slider" v-if="openBigCardSlider">
 
-                <appBigCard 
-                    :cardObject="cards[idCurrentPhoto]"
-                    @clickCloseBigCard="openBigCard=false"
-                >
-                </appBigCard>
+                    <div class="big-card-slider">
 
+                        <flickity ref="flickity" :options="flickityOptions" class="big-card-slider__container">
+
+                                <appBigCard v-for="bigCard in cards" :key="bigCard.id"
+                                    :cardObject="bigCard">                                                               
+                                </appBigCard>
+
+                        </flickity>
+
+                        <div class="big-card-slider__close">
+                            <button class="round-button round-button_close-transparent" type="button"
+                                @click="openBigCardSlider=false"
+                            ></button>
+                        </div>
+
+                        <button type="button" class="big-card-slider__control big-card-slider__control_prev"
+                            @click="previous()"
+                        ></button>
+                        <button type="button" class="big-card-slider__control big-card-slider__control_next"
+                            @click="next()"
+                        ></button>
+
+                    </div>
             </div>
+
 
         </section>
 
@@ -355,8 +374,7 @@
 
 
         <footer class="footer"
-            :style="bgCurrentUser"
-        >
+            :style="bgCurrentUser">
 
             <div class="footer__container">	
 
@@ -379,177 +397,199 @@
 
 
 <script>
-  import appCard from '../vue-components/app-card.vue'
-  import appBigCard from '../vue-components/app-big-card.vue'
-  import appMyalbum from '../vue-components/app-my-album.vue'
+    import appCard from '../vue-components/app-card.vue'
+    import appBigCard from '../vue-components/app-big-card.vue'
+    import appMyalbum from '../vue-components/app-my-album.vue'
 
-  import dataJSON_cards from '../json/cards.json'
-  import dataJSON_albums from '../json/albums.json'
-  import dataJSON_socials from '../json/socials.json'
-  import dataJSON_users from '../json/users.json'
+    import dataJSON_cards from '../json/cards.json'
+    import dataJSON_albums from '../json/albums.json'
+    import dataJSON_socials from '../json/socials.json'
+    import dataJSON_users from '../json/users.json'
 
-  export default {   
+    import Flickity from 'vue-flickity';
 
-    components: {
-      appCard, appBigCard, appMyalbum,
-    },
+    export default {   
 
-    data() {
-        return {
-            openBigCard: false,
-            openAddAlbum: false,
-            openEditProfile: false,
-            openEditHeader: false,
+        components: {
+        appCard, appBigCard, appMyalbum,
+        Flickity,
+        },
 
-            urlInlineSvgSprite: require('../img/spriteIcons.svg').default,
+        data() {
+            return {
+                openBigCardSlider: false,
+                openAddAlbum: false,
+                openEditProfile: false,
+                openEditHeader: false,
 
-            isActiveSocial: false,            
-            currentSocialId: '',
-            windowWidth: 0,
-            activeSocialLink: '',
+                urlInlineSvgSprite: require('../img/spriteIcons.svg').default,
 
-            idCurrentPhoto: 0,
+                isActiveSocial: false,            
+                currentSocialId: '',
+                windowWidth: 0,
+                activeSocialLink: '',
 
-            cards: dataJSON_cards,
-            myAlbums: dataJSON_albums,
-            socials: dataJSON_socials,
-            users: dataJSON_users,
+                idCurrentPhoto: 0,
 
-        }
-    },
+                cards: dataJSON_cards,
+                myAlbums: dataJSON_albums,
+                socials: dataJSON_socials,
+                users: dataJSON_users,
 
+                flickityOptions: {
+                    initialIndex: this.idCurrentPhoto,
+                    prevNextButtons: false,
+                    pageDots: false,
+                    wrapAround: true,
+                    freeScroll: false,
+                    groupCells: true,
+                    contain: true
+                },
 
-    computed: {
-        socEdit() {
-            return this.$refs['soc-edit'];
-            },
-        idCurrentUser() {
-            return this.$route.params.id-1;
-            },
-        bgCurrentUser() {
-            let bgUser = "";
-            if (this.users[this.idCurrentUser].urlCover) 
-                bgUser = "backgroundImage: url(" + this.users[this.idCurrentUser].urlCover + ")";
-            return bgUser;
-            },
-    },
-
-    methods: {
-
-        socEditMouseLeaveHandler(idCurrentUser) {
-            if (this.windowWidth > 480) {
-                this.isActiveSocial = false;
-
-                this.users[idCurrentUser].userSocials.map(social => { 
-                    social.isActive = false;
-                });
+                
             }
         },
 
-        socialClickHandler(socialId, idCurrentUser) {
+
+        computed: {
+            socEdit() {
+                return this.$refs['soc-edit'];
+                },
+            idCurrentUser() {
+                return this.$route.params.id-1;
+                },
+            bgCurrentUser() {
+                let bgUser = "";
+                if (this.users[this.idCurrentUser].urlCover) 
+                    bgUser = "backgroundImage: url(" + this.users[this.idCurrentUser].urlCover + ")";
+                return bgUser;
+                },
+        },
+
+        methods: {
+
+            socEditMouseLeaveHandler(idCurrentUser) {
+                if (this.windowWidth > 480) {
+                    this.isActiveSocial = false;
+
+                    this.users[idCurrentUser].userSocials.map(social => { 
+                        social.isActive = false;
+                    });
+                }
+            },
+
+            socialClickHandler(socialId, idCurrentUser) {
+                
+                if (this.windowWidth <= 480) {
+                    
+                    this.currentSocialId = socialId;
+
+                    this.users[idCurrentUser].userSocials.map(social => { 
+                            if (this.currentSocialId) {
+                                if (social.id !== this.currentSocialId) {
+                                    social.isActive = false;
+                                }
+                                else {
+                                    social.isActive = !social.isActive;
+                                    this.isActiveSocial = social.isActive;
+                                    this.activeSocialLink = social.link;
+                                }
+                            }                        
+                        }
+                    );
+
+                }
             
-            if (this.windowWidth <= 480) {
-                
-                this.currentSocialId = socialId;
+            },
 
-                this.users[idCurrentUser].userSocials.map(social => { 
-                        if (this.currentSocialId) {
-                            if (social.id !== this.currentSocialId) {
-                                social.isActive = false;
+            socialMouseHandler(socialId, currentUserId, e) { 
+
+                if (this.windowWidth > 480) {
+                    
+                    if (e.type=='mouseenter') {
+
+                    this.currentSocialId = socialId; 
+
+                    this.users[currentUserId].userSocials.map(social => { 
+                            if (this.currentSocialId) {
+
+                                if (social.id !== this.currentSocialId) {
+                                    social.isActive = false;
+                                }
+                                else {
+                                    social.isActive = !social.isActive;
+                                    this.isActiveSocial = social.isActive;
+                                    this.activeSocialLink = social.link;
+                                }
                             }
-                            else {
-                                social.isActive = !social.isActive;
-                                this.isActiveSocial = social.isActive;
-                                this.activeSocialLink = social.link;
-                            }
-                        }                        
-                    }
-                );
+                            
+                        });
 
-            }
-           
-        },
+                    } else if (e.type=='mouseleave') {
 
-        socialMouseHandler(socialId, currentUserId, e) { 
+                        let elem = e.relatedTarget;
 
-            if (this.windowWidth > 480) {
-                
-                if (e.type=='mouseenter') {
-
-                   this.currentSocialId = socialId; 
-
-                   this.users[currentUserId].userSocials.map(social => { 
-                        if (this.currentSocialId) {
-
-                            if (social.id !== this.currentSocialId) {
-                                social.isActive = false;
-                            }
-                            else {
-                                social.isActive = !social.isActive;
-                                this.isActiveSocial = social.isActive;
-                                this.activeSocialLink = social.link;
-                            }
+                        while(elem && elem != this.socEdit) {
+                            elem = elem.parentElement;
                         }
                         
-                    });
+                        if (elem !== this.socEdit) {
+                            this.users[currentUserId].userSocials.map(social => { 
+                                social.isActive = false;
+                            });
+                            this.isActiveSocial = false;
+                        }
 
-                } else if (e.type=='mouseleave') {
-
-                    let elem = e.relatedTarget;
-
-                    while(elem && elem != this.socEdit) {
-                        elem = elem.parentElement;
-                    }
-                    
-                    if (elem !== this.socEdit) {
-                        this.users[currentUserId].userSocials.map(social => { 
-                            social.isActive = false;
-                        });
-                        this.isActiveSocial = false;
                     }
 
                 }
+            },
 
-            }
-        },
+            cardClickHandler(cardId, e) {
 
-        cardClickHandler(cardId, e) {
+                this.openBigCardSlider = true;
+                this.idCurrentPhoto = cardId-1;
+                this.flickityOptions.initialIndex = this.idCurrentPhoto;
+            },
 
-            this.openBigCard = true;
-            this.idCurrentPhoto = cardId-1;
+            checkWidth() {
+                this.windowWidth = window.innerWidth;
+
+                if (this.windowWidth > 480) {
+
+                    this.isActiveSocial = false;
+                    this.users[idCurrentUser].userSocials.map(social => 
+                        {
+                            social.isActive = false;
+                        }
+                    );
+                }
+            },
             
-        },
+            scrollToTop() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            },
 
-        checkWidth() {
-            this.windowWidth = window.innerWidth;
-
-            if (this.windowWidth > 480) {
-
-                this.isActiveSocial = false;
-                this.users[idCurrentUser].userSocials.map(social => 
-                    {
-                        social.isActive = false;
-                    }
-                );
+            next() {
+                this.$refs.flickity.next();
+            },
+                
+            previous() {
+                this.$refs.flickity.previous();
             }
         },
-        
-        scrollToTop() {
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
-            });
-        }
-    },
 
-    created() {
-        window.addEventListener('resize', this.checkWidth);        
-    },
+        created() {
+            window.addEventListener('resize', this.checkWidth);        
+        },
 
-    mounted() {
-        this.windowWidth = window.innerWidth;
-    },
-        
+        mounted() {
+            this.windowWidth = window.innerWidth;
+        },
+            
     }
 
 </script>
@@ -1133,10 +1173,48 @@
             }
         }
 
-        &__big-card {
+        &__big-card-slider {
             @include popup-container;
         }
-            
+
+        .big-card-slider {
+            @include popup;
+            overflow: unset;
+            background-color: transparent;
+            position: relative;
+
+            &__close {
+                position: absolute;
+                right: -36px;
+                top: -36px;
+                z-index: 15;
+            }
+
+            &__control {
+                position: absolute;
+                display: none;
+
+                @include tablets {
+                    display: block;
+                    top: 190px;
+                    z-index: 15;
+                    background-repeat: no-repeat;
+                    background-position: 50%;
+                    background-image: svg-load('arrow_left.svg', fill=rgba(#a0a09f, 0.99));
+                    background-size: 15px;
+                    height: 30px;
+                    width: 20px;            
+
+                    &_prev {
+                        left: -25px;
+                    }
+                    &_next {
+                        right: -25px;
+                        transform: rotate(180deg);
+                    }
+                }
+            }
+        }
     }
 
 
