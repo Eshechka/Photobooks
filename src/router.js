@@ -24,4 +24,9 @@ const routes = [
 
 
 // export default new VueRouter({ routes, mode: 'history' });
-export default new VueRouter({ routes });
+export default new VueRouter({ 
+    routes, 
+    scrollBehavior (to, from, savedPosition) {
+        return { x: 0, y: 0 }
+    }
+});

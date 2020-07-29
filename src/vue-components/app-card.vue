@@ -20,16 +20,18 @@
 
             <div class="card__desc">
                 <div class="card__desc-title"> {{cardObject.title}} </div>
-                <div class="card__comments-likes-wrapper">					
-                    <button type="button" class="card__button card__button_comments">{{cardObject.comments}}</button>
-                    <button type="button" class="card__button card__button_likes">{{cardObject.likes}}</button>
+
+                <div class="card__signs-wrapper">
+                    <div class="card__signs card__signs_comments card__signs_mini">{{cardObject.comments}}</div>
+                    <div class="card__signs card__signs_likes card__signs_mini">{{cardObject.likes}}</div>
                 </div>
+
             </div>
 
         </div>
 
-        <div class="card__folder">
-            <div class="card__folder-name">{{cardObject.albumName}}</div>
+        <div class="card__signs-wrapper card__signs-wrapper_toright">
+            <div class="card__signs card__signs_name">{{cardObject.albumName}}</div>
         </div>
 
     </div>	
@@ -175,41 +177,43 @@
             font-family: 'ProximaNova-Light';
             font-size: 14px;
         }
-        &__button {
-            font-family: 'Panton Bold';
-            font-size: 16px;
-            color: $color-text;
-            padding-left: 30px;
 
-            background-repeat: no-repeat;
-            background-size: 20px;
-            background-position: 0 50%;
+        &__signs-wrapper {
+            padding: 10px;
+            padding-left: 0;
 
+            &_toright {
+                align-self: flex-end;
+                padding-left: 10px;
+            }	
+        }
+
+        &__signs {
+                display: inline-block;
+                padding-left: 30px;
+                color: $color-text;
+                background-repeat: no-repeat;
+                background-size: 20px;
+                background-position: 0 50%;
+
+                font-family: 'Proxima Nova Semibold';
+                font-size: 14px;
+
+                &_mini {
+                    font-family: 'Panton Bold';
+                    font-size: 16px;
+                    margin-right: 15px;
+                }
+            
+            &_name {                
+                background-image: svg-load('album.svg', fill=rgba(#{$color-text}, 0.2));                
+            }
             &_comments {
                 background-image: svg-load('comments.svg', fill=rgba(#{$color-text}, 0.2));
             } 
             &_likes {
                 background-image: svg-load('heart.svg', fill=rgba(#{$color-text}, 0.2));
             }
-        }
-
-        &__folder {
-            text-align: right;	
-            padding: 10px;		
-        }
-
-        &__folder-name {
-            display: inline-block;
-            padding-left: 30px;
-
-            background-repeat: no-repeat;
-            background-size: 20px;
-            background-position: 0 50%;
-            
-            background-image: svg-load('album.svg', fill=rgba(#{$color-text}, 0.2));
-            
-            font-family: 'Proxima Nova Semibold';
-            font-size: 14px;
         }
 
     }

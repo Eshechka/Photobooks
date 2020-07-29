@@ -21,7 +21,7 @@
                         to="/1"
                         @click.prevent
                     >На главную</router-link>
-                    <!-- ПОТОМ ИСПРАВИТЬ НА to="/" -->
+                    <!-- ПОТОМ ИСПРАВИТЬ НА to="/" !!!!!!!!!! -->
                 </div>
 
 					<div class="header__user" :class="{header__user_scrolled : isScrolledHeader}">
@@ -120,8 +120,9 @@
 						<appMyPhoto 
                             :myPhotoObject="myPhoto"
                             @clickEditMyPhoto="openEditPhoto=true"
-                            @clickMyPhoto="myPhotoClickHandler"
+                            @clickMyPhoto="openBigMyPhoto=true"
                         ></appMyPhoto>
+                            <!-- @clickMyPhoto="myPhotoClickHandler" -->
 					</li>
 
 
@@ -238,14 +239,39 @@
 				</ul>
 			</div>
 
-            <div class="my-photos__big-card" v-if="openBigMyPhoto">
+            
 
-                <appBigCard 
-                    :cardObject="albums[idCurrentAlbum].photos[idCurrentClickedPhoto]"
-                    @clickCloseBigCard="openBigMyPhoto=false"
-                >
-                </appBigCard>
+            <div class="my-photos__big-card-slider" v-if="openBigMyPhoto">
 
+                <div class="big-card-slider">
+
+                    <flickity ref="flickity" :options="flickityOptions" class="big-card-slider__container">
+
+                        <appBigCard v-for="bigCard in albums[idCurrentAlbum].photos" :key="bigCard.id"
+                            :cardObject="bigCard">                                                               
+                        </appBigCard>
+
+                        <!-- <appBigCard 
+                            :cardObject="albums[idCurrentAlbum].photos[idCurrentClickedPhoto]"
+                            @clickCloseBigCard="openBigMyPhoto=false">
+                        </appBigCard> -->
+                        
+                    </flickity>
+
+                    <div class="big-card-slider__close">
+                        <button class="round-button round-button_close-transparent" type="button"
+                            @click="openBigMyPhoto=false"
+                        ></button>
+                    </div>
+
+                    <button type="button" class="big-card-slider__control big-card-slider__control_prev"
+                        @click="previous()"
+                    ></button>
+                    <button type="button" class="big-card-slider__control big-card-slider__control_next"
+                        @click="next()"
+                    ></button>
+
+                </div>
             </div>
 
 		</section>
@@ -275,9 +301,12 @@
 
 
 <script>
-    import appMyPhoto from '../vue-components/app-my-photo.vue'
-    import appBigCard from '../vue-components/app-big-card.vue'
-    import dataJSON_albums from '../json/albums.json'
+    import appMyPhoto from '../vue-components/app-my-photo.vue';
+    import appBigCard from '../vue-components/app-big-card.vue';
+    import dataJSON_albums from '../json/albums.json';
+    
+    import Flickity from 'vue-flickity';
+
 
     const renderer = file => {
         const reader = new FileReader();
@@ -298,6 +327,7 @@
 
         components: {
             appMyPhoto, appBigCard,
+            Flickity,
         },
 
         data() {
@@ -305,20 +335,30 @@
 
                 albums: dataJSON_albums,
 
-                openEditPhoto: !!false,
-                openAddPhoto: !!false,
-                openEditHeader: !!false,
-                openBigMyPhoto: !!false,
+                openEditPhoto: false,
+                openAddPhoto: false,
+                openEditHeader: false,
+                openBigMyPhoto: false,
 
-                isScrolledHeader: !!false,
-                isPhotosLoaded: !!false,
+                isScrolledHeader: false,
+                isPhotosLoaded: false,
 
-                idCurrentClickedPhoto: 0,
+                // idCurrentClickedPhoto: 0,
 
                 userAvatarUrl: require('../img/anton.png').default,
                 userName: "Антон Черепов",
 
                 renderedPhotos: [],
+
+                flickityOptions: {
+                    initialIndex: this.idCurrentPhoto,
+                    prevNextButtons: false,
+                    pageDots: false,
+                    wrapAround: true,
+                    freeScroll: false,
+                    groupCells: true,
+                    contain: true
+                },
             }
         },
 
@@ -357,12 +397,12 @@
                 })                
             },
 
-            myPhotoClickHandler(myPhotoId) {
+            // myPhotoClickHandler(myPhotoId) {
                 
-                this.openBigMyPhoto = true;
-                this.idCurrentClickedPhoto = myPhotoId-1;
+            //     this.openBigMyPhoto = true;
+            //     this.idCurrentClickedPhoto = myPhotoId-1;
 
-            },
+            // },
 
             scrollToTop() {
                 window.scrollTo({
@@ -383,6 +423,14 @@
                     }
                     
             },
+
+            next() {
+                this.$refs.flickity.next();
+            },
+                
+            previous() {
+                this.$refs.flickity.previous();
+            }
         },
 
         mounted() {
@@ -752,10 +800,50 @@
             transform: translateY(-50%);
         }
 
-        &__big-card {
+        &__big-card-slider {
             @include popup-container;
         }
 
+    }
+
+
+    .big-card-slider {
+        @include popup;
+        overflow: unset;
+        background-color: transparent;
+        position: relative;
+
+        &__close {
+            position: absolute;
+            right: -36px;
+            top: -36px;
+            z-index: 15;
+        }
+
+        &__control {
+            position: absolute;
+            display: none;
+
+            @include tablets {
+                display: block;
+                top: 190px;
+                z-index: 15;
+                background-repeat: no-repeat;
+                background-position: 50%;
+                background-image: svg-load('arrow_left.svg', fill=rgba(#a0a09f, 0.99));
+                background-size: 15px;
+                height: 30px;
+                width: 20px;            
+
+                &_prev {
+                    left: -25px;
+                }
+                &_next {
+                    right: -25px;
+                    transform: rotate(180deg);
+                }
+            }
+        }
     }
 
     

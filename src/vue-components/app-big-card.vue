@@ -36,10 +36,14 @@
 
                         <div class="big-card__comments-topgroup">
                             <h4 class="big-card__comments-title">Комментарии</h4>
-                            <button type="button" class="big-card__button-tick"></button>
+                            <button type="button" class="big-card__button-tick"
+                                @click="myCommentVisibleHandle()"
+                                ref='my-comment-toggler'
+                            >
+                            </button>
                         </div>
                         
-                        <div class="big-card__my-comment">
+                        <div class="big-card__my-comment" v-if="isVisibleMyComment">
 
                                 <div class="big-card__my-comment-avatar-wrapper">
                                     <img class="big-card__my-comment-avatar" :src="userAvatarUrl" alt="my avatar">
@@ -104,6 +108,7 @@
             comments: dataJSON_comments,
             isActiveLike: this.cardObject.isLikedByMe,
 
+            isVisibleMyComment: true,
           }
 
         },
@@ -120,6 +125,9 @@
                 
                 return commentForThisCard;
             },
+            myCommentToggler() {
+                return this.$refs['my-comment-toggler'];
+            },
 
         },
 
@@ -129,6 +137,13 @@
                 if (this.isActiveLike) this.cardObject.likes++;
                 else this.cardObject.likes--;
                 // запись в cards значения  this.cardObject.likes !!!!!
+            },
+            myCommentVisibleHandle() {
+                this.isVisibleMyComment=!this.isVisibleMyComment;
+                if (this.isVisibleMyComment)
+                    this.myCommentToggler.style.transform = 'rotate(90deg)';
+                else
+                    this.myCommentToggler.style.transform = 'rotate(270deg)';
             },
 
         },

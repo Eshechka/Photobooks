@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
 
-        <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigCardSlider || openAddAlbum || openEditProfile"></div>
+        <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigCardSlider || openAddAlbum || openEditProfile || openEditMyAlbum"></div>
         <div class="wrapper__overlay wrapper__overlay_white" v-if="openEditHeader"></div>
 
         <header class="header"
@@ -121,7 +121,9 @@
                                 
                                 <div class="form-edit-profile__buttons">
                                     <button class="site-button" type="submit">Сохранить</button>
-                                    <button class="site-button site-button_theme-just-text" type="button">Отменить</button>
+                                    <button class="site-button site-button_theme-just-text" type="button"
+                                        @click="openEditProfile=false"
+                                    >Отменить</button>
                                 </div>
 
                             </form>
@@ -188,7 +190,9 @@
 
                                                     <div class="soc-edit__buttons">
                                                         <button type="submit" class="site-button site-button_theme_light">Сохранить</button>
-                                                        <button type="button" class="site-button site-button_theme-just-text">Отменить</button>
+                                                        <button type="button" class="site-button site-button_theme-just-text"
+                                                            @click="openEditHeader=false"
+                                                        >Отменить</button>
                                                     </div>
 
                                                 </form>
@@ -313,8 +317,9 @@
                 <ul class="my-albums__albums-list">
                     <li v-for="myAlbum in myAlbums" :key="myAlbum.id" class="my-albums__albums-item">
                         <appMyalbum 
-                            :myAlbumObject="myAlbum">                            
-                        </appMyalbum>
+                            :myAlbumObject="myAlbum"
+                            @clickEditMyAlbum="openEditMyAlbum=true"
+                        ></appMyalbum>
                     </li>
                 </ul> 
 
@@ -360,6 +365,61 @@
                                     <button class="site-button" type="submit">Сохранить</button>
                                     <button class="site-button site-button_theme-just-text" type="button"
                                         @click="openAddAlbum=false"
+                                    >Отменить</button>
+                                    <button class="round-button round-button_delete" type="button">Удалить</button>
+                                </div>
+
+                            </form>
+                        </div>      
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="my-albums__edit-album" v-if="openEditMyAlbum">
+                <div class="edit-album">
+                    <div class="edit-album__card">
+
+                        <div class="edit-album__topgroup">
+                            <h4 class="edit-album__title">Отредактировать альбом</h4>
+                            <button type="button" class="edit-album__button edit-album__button_close"
+                                @click="openEditMyAlbum=false"
+                            ></button>
+                        </div>
+                        
+                        <div class="edit-album__form">
+                            <form class="form-editAlbum">
+
+                                <label class="form-editAlbum__label">Название альбома
+                                    <input class="form-editAlbum__input" type="text" placeholder="Название альбома"
+                                        v-model="myEditAlbumObject.name"
+                                    >
+                                </label>
+
+                                <label class="form-editAlbum__label">Описание
+                                    <textarea class="form-editAlbum__input form-editAlbum__input_textarea" cols="20" rows="5" placeholder="Описание альбома"
+                                        v-model="myEditAlbumObject.desc"
+                                    ></textarea>
+                                </label>
+                        
+
+                                <div class="form-editAlbum__cover">
+
+                                    <div class="form-editAlbum__cover-img-wrapper">
+                                        <img class="form-editAlbum__cover-img" :src="users[idCurrentUser].urlCover" alt="card avatar">
+                                    </div>
+
+                                    <div class="form-editAlbum__cover-button">
+                                        <button class="site-button site-button_theme-light" type="button">Загрузить обложку</button>
+                                        <div class="form-editAlbum__notice-size">(файл должен быть размером не более 1024 КБ)</div>
+                                    </div>
+
+                                </div>
+                                
+                                <div class="form-editAlbum__buttons">
+                                    <button class="site-button" type="submit">Сохранить</button>
+                                    <button class="site-button site-button_theme-just-text" type="button"
+                                        @click="openEditMyAlbum=false"
                                     >Отменить</button>
                                     <button class="round-button round-button_delete" type="button">Удалить</button>
                                 </div>
@@ -421,6 +481,7 @@
                 openAddAlbum: false,
                 openEditProfile: false,
                 openEditHeader: false,
+                openEditMyAlbum: false,
 
                 urlInlineSvgSprite: require('../img/spriteIcons.svg').default,
 
@@ -435,6 +496,11 @@
                 myAlbums: dataJSON_albums,
                 socials: dataJSON_socials,
                 users: dataJSON_users,
+
+                myEditAlbumObject: {
+                    name: "Название альбома",
+                    desc: "Описание альбома",
+                },
 
                 flickityOptions: {
                     initialIndex: this.idCurrentPhoto,
@@ -881,6 +947,10 @@
 
             &_close {
                 background-image: svg-load('close.svg', fill=rgba(#{$color-text}, 0.4));
+
+                &:hover {
+                    background-image: svg-load('close.svg', fill=rgba(#{$color-text}, 0.8));
+                }
             }
         }
 
@@ -1177,41 +1247,43 @@
             @include popup-container;
         }
 
-        .big-card-slider {
-            @include popup;
-            overflow: unset;
-            background-color: transparent;
-            position: relative;
+    }
 
-            &__close {
-                position: absolute;
-                right: -36px;
-                top: -36px;
+
+    .big-card-slider {
+        @include popup;
+        overflow: unset;
+        background-color: transparent;
+        position: relative;
+
+        &__close {
+            position: absolute;
+            right: -36px;
+            top: -36px;
+            z-index: 15;
+        }
+
+        &__control {
+            position: absolute;
+            display: none;
+
+            @include tablets {
+                display: block;
+                top: 190px;
                 z-index: 15;
-            }
+                background-repeat: no-repeat;
+                background-position: 50%;
+                background-image: svg-load('arrow_left.svg', fill=rgba(#a0a09f, 0.99));
+                background-size: 15px;
+                height: 30px;
+                width: 20px;            
 
-            &__control {
-                position: absolute;
-                display: none;
-
-                @include tablets {
-                    display: block;
-                    top: 190px;
-                    z-index: 15;
-                    background-repeat: no-repeat;
-                    background-position: 50%;
-                    background-image: svg-load('arrow_left.svg', fill=rgba(#a0a09f, 0.99));
-                    background-size: 15px;
-                    height: 30px;
-                    width: 20px;            
-
-                    &_prev {
-                        left: -25px;
-                    }
-                    &_next {
-                        right: -25px;
-                        transform: rotate(180deg);
-                    }
+                &_prev {
+                    left: -25px;
+                }
+                &_next {
+                    right: -25px;
+                    transform: rotate(180deg);
                 }
             }
         }
@@ -1294,7 +1366,7 @@
             width: 100%;
             text-align: center;
 
-            {
+            @include tablets {
                 text-align: left;
             }
         }
@@ -1337,6 +1409,9 @@
         &__add-album {
             @include popup-container;
         }
+        &__edit-album {
+            @include popup-container;
+        }
         
     }
 
@@ -1374,6 +1449,10 @@
 
             &_close {
                 background-image: svg-load('close.svg', fill=rgba(#{$color-text}, 0.4));
+
+                &:hover {
+                    background-image: svg-load('close.svg', fill=rgba(#{$color-text}, 0.8));
+                }
             }
         }
 
@@ -1381,6 +1460,137 @@
 
     
     .form-addAlbum {
+        display: flex;
+        flex-direction: column;
+        background-color: $color-white;
+
+        &__label {
+            font-family: 'Proxima Nova Semibold';
+            font-size: 14px;
+            padding: 15px 10px 10px;
+
+            @include tablets {
+                margin-left: 80px;
+                margin-right: 20px;
+            }
+        }
+
+        &__input {
+            @include popup-input;
+
+            margin-top: 5px;
+
+            &_textarea {
+                resize: none;
+            }
+        }
+
+         &__cover {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+
+            @include tablets {
+                margin-bottom: 20px;
+                margin-left: 50px;
+                margin-right: 20px;                
+            }
+        }
+
+        &__cover-img-wrapper {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+        &__cover-img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+
+        &__cover-button {
+             margin-left: 18px;
+             display: flex;
+             align-items: center;
+
+            @include tablets {
+                margin-left: 20px;
+                margin-right: 20px;                
+            }
+        }
+
+        &__notice-size {
+            display: none;
+            width: 40%;
+            font-family: 'ProximaNova-LightIt';
+            font-size: 14px;
+            line-height: 14px;
+            padding: 10px 0;
+
+            @include tablets {
+                display: block;
+            }
+
+        }
+
+        &__buttons {
+            background-color: #f2f2f2;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+
+            @include tablets {
+                font-size: 14px;
+            }
+        }
+    }
+    
+
+    .edit-album {
+
+        @include popup;
+
+        &__card {
+            min-width: 300px;
+            background-color: #f2f2f2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        &__topgroup {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 10px;
+        }
+
+        &__title {
+            font-family: 'Panton-Bold';
+            font-size: 21px;
+            line-height: 21px;
+        }
+
+        &__button {
+            width: 20px;
+            height: 20px;
+            background-repeat: no-repeat;
+            background-size: 20px;
+            background-position: 50%;
+
+            &_close {
+                background-image: svg-load('close.svg', fill=rgba(#{$color-text}, 0.4));
+
+                &:hover {
+                    background-image: svg-load('close.svg', fill=rgba(#{$color-text}, 0.8));
+                }
+            }
+        }
+
+    }
+
+    
+    .form-editAlbum {
         display: flex;
         flex-direction: column;
         background-color: $color-white;

@@ -13,7 +13,9 @@
 
         
         <div class="my-album__folder">
-            <button type="button" class="my-album__button my-album__button_edit"></button>
+            <button type="button" class="my-album__button my-album__button_edit"
+				 @click="$emit('clickEditMyAlbum', myAlbumObject.id, $event)"
+			></button>
 			<router-link  class="my-album__folder-name" 
 				:to="'/album/'+myAlbumObject.id"
 				@click.prevent
@@ -35,7 +37,7 @@
 
 		data() {
 			return {
-				previewUrl: this.getPreviewUrl(),
+				previewUrl: this.getPreviewUrl(),				
 			}
 		},
 		methods: {
