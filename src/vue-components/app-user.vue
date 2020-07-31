@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
 
-        <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigCardSlider || openAddAlbum || openEditProfile || openEditMyAlbum"></div>
+        <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigCardSlider || openEditProfile || openChangeMyAlbum"></div>
         <div class="wrapper__overlay wrapper__overlay_white" v-if="openEditHeader"></div>
 
         <header class="header"
@@ -308,8 +308,9 @@
                 <div class="my-albums__topgroup">
                     <h2 class="my-albums__title">Мои альбомы</h2>
                     <div class="my-albums__button-plus">
-                        <button class="round-button round-button_plus"
-                            @click="openAddAlbum=true"
+                        <button class="round-button round-button_plus"                            
+                            @click="openChangeMyAlbum=true; 
+                                    albumChangeMode='add'"
                         ></button>
                     </div>
                 </div>
@@ -317,118 +318,22 @@
                 <ul class="my-albums__albums-list">
                     <li v-for="myAlbum in myAlbums" :key="myAlbum.id" class="my-albums__albums-item">
                         <appMyalbum 
-                            :myAlbumObject="myAlbum"
-                            @clickEditMyAlbum="openEditMyAlbum=true"
+                            @clickEditMyAlbum="clickEditAlbumHandler"
+                            :myAlbumObject="myAlbum"                            
                         ></appMyalbum>
                     </li>
                 </ul> 
 
             </div>
 
-            <div class="my-albums__add-album" v-if="openAddAlbum">
-                <div class="add-album">
-                    <div class="add-album__card">
 
-                        <div class="add-album__topgroup">
-                            <h4 class="add-album__title">Добавить альбом</h4>
-                            <button type="button" class="add-album__button add-album__button_close"
-                                @click="openAddAlbum=false"
-                            ></button>
-                        </div>
-                        
-                        <div class="add-album__form">
-                            <form class="form-addAlbum">
+            <div class="my-albums__change-album" v-if="openChangeMyAlbum">
+                <appChangeAlbum
+                    @clickCloseChangeMyAlbum="openChangeMyAlbum=false"
+                    :myAlbumObject="currentAlbum"                    
+                    :mode="albumChangeMode"
+                ></appChangeAlbum>
 
-                                <label class="form-addAlbum__label">Название альбома
-                                    <input class="form-addAlbum__input" type="text" placeholder="Мой альбом">
-                                </label>
-
-                                <label class="form-addAlbum__label">Описание
-                                    <textarea class="form-addAlbum__input form-addAlbum__input_textarea" cols="20" rows="5" placeholder="Описание альбома"></textarea>
-                                </label>
-                        
-
-                                <div class="form-addAlbum__cover">
-
-                                    <div class="form-addAlbum__cover-img-wrapper">
-                                        <img class="form-addAlbum__cover-img" :src="users[idCurrentUser].urlCover" alt="card avatar">
-                                    </div>
-
-                                    <div class="form-addAlbum__cover-button">
-                                        <button class="site-button site-button_theme-light" type="button">Загрузить обложку</button>
-                                        <div class="form-addAlbum__notice-size">(файл должен быть размером не более 1024 КБ)</div>
-                                    </div>
-
-                                </div>
-                                
-                                <div class="form-addAlbum__buttons">
-                                    <button class="site-button" type="submit">Сохранить</button>
-                                    <button class="site-button site-button_theme-just-text" type="button"
-                                        @click="openAddAlbum=false"
-                                    >Отменить</button>
-                                    <button class="round-button round-button_delete" type="button">Удалить</button>
-                                </div>
-
-                            </form>
-                        </div>      
-
-                    </div>
-                </div>
-            </div>
-
-            <div class="my-albums__edit-album" v-if="openEditMyAlbum">
-                <div class="edit-album">
-                    <div class="edit-album__card">
-
-                        <div class="edit-album__topgroup">
-                            <h4 class="edit-album__title">Отредактировать альбом</h4>
-                            <button type="button" class="edit-album__button edit-album__button_close"
-                                @click="openEditMyAlbum=false"
-                            ></button>
-                        </div>
-                        
-                        <div class="edit-album__form">
-                            <form class="form-editAlbum">
-
-                                <label class="form-editAlbum__label">Название альбома
-                                    <input class="form-editAlbum__input" type="text" placeholder="Название альбома"
-                                        v-model="myEditAlbumObject.name"
-                                    >
-                                </label>
-
-                                <label class="form-editAlbum__label">Описание
-                                    <textarea class="form-editAlbum__input form-editAlbum__input_textarea" cols="20" rows="5" placeholder="Описание альбома"
-                                        v-model="myEditAlbumObject.desc"
-                                    ></textarea>
-                                </label>
-                        
-
-                                <div class="form-editAlbum__cover">
-
-                                    <div class="form-editAlbum__cover-img-wrapper">
-                                        <img class="form-editAlbum__cover-img" :src="users[idCurrentUser].urlCover" alt="card avatar">
-                                    </div>
-
-                                    <div class="form-editAlbum__cover-button">
-                                        <button class="site-button site-button_theme-light" type="button">Загрузить обложку</button>
-                                        <div class="form-editAlbum__notice-size">(файл должен быть размером не более 1024 КБ)</div>
-                                    </div>
-
-                                </div>
-                                
-                                <div class="form-editAlbum__buttons">
-                                    <button class="site-button" type="submit">Сохранить</button>
-                                    <button class="site-button site-button_theme-just-text" type="button"
-                                        @click="openEditMyAlbum=false"
-                                    >Отменить</button>
-                                    <button class="round-button round-button_delete" type="button">Удалить</button>
-                                </div>
-
-                            </form>
-                        </div>      
-
-                    </div>
-                </div>
             </div>
         </section>
 
@@ -460,6 +365,7 @@
     import appCard from '../vue-components/app-card.vue'
     import appBigCard from '../vue-components/app-big-card.vue'
     import appMyalbum from '../vue-components/app-my-album.vue'
+    import appChangeAlbum from '../vue-components/app-change-album.vue'
 
     import dataJSON_cards from '../json/cards.json'
     import dataJSON_albums from '../json/albums.json'
@@ -471,17 +377,16 @@
     export default {   
 
         components: {
-        appCard, appBigCard, appMyalbum,
-        Flickity,
+            appCard, appBigCard, appMyalbum, appChangeAlbum,
+            Flickity,
         },
 
         data() {
             return {
                 openBigCardSlider: false,
-                openAddAlbum: false,
                 openEditProfile: false,
                 openEditHeader: false,
-                openEditMyAlbum: false,
+                openChangeMyAlbum: false,
 
                 urlInlineSvgSprite: require('../img/spriteIcons.svg').default,
 
@@ -490,6 +395,8 @@
                 windowWidth: 0,
                 activeSocialLink: '',
 
+                albumChangeMode: '',
+
                 idCurrentPhoto: 0,
 
                 cards: dataJSON_cards,
@@ -497,9 +404,24 @@
                 socials: dataJSON_socials,
                 users: dataJSON_users,
 
-                myEditAlbumObject: {
-                    name: "Название альбома",
-                    desc: "Описание альбома",
+  
+                currentAlbum: {
+                    // id: 0,
+                    // previewId: 0,
+                    // name: 'Название альбома',
+                    // desc: 'Описание альбома',
+                    // photos: [
+                    //     {
+                    //         "id": 1,
+                    //         "photo": "../img/photo-img1.png",
+                    //         "authorId": 2, 
+                    //         "authorName": "Александра Соколова", 
+                    //         "authorPhoto": "../img/aleksandra.png", 
+                    //         "comments": 9,
+                    //         "likes": 15,
+                    //         "photoName": "Путешествие на лодке по озеру"
+                    //     },
+                    // ],
                 },
 
                 flickityOptions: {
@@ -616,6 +538,14 @@
                 this.openBigCardSlider = true;
                 this.idCurrentPhoto = cardId-1;
                 this.flickityOptions.initialIndex = this.idCurrentPhoto;
+            },
+
+            clickEditAlbumHandler(clickedAlbumId) {
+                this.openChangeMyAlbum=true; 
+                this.albumChangeMode='edit';
+                console.log(clickedAlbumId);
+                
+                this.currentAlbum={...clickedAlbumId};
             },
 
             checkWidth() {
@@ -1406,17 +1336,17 @@
             }
         }
 
-        &__add-album {
+        /* &__add-album {
             @include popup-container;
-        }
-        &__edit-album {
+        } */
+        &__change-album {
             @include popup-container;
         }
         
     }
 
     
-    .add-album {
+    /* .add-album {
 
         @include popup;
 
@@ -1544,9 +1474,9 @@
                 font-size: 14px;
             }
         }
-    }
+    } */
     
-
+/* 
     .edit-album {
 
         @include popup;
@@ -1675,7 +1605,7 @@
                 font-size: 14px;
             }
         }
-    }
+    } */
 
 
     .footer {
