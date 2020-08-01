@@ -57,7 +57,6 @@
 
 
 <script>
-    import dataJSON_albums from '../json/albums.json';
 
     export default {
 
@@ -68,11 +67,9 @@
 
         data() {
             return {
-                // albums: dataJSON_albums,
-                // myChangeCurrentObject: this.myAlbumObject,
-
                 title: 'Добавить альбом',
                 coverTitle: "Загрузить обложку",
+                coverImg: require("../img/no_album_cover.jpg").default,
 
                 myChangeCurrentObject: {
                     id: 0,
@@ -81,13 +78,6 @@
                     previewId: 0,
                     photos: [],
                 },
-
-                coverImg: require("../img/no_album_cover.jpg").default,
-                // title: this.mode==='add' ? "Добавить альбом" : "Отредактировать альбом",
-                // coverTitle: this.mode==='add' ? "Загрузить обложку" : "Редактировать обложку",
-                
-                // coverImg: this.mode==='add' ? require("../img/no_album_cover.jpg").default : this.myAlbumObject.photos[0].photo,
-
             }
         },
 
@@ -122,7 +112,6 @@
             this.title = 'Отредактировать альбом';
             this.coverTitle = "Редактировать обложку";
             this.coverImg = currentCoverImg ? currentCoverImg.photo : this.myAlbumObject.photos[0].photo;
-
         },
 
       },

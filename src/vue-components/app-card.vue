@@ -4,7 +4,7 @@
         <div class="card__img-card">
             <img  class="card__img" :src="cardObject.photo" alt="card image">
             <div class="card__img-overlay"
-                @click="$emit('clickCard', cardObject.id, $event)"
+                @click="$emit('clickCard', cardObject.id)"
             ></div>
         </div>
 

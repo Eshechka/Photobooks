@@ -18,7 +18,7 @@
 			<button type="button" class="my-photo__button my-photo__button_edit"
                 @click="$emit('clickEditMyPhoto', myPhotoObject.id)"
             ></button>
-			<div class="my-photo__name"> {{myPhotoObject.photoName}} </div>			
+			<div class="my-photo__name"> {{myPhotoObject.title}} </div>			
 		</div>
 
 	

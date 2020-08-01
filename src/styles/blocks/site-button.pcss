@@ -10,7 +10,7 @@
 
 	margin-right: 20px;
 
-	&:hover {			
+	&:not(.disabled):hover {			
 		background-color: rgba($color-blue-hover, 1);
 	}
 
@@ -24,7 +24,14 @@
 		color: $color-blue;
 		border: 2px solid $color-blue;
 
-		&:hover {
+		&.disabled {
+			// background-color: rgba($color-white, 0.3);
+			color: rgba($color-blue, 0.3);
+			border: 2px solid rgba($color-blue, 0.3);
+			cursor: unset;
+		}
+
+		&:not(.disabled):hover {
 			background-color: $color-blue;
 			color: $color-white;
 		}
@@ -38,7 +45,7 @@
 		min-width: unset;
 		min-height: unset;
 
-		&:hover {			
+		&:not(.disabled):hover {			
 			background-color: transparent;
 			color: rgba($color-blue-hover, 1);
 		}

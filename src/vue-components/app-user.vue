@@ -253,7 +253,7 @@
                 <h2 class="new__title">Новое в мире</h2>
 
                 <ul class="new__card-list">
-                    <li v-for="card in cards" :key="card.id" class="new__card-item">
+                    <li v-for="card in loadedCards" :key="card.id" class="new__card-item">
                         <appCard
                             :cardObject="card"
                             @clickCard="cardClickHandler"
@@ -263,7 +263,10 @@
                 </ul> 
 
                 <div class="new__button-show-more">
-                    <button type="button" class="site-button site-button_theme-light">Показать ещё</button>
+                    <button type="button" class="site-button site-button_theme-light"
+                        @click="loadedCardsPush(4)"
+                        :class="{disabled : !amountLoadedPhotos}"
+                    >Показать ещё</button>
                 </div>
 
             </div>
@@ -404,25 +407,10 @@
                 socials: dataJSON_socials,
                 users: dataJSON_users,
 
+                loadedCards: [],
+                amountLoadedPhotos: 4,
   
-                currentAlbum: {
-                    // id: 0,
-                    // previewId: 0,
-                    // name: 'Название альбома',
-                    // desc: 'Описание альбома',
-                    // photos: [
-                    //     {
-                    //         "id": 1,
-                    //         "photo": "../img/photo-img1.png",
-                    //         "authorId": 2, 
-                    //         "authorName": "Александра Соколова", 
-                    //         "authorPhoto": "../img/aleksandra.png", 
-                    //         "comments": 9,
-                    //         "likes": 15,
-                    //         "photoName": "Путешествие на лодке по озеру"
-                    //     },
-                    // ],
-                },
+                currentAlbum: {},
 
                 flickityOptions: {
                     initialIndex: this.idCurrentPhoto,
@@ -533,18 +521,19 @@
                 }
             },
 
-            cardClickHandler(cardId, e) {
-
+            cardClickHandler(cardId) {
+                let photoIndex = 0;
                 this.openBigCardSlider = true;
-                this.idCurrentPhoto = cardId-1;
+                this.cards.find(card => {
+                    if (card.id !== cardId) photoIndex++;
+                    else this.idCurrentPhoto = photoIndex;
+                });                
                 this.flickityOptions.initialIndex = this.idCurrentPhoto;
             },
 
             clickEditAlbumHandler(clickedAlbumId) {
                 this.openChangeMyAlbum=true; 
                 this.albumChangeMode='edit';
-                console.log(clickedAlbumId);
-                
                 this.currentAlbum={...clickedAlbumId};
             },
 
@@ -569,6 +558,17 @@
                 });
             },
 
+            loadedCardsPush(startPos) {
+                let posTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
+                for (let i = 0; i < this.amountLoadedPhotos; i++)
+                    if (this.cards[i+startPos]) this.loadedCards.push(this.cards[i+startPos]);
+                    else this.amountLoadedPhotos = 0;
+
+                    this.$nextTick(() => {
+                        window.scrollTo({top: posTop});                        
+                    });
+            },
+
             next() {
                 this.$refs.flickity.next();
             },
@@ -584,6 +584,7 @@
 
         mounted() {
             this.windowWidth = window.innerWidth;
+            this.loadedCardsPush(0);
         },
             
     }
