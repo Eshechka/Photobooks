@@ -6,7 +6,10 @@ Vue.use(VueRouter);
 const routes = [
     {
         path: '/',
-        component: () => import('./vue-pages/app-index.vue'),
+        redirect: '/1',
+        component: () => import('./vue-components/app-user.vue'),
+
+        // component: () => import('./vue-pages/app-index.vue'),
     },
     // {
     //     path: '/login',

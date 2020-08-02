@@ -62,8 +62,6 @@ module.exports = {
 	},
 
 	plugins: [
-
-
 		new HTMLWebpackPlugin({ 
 			template: 'src/markup/index.html',
 			filename: 'index.html',
@@ -88,7 +86,6 @@ module.exports = {
 				},
 			],
 		}),
-
 
 		new MiniCssExtractPlugin({
 			filename: 'style/[name].[contenthash].css',
