@@ -26,7 +26,7 @@
                     <img class="header__avatar-img" :src='users[idCurrentUser].urlAvatar' alt="avatar">
                 </div>
                 <div class="header__info">
-                    <h1 class="header__title">{{users[idCurrentUser].name}}</h1>
+                    <h1 class="header__title">{{users[idCurrentUser].userName}}</h1>
 
                     <div class="header__text">		
                         {{users[idCurrentUser].userDesc}}		

@@ -19,7 +19,7 @@
 			<router-link  class="my-album__folder-name" 
 				:to="'/album/'+myAlbumObject.id"
 				@click.prevent
-			>{{myAlbumObject.name}}</router-link>
+			>{{myAlbumObject.albumName}}</router-link>
         </div>
 
     </div>		

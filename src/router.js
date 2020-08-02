@@ -8,8 +8,6 @@ const routes = [
         path: '/',
         redirect: '/1',
         component: () => import('./vue-components/app-user.vue'),
-
-        // component: () => import('./vue-pages/app-index.vue'),
     },
     // {
     //     path: '/login',

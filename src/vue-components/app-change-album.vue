@@ -1,8 +1,6 @@
 <template>
     <div class="change-album">
         <div class="change-album__card">
-        <!-- <pre>{{myAlbumObject}}</pre>
-            <pre>{{mode}}</pre> -->
 
             <div class="change-album__topgroup">
                 <h4 class="change-album__title">{{title}}</h4>
@@ -16,7 +14,7 @@
 
                     <label class="form-changeAlbum__label">Название альбома
                         <input class="form-changeAlbum__input" type="text" placeholder="Название альбома"
-                            v-model="myChangeCurrentObject.name"
+                            v-model="myChangeCurrentObject.albumName"
                         >
                     </label>
 
@@ -73,7 +71,7 @@
 
                 myChangeCurrentObject: {
                     id: 0,
-                    name: '',
+                    albumName: '',
                     desc: '',
                     previewId: 0,
                     photos: [],

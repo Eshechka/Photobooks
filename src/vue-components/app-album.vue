@@ -30,13 +30,13 @@
 								<img class="avatar__img" :src='userAvatarUrl' alt="avatar">
 							</div>
 						</div>
-						<h1 class="header__title" v-if="isScrolledHeader"> {{albums[idCurrentAlbum].name}} </h1>
+						<h1 class="header__title" v-if="isScrolledHeader"> {{albums[idCurrentAlbum].albumName}} </h1>
 						<h1 class="header__title" v-else > {{userName}} </h1>
 
 					</div>
 
 					<div class="header__album-desc">
-						<h2 class="header__album-title"> {{albums[idCurrentAlbum].name}} </h2>
+						<h2 class="header__album-title"> {{albums[idCurrentAlbum].albumName}} </h2>
                         
 						<div class="header__text"> {{albums[idCurrentAlbum].desc}} </div>
 					</div>
@@ -183,7 +183,7 @@
                                     <form class="form-addPhoto">
 
                                         <div class="form-addPhoto__album-name-label">Название
-                                            <span class="form-addPhoto__album-name" type="text"> {{this.albums[idCurrentAlbum].name}} </span>
+                                            <span class="form-addPhoto__album-name" type="text"> {{this.albums[idCurrentAlbum].albumName}} </span>
                                         </div>
 
                                         <div class="form-addPhoto__load-cover">
