@@ -2,6 +2,7 @@
     {
       "id": 1,
       "albumName": "Лесные прогулки",
+      "author": 2,
       "desc": "Фотографии природы леса, енотов и оленей. Как прекрасно сойти на дальней станции и пройтись по полю босиком. И чтобы никто не беспокоил бродить влюбленным в тишину. Запах мёда, лесных оленей и енотов будоражит нутро.",
       "previewId": 11,
       "photos": [
@@ -9,9 +10,6 @@
             "id": 1,
             "title": "Путешествие на лодке по озеру",
             "photo": "../img/photo-img1.png",
-            "authorId": 2, 
-            "authorName": "Александра Соколова", 
-            "authorPhoto": "../img/aleksandra.png", 
             "comments": 9,
             "likes": 15
         },
@@ -19,9 +17,6 @@
             "id": 2,
             "title": "Отдых в палатке",
             "photo": "../img/photo-img2.png",
-            "authorId": 2, 
-            "authorName": "Александра Соколова", 
-            "authorPhoto": "../img/aleksandra.png", 
             "comments": 9,
             "likes": 15
         },
@@ -29,9 +24,6 @@
             "id": 3,
             "title": "Путешествие на лодке по озеру",
             "photo": "../img/photo-img3.png",
-            "authorId": 2, 
-            "authorName": "Александра Соколова", 
-            "authorPhoto": "../img/aleksandra.png", 
             "comments": 9,
             "likes": 15
         },
@@ -39,9 +31,6 @@
             "id": 4,
             "title": "Мечтательный взгляд вдоль поверх...",
             "photo": "../img/photo-img4.png",
-            "authorId": 2, 
-            "authorName": "Александра Соколова", 
-            "authorPhoto": "../img/aleksandra.png", 
             "comments": 9,
             "likes": 15
         },
@@ -49,9 +38,6 @@
             "id": 5,
             "title": "Путешествие на лодке",
             "photo": "../img/photo-img5.png",
-            "authorId": 2, 
-            "authorName": "Александра Соколова", 
-            "authorPhoto": "../img/aleksandra.png", 
             "comments": 9,
             "likes": 15
         }
@@ -60,6 +46,7 @@
     {      
       "id": 2,
       "albumName": "Животные",
+      "author": 2,
       "desc": "Фотографии животных...",
       "previewId": 7,
       "photos": [
@@ -67,9 +54,6 @@
             "id": 6,
             "title": "Лисёнок",
             "photo": "../img/0a4b7d189d019ef1552bc8cc205fe3cd.jpg",
-            "authorId": 2, 
-            "authorName": "Александра Соколова", 
-            "authorPhoto": "../img/aleksandra.png", 
             "comments": 9,
             "likes": 15
         },
@@ -77,9 +61,6 @@
             "id": 7,
             "title": "Детеныш леопарда",
             "photo": "../img/227bdbe369525e259c7d.jpg",
-            "authorId": 2, 
-            "authorName": "Александра Соколова", 
-            "authorPhoto": "../img/aleksandra.png", 
             "comments": 9,
             "likes": 15
         },
@@ -87,9 +68,6 @@
             "id": 8,
             "title": "Тигры",
             "photo": "../img/2560x1600_705457.jpg",
-            "authorId": 2, 
-            "authorName": "Александра Соколова", 
-            "authorPhoto": "../img/aleksandra.png", 
             "comments": 9,
             "likes": 15
         },
@@ -97,9 +75,6 @@
             "id": 10,
             "title": "Бельчонок",
             "photo": "../img/163039-squirrel.jpg",
-            "authorId": 2, 
-            "authorName": "Александра Соколова", 
-            "authorPhoto": "../img/aleksandra.png", 
             "comments": 9,
             "likes": 15
         },
@@ -107,9 +82,6 @@
             "id": 15,
             "title": "Ёжик",
             "photo": "../img/5681.jpg",
-            "authorId": 2, 
-            "authorName": "Александра Соколова", 
-            "authorPhoto": "../img/aleksandra.png", 
             "comments": 9,
             "likes": 15
         },
@@ -117,9 +89,6 @@
             "id": 16,
             "title": "Панда",
             "photo": "../img/wpapers_ru.jpg",
-            "authorId": 2, 
-            "authorName": "Александра Соколова", 
-            "authorPhoto": "../img/aleksandra.png", 
             "comments": 9,
             "likes": 15
         },
@@ -127,9 +96,6 @@
             "id": 17, 
             "title": "Любимые лошадки",
             "photo": "../img/card-img3.png", 
-            "authorId": 3, 
-            "authorName": "Дима Ковальчук", 
-            "authorPhoto": "../img/dima.jpg", 
             "comments": 8, 
             "likes": 17
         }
@@ -138,6 +104,7 @@
     {
       "id": 3,
       "albumName": "Тачки",
+      "author": 1,
       "desc": "Тачки...",
       "previewId": 9,
       "photos": [
@@ -145,9 +112,6 @@
             "id": 9,
             "title": "BMW",
             "photo": "../img/2016_bmw_m2_coupe_m_performance_parts-2560x1440.jpg",
-            "authorId": 1, 
-            "authorName": "Антон Черепов", 
-            "authorPhoto": "../img/anton.png", 
             "comments": 9,
             "likes": 15
         },
@@ -155,9 +119,6 @@
             "id": 12,
             "title": "AUDI",
             "photo": "../img/Audi_2015_TT_Roadster_477664.jpg",
-            "authorId": 1, 
-            "authorName": "Антон Черепов", 
-            "authorPhoto": "../img/anton.png", 
             "comments": 9,
             "likes": 15
         },
@@ -165,9 +126,6 @@
             "id": 13,
             "title": "Mercedes",
             "photo": "../img/mercedes_benz_amg_gt_s_2016_silver_wood_night_front_view_102048_3840x2400.jpg",
-            "authorId": 1, 
-            "authorName": "Антон Черепов", 
-            "authorPhoto": "../img/anton.png", 
             "comments": 9,
             "likes": 15
         }
@@ -176,6 +134,7 @@
     {
       "id": 4,
       "albumName": "Cartoons",
+      "author": 3,
       "desc": "Just random cartoon's pictures",
       "previewId": 11,
       "photos": [
@@ -183,9 +142,6 @@
             "id": 11,
             "title": "Bender running",
             "photo": "../img/Bender_running.jpg",
-            "authorId": 3, 
-            "authorName": "Дима Ковальчук", 
-            "authorPhoto": "../img/dima.png", 
             "comments": 9,
             "likes": 15
         },
@@ -193,11 +149,31 @@
             "id": 14,
             "title": "Bender bum",
             "photo": "../img/024_bender-bum.gif",
-            "authorId": 3, 
-            "authorName": "Дима Ковальчук", 
-            "authorPhoto": "../img/dima.png", 
             "comments": 9,
             "likes": 15
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "albumName": "Workspaces",
+      "author": 3,
+      "desc": "Workspaces' pictures",
+      "previewId": 19,
+      "photos": [
+        {
+            "id": 18,
+            "title": "Работа стоя",
+            "photo": "../img/Работа стоя.png",
+            "comments": 0,
+            "likes": 111
+        },
+        {
+            "id": 19,
+            "title": "cool-workplaces",
+            "photo": "../img/cool-workplaces-09.jpg",
+            "comments": 9,
+            "likes": 1
         }
       ]
     }

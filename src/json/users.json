@@ -1,8 +1,8 @@
 [
   {   
     "id": 1, 
-    "urlAvatar": "../img/anton.png", 
-    "urlCover": "../img/bg-main-header.png", 
+    "urlUserAvatar": "../img/anton.png", 
+    "urlUserCover": "../img/bg-main-header.png", 
     "userName": "Антон Черепов",
     "email": "some@mail.com",
     "isThisUser": true,
@@ -47,8 +47,8 @@
   },
   {   
     "id": 2, 
-    "urlAvatar": "../img/aleksandra.png", 
-    "urlCover": "../img/bg-main-aleksandra.png", 
+    "urlUserAvatar": "../img/aleksandra.png", 
+    "urlUserCover": "../img/bg-main-aleksandra.png", 
     "userName": "Александра Соколова",
     "email": "sasha@mail.com",
     "isThisUser": false,
@@ -72,8 +72,8 @@
   },
   {   
     "id": 3, 
-    "urlAvatar": "../img/dima.jpg", 
-    "urlCover": "", 
+    "urlUserAvatar": "../img/dima.jpg", 
+    "urlUserCover": "", 
     "userName": "Дима Ковальчук",
     "email": "some@mail.com",
     "isThisUser": false,

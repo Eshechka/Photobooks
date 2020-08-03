@@ -248,8 +248,9 @@
                     <flickity ref="flickity" :options="flickityOptions" class="big-card-slider__container">
 
                         <appBigCard v-for="bigCard in albums[idCurrentAlbum].photos" :key="bigCard.id"
-                            :cardObject="bigCard">                                                               
-                        </appBigCard>
+                            :cardObject="bigCard"
+                            :userId="albums[idCurrentAlbum].author"
+                        ></appBigCard>
 
                         <!-- <appBigCard 
                             :cardObject="albums[idCurrentAlbum].photos[idCurrentClickedPhoto]"

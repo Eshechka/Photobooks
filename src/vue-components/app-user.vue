@@ -23,7 +23,7 @@
                 </div>
 
                 <div class="header__avatar">
-                    <img class="header__avatar-img" :src='users[idCurrentUser].urlAvatar' alt="avatar">
+                    <img class="header__avatar-img" :src='users[idCurrentUser].urlUserAvatar' alt="avatar">
                 </div>
                 <div class="header__info">
                     <h1 class="header__title">{{users[idCurrentUser].userName}}</h1>
@@ -92,7 +92,7 @@
                                 <div class="form-edit-profile__load-image">
 
                                     <div class="form-edit-profile__img-wrapper">
-                                        <img class="form-edit-profile__img" :src="users[idCurrentUser].urlCover" alt="background cover image">
+                                        <img class="form-edit-profile__img" :src="users[idCurrentUser].urlUserCover" alt="background cover image">
                                     </div>
 
                                     <div class="form-edit-profile__button">
@@ -148,7 +148,7 @@
 
                                 <div class="form-edit-header__load-image">
                                     <div class="form-edit-header__img-wrapper">
-                                        <img class="form-edit-header__img" :src="users[idCurrentUser].urlAvatar" alt="avatar image">
+                                        <img class="form-edit-header__img" :src="users[idCurrentUser].urlUserAvatar" alt="avatar image">
                                     </div>
                                 </div>   
 
@@ -265,7 +265,7 @@
                 <div class="new__button-show-more">
                     <button type="button" class="site-button site-button_theme-light"
                         @click="loadedCardsPush(4)"
-                        :class="{disabled : !amountLoadedPhotos}"
+                        :class="{disabled : amountLoadedPhotos===-1}"
                     >Показать ещё</button>
                 </div>
 
@@ -408,7 +408,7 @@
                 users: dataJSON_users,
 
                 loadedCards: [],
-                amountLoadedPhotos: 4,
+                amountLoadedPhotos: 0,
   
                 currentAlbum: {},
 
@@ -420,9 +420,7 @@
                     freeScroll: false,
                     groupCells: true,
                     contain: true
-                },
-
-                
+                },                
             }
         },
 
@@ -436,11 +434,12 @@
                 },
             bgCurrentUser() {
                 let bgUser = "";
-                if (this.users[this.idCurrentUser].urlCover) 
-                    bgUser = "backgroundImage: url(" + this.users[this.idCurrentUser].urlCover + ")";
+                if (this.users[this.idCurrentUser].urlUserCover) 
+                    bgUser = "backgroundImage: url(" + this.users[this.idCurrentUser].urlUserCover + ")";
                 return bgUser;
                 },
         },
+
 
         methods: {
 
@@ -543,11 +542,17 @@
                 if (this.windowWidth > 480) {
 
                     this.isActiveSocial = false;
-                    this.users[idCurrentUser].userSocials.map(social => 
+                    this.users[this.idCurrentUser].userSocials.map(social => 
                         {
                             social.isActive = false;
                         }
                     );
+                }
+
+                if (this.amountLoadedPhotos !== -1) {
+                    if (this.amountLoadedPhotos !== 2 && this.windowWidth <= 768) this.amountLoadedPhotos = 2;
+                    else if (this.amountLoadedPhotos !== 4 && this.windowWidth <= 1200) this.amountLoadedPhotos = 4;
+                    else if (this.amountLoadedPhotos !== 6 && this.windowWidth > 1200) this.amountLoadedPhotos = 6;
                 }
             },
             
@@ -559,10 +564,12 @@
             },
 
             loadedCardsPush(startPos) {
+                this.checkWidth();
                 let posTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
-                for (let i = 0; i < this.amountLoadedPhotos; i++)
+                for (let i = 0; i < this.amountLoadedPhotos; i++) {
                     if (this.cards[i+startPos]) this.loadedCards.push(this.cards[i+startPos]);
-                    else this.amountLoadedPhotos = 0;
+                    if (!this.cards[i+1+startPos]) this.amountLoadedPhotos = -1;
+                }                
 
                     this.$nextTick(() => {
                         window.scrollTo({top: posTop});                        
@@ -579,12 +586,12 @@
         },
 
         created() {
-            window.addEventListener('resize', this.checkWidth);        
+            window.addEventListener('resize', this.checkWidth);            
+            this.loadedCardsPush(0);
         },
 
         mounted() {
             this.windowWidth = window.innerWidth;
-            this.loadedCardsPush(0);
         },
             
     }
@@ -657,6 +664,10 @@
                 width: 102px;
                 height: 102px;
             }
+            @include desktop {
+                width: 125px;
+                height: 125px;
+            }
         }
 
         &__avatar-img {
@@ -671,6 +682,10 @@
                 width: 102px;
                 height: 102px;
             }	
+            @include desktop {
+                width: 125px;
+                height: 125px;
+            }
         }      
 
         &__info {
@@ -709,10 +724,6 @@
             }
         }
 
-        &__socials {
-            /* text-align: center;		 */
-        }
-
         &__avatar {
             display: inline-block;		
             vertical-align: middle;
@@ -724,11 +735,9 @@
 
         &__edit-header {
             position: relative;
-            /* top: 0; */ 
             width: 100%;
             min-height: 210px;
             margin: 0;
-            /* bottom: 0; */
             z-index: 12;
             background-repeat: no-repeat;
             background-size: cover;
@@ -1172,6 +1181,10 @@
                 width: 48%;
                 margin-bottom: 20px;
             }
+            @include desktop {
+                width: 32%;
+
+            }
         }
 
         &__big-card-slider {
@@ -1335,6 +1348,20 @@
                 }
 
             }
+            @include desktop {
+                width: 23.8%;
+                margin-bottom: 20px;
+                margin-right: 1.6%;
+
+                &:nth-child(3n) {
+                    margin-right: 1.6%;
+                }
+
+                &:nth-child(4n) {
+                    margin-right: 0;
+                }
+
+            }
         }
 
         /* &__add-album {
@@ -1345,268 +1372,6 @@
         }
         
     }
-
-    
-    /* .add-album {
-
-        @include popup;
-
-        &__card {
-            min-width: 300px;
-            background-color: #f2f2f2;
-            display: flex;
-            flex-direction: column;
-        }
-
-        &__topgroup {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 10px;
-        }
-
-        &__title {
-            font-family: 'Panton-Bold';
-            font-size: 21px;
-            line-height: 21px;
-        }
-
-        &__button {
-            width: 20px;
-            height: 20px;
-            background-repeat: no-repeat;
-            background-size: 20px;
-            background-position: 50%;
-
-            &_close {
-                background-image: svg-load('close.svg', fill=rgba(#{$color-text}, 0.4));
-
-                &:hover {
-                    background-image: svg-load('close.svg', fill=rgba(#{$color-text}, 0.8));
-                }
-            }
-        }
-
-    }
-
-    
-    .form-addAlbum {
-        display: flex;
-        flex-direction: column;
-        background-color: $color-white;
-
-        &__label {
-            font-family: 'Proxima Nova Semibold';
-            font-size: 14px;
-            padding: 15px 10px 10px;
-
-            @include tablets {
-                margin-left: 80px;
-                margin-right: 20px;
-            }
-        }
-
-        &__input {
-            @include popup-input;
-
-            margin-top: 5px;
-
-            &_textarea {
-                resize: none;
-            }
-        }
-
-         &__cover {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-
-            @include tablets {
-                margin-bottom: 20px;
-                margin-left: 50px;
-                margin-right: 20px;                
-            }
-        }
-
-        &__cover-img-wrapper {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            overflow: hidden;
-        }
-        &__cover-img {
-            object-fit: cover;
-            width: 100%;
-            height: 100%;
-        }
-
-        &__cover-button {
-             margin-left: 18px;
-             display: flex;
-             align-items: center;
-
-            @include tablets {
-                margin-left: 20px;
-                margin-right: 20px;                
-            }
-        }
-
-        &__notice-size {
-            display: none;
-            width: 40%;
-            font-family: 'ProximaNova-LightIt';
-            font-size: 14px;
-            line-height: 14px;
-            padding: 10px 0;
-
-            @include tablets {
-                display: block;
-            }
-
-        }
-
-        &__buttons {
-            background-color: #f2f2f2;
-            padding: 10px;
-            display: flex;
-            align-items: center;
-
-            @include tablets {
-                font-size: 14px;
-            }
-        }
-    } */
-    
-/* 
-    .edit-album {
-
-        @include popup;
-
-        &__card {
-            min-width: 300px;
-            background-color: #f2f2f2;
-            display: flex;
-            flex-direction: column;
-        }
-
-        &__topgroup {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 10px;
-        }
-
-        &__title {
-            font-family: 'Panton-Bold';
-            font-size: 21px;
-            line-height: 21px;
-        }
-
-        &__button {
-            width: 20px;
-            height: 20px;
-            background-repeat: no-repeat;
-            background-size: 20px;
-            background-position: 50%;
-
-            &_close {
-                background-image: svg-load('close.svg', fill=rgba(#{$color-text}, 0.4));
-
-                &:hover {
-                    background-image: svg-load('close.svg', fill=rgba(#{$color-text}, 0.8));
-                }
-            }
-        }
-
-    }
-
-    
-    .form-editAlbum {
-        display: flex;
-        flex-direction: column;
-        background-color: $color-white;
-
-        &__label {
-            font-family: 'Proxima Nova Semibold';
-            font-size: 14px;
-            padding: 15px 10px 10px;
-
-            @include tablets {
-                margin-left: 80px;
-                margin-right: 20px;
-            }
-        }
-
-        &__input {
-            @include popup-input;
-
-            margin-top: 5px;
-
-            &_textarea {
-                resize: none;
-            }
-        }
-
-         &__cover {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-
-            @include tablets {
-                margin-bottom: 20px;
-                margin-left: 50px;
-                margin-right: 20px;                
-            }
-        }
-
-        &__cover-img-wrapper {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            overflow: hidden;
-        }
-        &__cover-img {
-            object-fit: cover;
-            width: 100%;
-            height: 100%;
-        }
-
-        &__cover-button {
-             margin-left: 18px;
-             display: flex;
-             align-items: center;
-
-            @include tablets {
-                margin-left: 20px;
-                margin-right: 20px;                
-            }
-        }
-
-        &__notice-size {
-            display: none;
-            width: 40%;
-            font-family: 'ProximaNova-LightIt';
-            font-size: 14px;
-            line-height: 14px;
-            padding: 10px 0;
-
-            @include tablets {
-                display: block;
-            }
-
-        }
-
-        &__buttons {
-            background-color: #f2f2f2;
-            padding: 10px;
-            display: flex;
-            align-items: center;
-
-            @include tablets {
-                font-size: 14px;
-            }
-        }
-    } */
 
 
     .footer {

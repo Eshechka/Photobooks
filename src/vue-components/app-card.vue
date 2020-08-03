@@ -14,7 +14,7 @@
                 tag="div"
                 :to="'/'+cardObject.authorId"
             >
-                <img class="card__avatar-img" :src="cardObject.authorPhoto" alt="card avatar">
+                <img class="card__avatar-img" :src="cardObject.urlUserAvatar" alt="card avatar">
                 <div class="card__avatar-overlay"></div>
             </router-link>
 

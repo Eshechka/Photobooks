@@ -10,10 +10,10 @@
                     <div class="big-card__author-info">
 
                         <div class="big-card__avatar">
-                            <img class="big-card__avatar-img" :src="cardObject.authorPhoto" alt="card avatar">
+                            <img class="big-card__avatar-img" alt="card avatar" :src="cardObject.urlUserAvatar">
                         </div>
                         
-                        <div class="big-card__name">{{cardObject.authorName}}</div>
+                        <div class="big-card__name">{{cardObject.userName}}</div>
 
                         <div class="big-card__likes">
                             <button type="button" class="big-card__button-likes"
@@ -71,10 +71,10 @@
                                 class="users-comments__item">
 
                                     <div class="users-comments__avatar-wrapper">
-                                        <img class="users-comments__avatar" :src="comment.authorAvatar" alt="Avatar of comment's author">
+                                        <img class="users-comments__avatar" :src="comment.urlUserAvatar" alt="Avatar of comment's author">
                                     </div>
                                     <div class="users-comments__info-wrapper">
-                                        <div class="users-comments__author">{{comment.authorName}}</div>
+                                        <div class="users-comments__author">{{comment.userName}}</div>
                                         <div class="users-comments__text">{{comment.text}}</div>
                                     </div>
 
@@ -94,10 +94,12 @@
 <script >
 
     import dataJSON_comments from '../json/comments.json';
+    import dataJSON_users from '../json/users.json';
 
     export default {
         props: {
             cardObject: Object,
+            userId: Number,
         },
 
 
@@ -106,6 +108,7 @@
             userAvatarUrl: require('../img/anton.png').default,
             userName: "Антон Черепов",
             comments: dataJSON_comments,
+            users: dataJSON_users,
             isActiveLike: this.cardObject.isLikedByMe,
 
             isVisibleMyComment: true,
@@ -116,15 +119,21 @@
         
         computed: {
             filteredComments() {
-                let commentForThisCard = [];
+                let commentsForThisCard = [];
 
                 this.comments.map(comment => { 
                     if (comment.photoId === this.cardObject.id)
-                    commentForThisCard.push(comment);
+                    {                        
+                        let thisUser = this.users.find(user => user.id === comment.userId);
+                        comment.urlUserAvatar = thisUser.urlUserAvatar;
+                        comment.userName = thisUser.userName;
+                        commentsForThisCard.push(comment);
+                    }
                 });                
                 
-                return commentForThisCard;
+                return commentsForThisCard;
             },
+
             myCommentToggler() {
                 return this.$refs['my-comment-toggler'];
             },
@@ -145,7 +154,16 @@
                 else
                     this.myCommentToggler.style.transform = 'rotate(270deg)';
             },
+            upgradeCardObject() {
+                let thisUser = this.users.find(user => user.id === this.userId);
+                this.cardObject.urlUserAvatar = thisUser.urlUserAvatar;
+                this.cardObject.userName = thisUser.userName;
+            },
 
+        },
+
+        created() {
+            this.upgradeCardObject();
         },
     }
 </script>
@@ -280,7 +298,7 @@
             background-color: rgba(f6f6f6, 0.8);
             display: flex;
             flex-direction: column;
-            padding: 20px 10px;
+            padding: 20px 0;
             background-color: rgb(246, 246, 246);
             border-radius: 0 0 3px 3px;
         }
@@ -289,6 +307,7 @@
             display: flex;
             align-items: center;
             margin-bottom: 10px;
+            padding: 0 10px;
         }
 
         &__comments-title {
@@ -320,7 +339,7 @@
         }
 
         &__my-comment {
-            padding-bottom: 10px;
+            padding: 0 10px 10px;
 
             @include tablets {
                 display: flex;
@@ -370,6 +389,11 @@
             }
 
         }
+
+        &__item {
+            padding: 20px 10px 15px;
+            border-top: 1px solid rgba($color-text, 0.2);
+        }
         
         &__avatar-wrapper {
 
@@ -381,6 +405,10 @@
                 flex-basis: 80px;
                 flex-shrink: 0;
                 margin-right: 10px;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                overflow: hidden;
             }
         }
 
