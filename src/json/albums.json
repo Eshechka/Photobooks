@@ -3,8 +3,8 @@
       "id": 1,
       "albumName": "Лесные прогулки",
       "author": 2,
-      "desc": "Фотографии природы леса, енотов и оленей. Как прекрасно сойти на дальней станции и пройтись по полю босиком. И чтобы никто не беспокоил бродить влюбленным в тишину. Запах мёда, лесных оленей и енотов будоражит нутро.",
-      "previewId": 11,
+      "description": "Фотографии природы леса, енотов и оленей. Как прекрасно сойти на дальней станции и пройтись по полю босиком. И чтобы никто не беспокоил бродить влюбленным в тишину. Запах мёда, лесных оленей и енотов будоражит нутро.",
+      "preview": 11,
       "photos": [
         {
             "id": 1,
@@ -47,8 +47,8 @@
       "id": 2,
       "albumName": "Животные",
       "author": 2,
-      "desc": "Фотографии животных...",
-      "previewId": 7,
+      "description": "Фотографии животных...",
+      "preview": 7,
       "photos": [
         {
             "id": 6,
@@ -105,8 +105,8 @@
       "id": 3,
       "albumName": "Тачки",
       "author": 1,
-      "desc": "Тачки...",
-      "previewId": 9,
+      "description": "Тачки...",
+      "preview": 9,
       "photos": [
         {
             "id": 9,
@@ -135,8 +135,8 @@
       "id": 4,
       "albumName": "Cartoons",
       "author": 3,
-      "desc": "Just random cartoon's pictures",
-      "previewId": 11,
+      "description": "Just random cartoon's pictures",
+      "preview": 11,
       "photos": [
         {
             "id": 11,
@@ -158,8 +158,8 @@
       "id": 5,
       "albumName": "Workspaces",
       "author": 3,
-      "desc": "Workspaces' pictures",
-      "previewId": 19,
+      "description": "Workspaces' pictures",
+      "preview": 19,
       "photos": [
         {
             "id": 18,

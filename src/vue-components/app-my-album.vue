@@ -8,7 +8,7 @@
 			<img class="my-album__img" :src="previewUrl" alt="album image">
             <div class="my-album__img-overlay"
 
-			>{{myAlbumObject.desc}}</div>
+			>{{myAlbumObject.description}}</div>
         </router-link>
 
         
@@ -42,7 +42,7 @@
 		},
 		methods: {
 			getPreviewUrl() {
-				let previewPhoto = this.myAlbumObject.photos.find(item => item.id === this.myAlbumObject.previewId);
+				let previewPhoto = this.myAlbumObject.photos.find(item => item.id === this.myAlbumObject.preview);
 				let previewUrl = '';
 
 				if (!previewPhoto)

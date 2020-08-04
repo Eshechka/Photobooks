@@ -156,13 +156,13 @@
             },
             upgradeCardObject() {
                 let thisUser = this.users.find(user => user.id === this.userId);
-                this.cardObject.urlUserAvatar = thisUser.urlUserAvatar;
                 this.cardObject.userName = thisUser.userName;
+                this.cardObject.urlUserAvatar = thisUser.urlUserAvatar;
             },
 
         },
 
-        created() {
+        mounted() {
             this.upgradeCardObject();
         },
     }

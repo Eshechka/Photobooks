@@ -264,7 +264,7 @@
 
                 <div class="new__button-show-more">
                     <button type="button" class="site-button site-button_theme-light"
-                        @click="loadedCardsPush(4)"
+                        @click="loadedCardsPush(startPhotoLoadingPos)"
                         :class="{disabled : amountLoadedPhotos===-1}"
                     >Показать ещё</button>
                 </div>
@@ -279,7 +279,9 @@
                         <flickity ref="flickity" :options="flickityOptions" class="big-card-slider__container">
 
                                 <appBigCard v-for="bigCard in cards" :key="bigCard.id"
-                                    :cardObject="bigCard">                                                               
+                                    :cardObject="bigCard"
+                                    :userId="bigCard.authorId"
+                                    >                                                               
                                 </appBigCard>
 
                         </flickity>
@@ -409,11 +411,11 @@
 
                 loadedCards: [],
                 amountLoadedPhotos: 0,
+                startPhotoLoadingPos: 0,
   
                 currentAlbum: {},
 
                 flickityOptions: {
-                    initialIndex: this.idCurrentPhoto,
                     prevNextButtons: false,
                     pageDots: false,
                     wrapAround: true,
@@ -549,7 +551,7 @@
                     );
                 }
 
-                if (this.amountLoadedPhotos !== -1) {
+                if (this.amountLoadedPhotos === 0) {
                     if (this.amountLoadedPhotos !== 2 && this.windowWidth <= 768) this.amountLoadedPhotos = 2;
                     else if (this.amountLoadedPhotos !== 4 && this.windowWidth <= 1200) this.amountLoadedPhotos = 4;
                     else if (this.amountLoadedPhotos !== 6 && this.windowWidth > 1200) this.amountLoadedPhotos = 6;
@@ -564,16 +566,24 @@
             },
 
             loadedCardsPush(startPos) {
+                console.log('this.amountLoadedPhotos', this.amountLoadedPhotos);
+                console.log('startPos', startPos);
+
                 this.checkWidth();
                 let posTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
                 for (let i = 0; i < this.amountLoadedPhotos; i++) {
                     if (this.cards[i+startPos]) this.loadedCards.push(this.cards[i+startPos]);
                     if (!this.cards[i+1+startPos]) this.amountLoadedPhotos = -1;
-                }                
+                }
+                   if (this.amountLoadedPhotos !== -1) 
+                    this.startPhotoLoadingPos = startPos + this.amountLoadedPhotos;
 
                     this.$nextTick(() => {
                         window.scrollTo({top: posTop});                        
                     });
+
+                console.log('this.amountLoadedPhotos 2!!! ', this.amountLoadedPhotos);
+                console.log('startPos 2!!! ', this.startPhotoLoadingPos);
             },
 
             next() {
@@ -587,7 +597,7 @@
 
         created() {
             window.addEventListener('resize', this.checkWidth);            
-            this.loadedCardsPush(0);
+            this.loadedCardsPush(this.startPhotoLoadingPos);
         },
 
         mounted() {
@@ -1170,7 +1180,7 @@
             @include tablets {
                 display: flex;
                 flex-wrap: wrap;
-                justify-content: space-between;
+                /* justify-content: space-between; */
             }
         }
 
@@ -1183,7 +1193,11 @@
             }
             @include desktop {
                 width: 32%;
+                margin-right: 2%;
 
+                &:nth-child(3n) {
+                    margin-right: 0;
+                }
             }
         }
 
@@ -1364,9 +1378,6 @@
             }
         }
 
-        /* &__add-album {
-            @include popup-container;
-        } */
         &__change-album {
             @include popup-container;
         }

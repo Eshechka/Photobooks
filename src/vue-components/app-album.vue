@@ -38,7 +38,7 @@
 					<div class="header__album-desc">
 						<h2 class="header__album-title"> {{albums[idCurrentAlbum].albumName}} </h2>
                         
-						<div class="header__text"> {{albums[idCurrentAlbum].desc}} </div>
+						<div class="header__text"> {{albums[idCurrentAlbum].description}} </div>
 					</div>
 			</div>
 					<div class="header__album-info">
@@ -122,7 +122,6 @@
                             @clickEditMyPhoto="openEditPhoto=true"
                             @clickMyPhoto="openBigMyPhoto=true"
                         ></appMyPhoto>
-                            <!-- @clickMyPhoto="myPhotoClickHandler" -->
 					</li>
 
 
@@ -251,11 +250,6 @@
                             :cardObject="bigCard"
                             :userId="albums[idCurrentAlbum].author"
                         ></appBigCard>
-
-                        <!-- <appBigCard 
-                            :cardObject="albums[idCurrentAlbum].photos[idCurrentClickedPhoto]"
-                            @clickCloseBigCard="openBigMyPhoto=false">
-                        </appBigCard> -->
                         
                     </flickity>
 

@@ -20,7 +20,7 @@
 
                     <label class="form-changeAlbum__label">Описание
                         <textarea class="form-changeAlbum__input form-changeAlbum__input_textarea" cols="20" rows="5" placeholder="Описание альбома"
-                            v-model="myChangeCurrentObject.desc"
+                            v-model="myChangeCurrentObject.description"
                         ></textarea>
                     </label>
             
@@ -73,7 +73,7 @@
                     id: 0,
                     albumName: '',
                     desc: '',
-                    previewId: 0,
+                    preview: 0,
                     photos: [],
                 },
             }
@@ -105,7 +105,7 @@
       methods: {
 
         setChangedAlbum() {         
-            let currentCoverImg = this.myAlbumObject.photos.find(photo => photo.id===this.myAlbumObject.previewId);
+            let currentCoverImg = this.myAlbumObject.photos.find(photo => photo.id===this.myAlbumObject.preview);
             this.myChangeCurrentObject = this.myAlbumObject;
             this.title = 'Отредактировать альбом';
             this.coverTitle = "Редактировать обложку";
