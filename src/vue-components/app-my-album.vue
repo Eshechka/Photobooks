@@ -7,7 +7,7 @@
 		>
 			<img class="my-album__img" :src="previewUrl" alt="album image">
             <div class="my-album__img-overlay"
-
+				
 			>{{myAlbumObject.description}}</div>
         </router-link>
 

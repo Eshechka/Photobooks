@@ -9,10 +9,10 @@ const routes = [
         redirect: '/1',
         component: () => import('./vue-components/app-user.vue'),
     },
-    // {
-    //     path: '/login',
-    //     component: () => import('./vue-pages/app-login.vue'),
-    // },
+    {
+        path: '/login',
+        component: () => import('./vue-pages/app-login.vue'),
+    },
     { 
         path: '/:id',
         component: () => import('./vue-components/app-user.vue'),

@@ -566,10 +566,9 @@
             },
 
             loadedCardsPush(startPos) {
-                console.log('this.amountLoadedPhotos', this.amountLoadedPhotos);
-                console.log('startPos', startPos);
 
                 this.checkWidth();
+
                 let posTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
                 for (let i = 0; i < this.amountLoadedPhotos; i++) {
                     if (this.cards[i+startPos]) this.loadedCards.push(this.cards[i+startPos]);
@@ -582,8 +581,6 @@
                         window.scrollTo({top: posTop});                        
                     });
 
-                console.log('this.amountLoadedPhotos 2!!! ', this.amountLoadedPhotos);
-                console.log('startPos 2!!! ', this.startPhotoLoadingPos);
             },
 
             next() {
@@ -615,8 +612,7 @@
     @import '../fonts/fonts.pcss';
     @import '../styles/mixins.pcss';
     @import '../styles/layout.pcss';
-
-    @import '../styles/blocks/site-button.pcss';
+    @import '../styles/common/site-button.pcss';
 
 
     .header {
@@ -990,8 +986,8 @@
         &__link {
             display: block;
             font-size: 0px;
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             border-radius: 5px;
             margin-right: 5px;
             margin-bottom: 10px;
@@ -1148,9 +1144,11 @@
 
 
     .new {
-        position: relative;
         min-width: 320px;
         padding: 30px 0;
+        
+        /* position: relative; */
+        min-height: 900px;
 
         &__container {
             margin: 0 auto;
@@ -1180,7 +1178,6 @@
             @include tablets {
                 display: flex;
                 flex-wrap: wrap;
-                /* justify-content: space-between; */
             }
         }
 
@@ -1188,12 +1185,21 @@
             margin-bottom: 10px;
 
             @include tablets {
-                width: 48%;
                 margin-bottom: 20px;
+                width: 48%;
+                margin-right: 4%;
+
+                &:nth-child(2n) {
+                    margin-right: 0;
+                }
             }
             @include desktop {
                 width: 32%;
                 margin-right: 2%;
+
+                &:nth-child(2n) {
+                    margin-right: 2%;
+                }
 
                 &:nth-child(3n) {
                     margin-right: 0;
@@ -1203,6 +1209,7 @@
 
         &__big-card-slider {
             @include popup-container;
+            top: 40px;
         }
 
     }

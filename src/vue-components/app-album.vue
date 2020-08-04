@@ -120,7 +120,7 @@
 						<appMyPhoto 
                             :myPhotoObject="myPhoto"
                             @clickEditMyPhoto="openEditPhoto=true"
-                            @clickMyPhoto="openBigMyPhoto=true"
+                            @clickMyPhoto="clickMyPhotoHandler"
                         ></appMyPhoto>
 					</li>
 
@@ -181,8 +181,8 @@
 
                                     <form class="form-addPhoto">
 
-                                        <div class="form-addPhoto__album-name-label">Название
-                                            <span class="form-addPhoto__album-name" type="text"> {{this.albums[idCurrentAlbum].albumName}} </span>
+                                        <div class="form-addPhoto__album-name-label">Название XXX
+                                            <span class="form-addPhoto__album-name" type="text"> {{albums[idCurrentAlbum].albumName}} </span>
                                         </div>
 
                                         <div class="form-addPhoto__load-cover">
@@ -338,7 +338,7 @@
                 isScrolledHeader: false,
                 isPhotosLoaded: false,
 
-                // idCurrentClickedPhoto: 0,
+                idCurrentClickedPhoto: 0,
 
                 userAvatarUrl: require('../img/anton.png').default,
                 userName: "Антон Черепов",
@@ -346,7 +346,7 @@
                 renderedPhotos: [],
 
                 flickityOptions: {
-                    initialIndex: this.idCurrentPhoto,
+                    // initialIndex: this.idCurrentPhoto,
                     prevNextButtons: false,
                     pageDots: false,
                     wrapAround: true,
@@ -392,12 +392,19 @@
                 })                
             },
 
-            // myPhotoClickHandler(myPhotoId) {
-                
-            //     this.openBigMyPhoto = true;
-            //     this.idCurrentClickedPhoto = myPhotoId-1;
+            clickMyPhotoHandler(myPhotoId) {
 
-            // },
+                let photoIndex = 0;
+                
+                this.albums[this.idCurrentAlbum].photos.find(photo => {
+                    if (photo.id !== myPhotoId) photoIndex++;
+                    else this.idCurrentClickedPhoto = photoIndex;
+                });                
+                this.flickityOptions.initialIndex = this.idCurrentClickedPhoto;
+
+                this.openBigMyPhoto = true;
+
+            },
 
             scrollToTop() {
                 window.scrollTo({
@@ -444,7 +451,7 @@
     @import '../styles/mixins.pcss';
     @import '../styles/layout.pcss';
 
-    @import '../styles/blocks/site-button.pcss';
+    @import '../styles/common/site-button.pcss';
 
 
     .header {
@@ -747,7 +754,8 @@
         min-width: 320px;
         padding: 30px 0;
         background: $color-white;
-        position: relative;
+        /* position: relative; */
+        min-height: 900px;
         
         &__container {
             margin: 0 auto;
@@ -796,7 +804,8 @@
         }
 
         &__big-card-slider {
-            @include popup-container;
+            @include popup-container;            
+            top: 30px;
         }
 
     }
@@ -807,6 +816,7 @@
         overflow: unset;
         background-color: transparent;
         position: relative;
+
 
         &__close {
             position: absolute;

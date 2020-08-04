@@ -196,7 +196,7 @@
     @import '../styles/mixins.pcss';
     @import '../styles/layout.pcss';
 
-    @import '../styles/blocks/site-button.pcss';
+    @import '../styles/common/site-button.pcss';
 
 
 .login {
@@ -291,6 +291,7 @@
 
     @include tablets {
         width: 273px;
+		min-width: unset;
         min-height: 200px;
     }
 

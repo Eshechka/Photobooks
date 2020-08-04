@@ -1,91 +1,91 @@
 <template>
         
-            <div class="big-card">
-                <div class="big-card__card">
+    <div class="big-card">
+        <div class="big-card__card">
 
-                    <div class="big-card__card-img">
-                        <img class="big-card__img" :src="cardObject.photo" alt="big card image">
-                    </div>
-
-                    <div class="big-card__author-info">
-
-                        <div class="big-card__avatar">
-                            <img class="big-card__avatar-img" alt="card avatar" :src="cardObject.urlUserAvatar">
-                        </div>
-                        
-                        <div class="big-card__name">{{cardObject.userName}}</div>
-
-                        <div class="big-card__likes">
-                            <button type="button" class="big-card__button-likes"
-                                @click="plusMyLike()"
-                                :class="{'big-card__button-likes_active' : isActiveLike}"
-                            >{{cardObject.likes}}</button>
-                        </div>
-
-                    </div>
-
-                    <div class="big-card__desc">
-
-                        <h3 class="big-card__title">{{cardObject.title}}</h3>
-                    
-                        <div class="big-card__desc-text">{{cardObject.desc}}</div>
-
-                    </div> 
-
-                    <div class="big-card__comments">
-
-                        <div class="big-card__comments-topgroup">
-                            <h4 class="big-card__comments-title">Комментарии</h4>
-                            <button type="button" class="big-card__button-tick"
-                                @click="myCommentVisibleHandle()"
-                                ref='my-comment-toggler'
-                            >
-                            </button>
-                        </div>
-                        
-                        <div class="big-card__my-comment" v-if="isVisibleMyComment">
-
-                                <div class="big-card__my-comment-avatar-wrapper">
-                                    <img class="big-card__my-comment-avatar" :src="userAvatarUrl" alt="my avatar">
-                                </div>
-                                <div class="big-card__my-comment-info">
-                                    
-                                <div class="big-card__my-comment-name">{{userName}}</div>
-                            
-                                <form class="big-card__my-comment-form">
-
-                                    <textarea class="big-card__my-comment-input" name="" id="" cols="10" rows="1" placeholder="Добавить комментарий"></textarea>
-                                    <div class="big-card__my-comment-submit">
-                                        <button class="site-button site-button_theme-light" type="submit">Добавить</button>
-                                    </div>
-
-                                </form>
-                                </div>
-                        </div>
-
-                        <div class="big-card__users-comments">
-
-                            <ul class="users-comments">
-                                <li
-                                    v-for="comment in filteredComments" :key="comment.id"
-                                class="users-comments__item">
-
-                                    <div class="users-comments__avatar-wrapper">
-                                        <img class="users-comments__avatar" :src="comment.urlUserAvatar" alt="Avatar of comment's author">
-                                    </div>
-                                    <div class="users-comments__info-wrapper">
-                                        <div class="users-comments__author">{{comment.userName}}</div>
-                                        <div class="users-comments__text">{{comment.text}}</div>
-                                    </div>
-
-                                </li>
-                            </ul>
-
-                        </div>
-
-                    </div> 
-                </div>
+            <div class="big-card__card-img">
+                <img class="big-card__img" :src="cardObject.photo" alt="big card image">
             </div>
+
+            <div class="big-card__author-info">
+
+                <div class="big-card__avatar">
+                    <img class="big-card__avatar-img" alt="card avatar" :src="cardObject.urlUserAvatar">
+                </div>
+                
+                <div class="big-card__name">{{cardObject.userName}}</div>
+
+                <div class="big-card__likes">
+                    <button type="button" class="big-card__button-likes"
+                        @click="plusMyLike()"
+                        :class="{'big-card__button-likes_active' : isActiveLike}"
+                    >{{cardObject.likes}}</button>
+                </div>
+
+            </div>
+
+            <div class="big-card__desc">
+
+                <h3 class="big-card__title">{{cardObject.title}}</h3>
+            
+                <div class="big-card__desc-text">{{cardObject.desc}}</div>
+
+            </div> 
+
+            <div class="big-card__comments">
+
+                <div class="big-card__comments-topgroup">
+                    <h4 class="big-card__comments-title">Комментарии</h4>
+                    <button type="button" class="big-card__button-tick"
+                        @click="myCommentVisibleHandle()"
+                        ref='my-comment-toggler'
+                    >
+                    </button>
+                </div>
+                
+                <div class="big-card__my-comment" v-if="isVisibleMyComment">
+
+                        <div class="big-card__my-comment-avatar-wrapper">
+                            <img class="big-card__my-comment-avatar" :src="userAvatarUrl" alt="my avatar">
+                        </div>
+                        <div class="big-card__my-comment-info">
+                            
+                        <div class="big-card__my-comment-name">{{userName}}</div>
+                    
+                        <form class="big-card__my-comment-form">
+
+                            <textarea class="big-card__my-comment-input" name="" id="" cols="10" rows="1" placeholder="Добавить комментарий"></textarea>
+                            <div class="big-card__my-comment-submit">
+                                <button class="site-button site-button_theme-light" type="submit">Добавить</button>
+                            </div>
+
+                        </form>
+                        </div>
+                </div>
+
+                <div class="big-card__users-comments">
+
+                    <ul class="users-comments">
+                        <li
+                            v-for="comment in filteredComments" :key="comment.id"
+                        class="users-comments__item">
+
+                            <div class="users-comments__avatar-wrapper">
+                                <img class="users-comments__avatar" :src="comment.urlUserAvatar" alt="Avatar of comment's author">
+                            </div>
+                            <div class="users-comments__info-wrapper">
+                                <div class="users-comments__author">{{comment.userName}}</div>
+                                <div class="users-comments__text">{{comment.text}}</div>
+                            </div>
+
+                        </li>
+                    </ul>
+
+                </div>
+
+            </div> 
+        </div>
+    </div>
 
 </template>
 
@@ -159,11 +159,10 @@
                 this.cardObject.userName = thisUser.userName;
                 this.cardObject.urlUserAvatar = thisUser.urlUserAvatar;
             },
-
         },
 
-        mounted() {
-            this.upgradeCardObject();
+        created() {
+            this.upgradeCardObject();            
         },
     }
 </script>
@@ -176,7 +175,7 @@
     @import '../styles/mixins.pcss';
     @import '../styles/layout.pcss';
 
-    @import '../styles/blocks/site-button.pcss';
+    @import '../styles/common/site-button.pcss';
 
     .big-card {   
         width: 100%;    

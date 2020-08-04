@@ -5,7 +5,7 @@
 
 			<img class="my-photo__img" :src="myPhotoObject.photo" alt="photo image">
             <div class="my-photo__img-overlay"
-                 @click="$emit('clickMyPhoto', myPhotoObject.id, $event)"
+                 @click="$emit('clickMyPhoto', myPhotoObject.id)"
             ></div>
 		
 			<div class="my-photo__comments-likes-wrapper">					

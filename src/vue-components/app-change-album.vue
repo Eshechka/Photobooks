@@ -131,10 +131,7 @@
     @import '../fonts/fonts.pcss';
     @import '../styles/mixins.pcss';
     @import '../styles/layout.pcss';
-
-    @import '../styles/blocks/site-button.pcss';
-
-   
+    @import '../styles/common/site-button.pcss';   
 
     .change-album {
 
@@ -266,5 +263,4 @@
         }
     }
  
-
 </style>
