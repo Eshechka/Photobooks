@@ -1,5 +1,6 @@
 <template>
     <div class="wrapper">
+        <!-- <pre>{{currentUserObject}}</pre> -->
 
         <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigCardSlider || openEditProfile || openChangeMyAlbum"></div>
         <div class="wrapper__overlay wrapper__overlay_white" v-if="openEditHeader"></div>
@@ -10,12 +11,12 @@
 
             <div class="header__container" v-if="!openEditHeader">		
                 <div class="header__button-logout"
-                    v-if="users[idCurrentUser].isThisUser"
+                    v-if="currentUserObject.isThisUser"
                 >
                     <button type='button' class="round-button round-button_logout">Выйти</button>
                 </div>
                 <div class="header__button-edit"
-                    v-if="users[idCurrentUser].isThisUser"
+                    v-if="currentUserObject.isThisUser"
                 >
                     <button type='button' class="round-button round-button_edit"
                         @click="openEditHeader=true"
@@ -23,19 +24,19 @@
                 </div>
 
                 <div class="header__avatar">
-                    <img class="header__avatar-img" :src='users[idCurrentUser].urlUserAvatar' alt="avatar">
+                    <img class="header__avatar-img" :src='currentUserObject.urlUserAvatar' alt="avatar">
                 </div>
                 <div class="header__info">
-                    <h1 class="header__title">{{users[idCurrentUser].userName}}</h1>
+                    <h1 class="header__title">{{currentUserObject.userName}}</h1>
 
                     <div class="header__text">		
-                        {{users[idCurrentUser].userDesc}}		
+                        {{currentUserObject.userDesc}}		
                     </div>
 
                     <div class="header__socials">
                         <ul class="socials__list">
                             <li class="socials__item"
-                                v-for="social in users[idCurrentUser].userSocials" :key="social.id"
+                                v-for="social in currentUserObject.userSocials" :key="social.id"
                             >
                                 <a class="socials__link" target="blank"
                                     :class="`socials__link_${social.id}`"
@@ -92,7 +93,7 @@
                                 <div class="form-edit-profile__load-image">
 
                                     <div class="form-edit-profile__img-wrapper">
-                                        <img class="form-edit-profile__img" :src="users[idCurrentUser].urlUserCover" alt="background cover image">
+                                        <img class="form-edit-profile__img" :src="currentUserObject.urlUserCover" alt="background cover image">
                                     </div>
 
                                     <div class="form-edit-profile__button">
@@ -148,7 +149,7 @@
 
                                 <div class="form-edit-header__load-image">
                                     <div class="form-edit-header__img-wrapper">
-                                        <img class="form-edit-header__img" :src="users[idCurrentUser].urlUserAvatar" alt="avatar image">
+                                        <img class="form-edit-header__img" :src="currentUserObject.urlUserAvatar" alt="avatar image">
                                     </div>
                                 </div>   
 
@@ -165,11 +166,11 @@
                                     <div class="socials">
 
                                         <ul class="socials__list">
-                                            <li v-for="social in users[idCurrentUser].userSocials" :key="social.id" class="socials__item"> 
+                                            <li v-for="social in currentUserObject.userSocials" :key="social.id" class="socials__item"> 
                                                 <a
-                                                    @mouseenter="socialMouseHandler(social.id, idCurrentUser, $event)" 
-                                                    @mouseleave="socialMouseHandler(social.id, idCurrentUser, $event)" 
-                                                    @click.prevent="socialClickHandler(social.id, idCurrentUser)" 
+                                                    @mouseenter="socialMouseHandler(social.id, $event)" 
+                                                    @mouseleave="socialMouseHandler(social.id, $event)" 
+                                                    @click.prevent="socialClickHandler(social.id)" 
                                                     :class="[`socials__link socials__link_${social.id}`,
                                                             {'socials__link_active': social.isActive}]"
                                                 >{{social.text}}</a>
@@ -179,7 +180,7 @@
                                         <div class="soc-edit"
                                             ref="soc-edit"
                                             :class="{'soc-edit_showed' : isActiveSocial}" 
-                                            @mouseleave="socEditMouseLeaveHandler(idCurrentUser)"                                             
+                                            @mouseleave="socEditMouseLeaveHandler"                                             
                                         >
                                             <div class="soc-edit__card">
 
@@ -272,7 +273,9 @@
             </div>
 
 
-            <div class="new__big-card-slider" v-if="openBigCardSlider">
+            <div class="new__big-card-slider" v-if="openBigCardSlider"
+                :style="{top : bigCardSliderTop+'px'}"
+            >
 
                     <div class="big-card-slider">
 
@@ -415,6 +418,8 @@
   
                 currentAlbum: {},
 
+                bigCardSliderTop: 0,
+
                 flickityOptions: {
                     prevNextButtons: false,
                     pageDots: false,
@@ -431,13 +436,16 @@
             socEdit() {
                 return this.$refs['soc-edit'];
                 },
-            idCurrentUser() {
-                return this.$route.params.id-1;
+            // idCurrentUser() {
+            //     return this.$route.params.id;
+            //     },
+            currentUserObject() {                
+                return this.users.find(user => user.id == this.$route.params.id);
                 },
             bgCurrentUser() {
                 let bgUser = "";
-                if (this.users[this.idCurrentUser].urlUserCover) 
-                    bgUser = "backgroundImage: url(" + this.users[this.idCurrentUser].urlUserCover + ")";
+                if (this.currentUserObject.urlUserCover) 
+                    bgUser = "backgroundImage: url(" + this.currentUserObject.urlUserCover + ")";
                 return bgUser;
                 },
         },
@@ -445,23 +453,23 @@
 
         methods: {
 
-            socEditMouseLeaveHandler(idCurrentUser) {
+            socEditMouseLeaveHandler() {
                 if (this.windowWidth > 480) {
                     this.isActiveSocial = false;
 
-                    this.users[idCurrentUser].userSocials.map(social => { 
+                    this.currentUserObject.userSocials.map(social => { 
                         social.isActive = false;
                     });
                 }
             },
 
-            socialClickHandler(socialId, idCurrentUser) {
+            socialClickHandler(socialId) {
                 
                 if (this.windowWidth <= 480) {
                     
                     this.currentSocialId = socialId;
 
-                    this.users[idCurrentUser].userSocials.map(social => { 
+                    this.currentUserObject.userSocials.map(social => { 
                             if (this.currentSocialId) {
                                 if (social.id !== this.currentSocialId) {
                                     social.isActive = false;
@@ -479,7 +487,7 @@
             
             },
 
-            socialMouseHandler(socialId, currentUserId, e) { 
+            socialMouseHandler(socialId, e) { 
 
                 if (this.windowWidth > 480) {
                     
@@ -487,7 +495,7 @@
 
                     this.currentSocialId = socialId; 
 
-                    this.users[currentUserId].userSocials.map(social => { 
+                    this.currentUserObject.userSocials.map(social => { 
                             if (this.currentSocialId) {
 
                                 if (social.id !== this.currentSocialId) {
@@ -511,7 +519,7 @@
                         }
                         
                         if (elem !== this.socEdit) {
-                            this.users[currentUserId].userSocials.map(social => { 
+                            this.userSocials.map(social => { 
                                 social.isActive = false;
                             });
                             this.isActiveSocial = false;
@@ -523,8 +531,12 @@
             },
 
             cardClickHandler(cardId) {
-                let photoIndex = 0;
+                
                 this.openBigCardSlider = true;
+                this.bigCardSliderTop = window.pageYOffset + 40;
+
+                let photoIndex = 0;
+
                 this.cards.find(card => {
                     if (card.id !== cardId) photoIndex++;
                     else this.idCurrentPhoto = photoIndex;
@@ -539,22 +551,29 @@
             },
 
             checkWidth() {
-                this.windowWidth = window.innerWidth;
 
-                if (this.windowWidth > 480) {
+                if (this.$route.params.id && this.currentUserObject) {
 
-                    this.isActiveSocial = false;
-                    this.users[this.idCurrentUser].userSocials.map(social => 
-                        {
-                            social.isActive = false;
-                        }
-                    );
-                }
+                    this.windowWidth = window.innerWidth;
+    
+                    if (this.windowWidth > 480) {
+    
+                        this.isActiveSocial = false;
+                        // console.log('= ',this.currentUserObject);
+                        
+                        this.currentUserObject.userSocials.map(social => 
+                            {
+                                social.isActive = false;
+                            }
+                        );
+                    }
+    
+                    if (this.amountLoadedPhotos === 0) {
+                        if (this.amountLoadedPhotos !== 2 && this.windowWidth <= 768) this.amountLoadedPhotos = 2;
+                        else if (this.amountLoadedPhotos !== 4 && this.windowWidth <= 1200) this.amountLoadedPhotos = 4;
+                        else if (this.amountLoadedPhotos !== 6 && this.windowWidth > 1200) this.amountLoadedPhotos = 6;
+                    }
 
-                if (this.amountLoadedPhotos === 0) {
-                    if (this.amountLoadedPhotos !== 2 && this.windowWidth <= 768) this.amountLoadedPhotos = 2;
-                    else if (this.amountLoadedPhotos !== 4 && this.windowWidth <= 1200) this.amountLoadedPhotos = 4;
-                    else if (this.amountLoadedPhotos !== 6 && this.windowWidth > 1200) this.amountLoadedPhotos = 6;
                 }
             },
             
@@ -1208,8 +1227,7 @@
         }
 
         &__big-card-slider {
-            @include popup-container;
-            top: 40px;
+            @include fixed-popup-container;
         }
 
     }

@@ -44,6 +44,12 @@
   }    
 }
 
+@mixin fixed-popup-container() {
+  @include popup-container;
+  // position: fixed;
+  top: 30px;
+}
+
 @mixin popup-input() {
   display: block;
   border: 1px solid rgb(216, 214, 214);

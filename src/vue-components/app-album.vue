@@ -181,7 +181,7 @@
 
                                     <form class="form-addPhoto">
 
-                                        <div class="form-addPhoto__album-name-label">Название XXX
+                                        <div class="form-addPhoto__album-name-label">Название
                                             <span class="form-addPhoto__album-name" type="text"> {{albums[idCurrentAlbum].albumName}} </span>
                                         </div>
 
@@ -240,7 +240,9 @@
 
             
 
-            <div class="my-photos__big-card-slider" v-if="openBigMyPhoto">
+            <div class="my-photos__big-card-slider" v-if="openBigMyPhoto"
+                :style="{top : bigCardSliderTop+'px'}"
+            >
 
                 <div class="big-card-slider">
 
@@ -345,6 +347,8 @@
 
                 renderedPhotos: [],
 
+                bigCardSliderTop: 0,
+
                 flickityOptions: {
                     // initialIndex: this.idCurrentPhoto,
                     prevNextButtons: false,
@@ -363,6 +367,15 @@
             },
             idCurrentAlbum() {
                 return this.$route.params.albumid-1;
+            },
+        },
+
+        watch: {
+            openBigMyPhoto(value) {
+                if (value) {
+                    console.log('openBigMyPhoto');
+                    
+                }
             },
         },
 
@@ -393,6 +406,8 @@
             },
 
             clickMyPhotoHandler(myPhotoId) {
+
+                this.bigCardSliderTop = window.pageYOffset + 100;
 
                 let photoIndex = 0;
                 
@@ -804,8 +819,8 @@
         }
 
         &__big-card-slider {
-            @include popup-container;            
-            top: 30px;
+            @include fixed-popup-container;
+            top: 100px;
         }
 
     }

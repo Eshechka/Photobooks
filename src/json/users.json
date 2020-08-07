@@ -1,5 +1,15 @@
 [
   {   
+    "id": 3, 
+    "urlUserAvatar": "../img/dima.jpg", 
+    "urlUserCover": "", 
+    "userName": "Дима Ковальчук",
+    "email": "some@mail.com",
+    "isThisUser": false,
+    "userDesc": "Я Дима. Руковожу школой LoftSchool.",
+    "userSocials": []
+  },
+  {   
     "id": 1, 
     "urlUserAvatar": "../img/anton.png", 
     "urlUserCover": "../img/bg-main-header.png", 
@@ -13,7 +23,7 @@
         "icon": "../icons/soc_vk.svg", 
         "text": "vk", 
         "isActive": false, 
-        "link": "https://vk.com/" 
+        "link": "https://vk1.com/" 
       },
       {   
         "id": "fb", 
@@ -59,26 +69,16 @@
         "icon": "../icons/social_google.svg", 
         "text": "google", 
         "isActive": false, 
-        "link": "https://vk.com/" 
+        "link": "https://google2.com/" 
       },
       {   
         "id": "email", 
         "icon": "../icons/soc_email.svg", 
         "text": "email", 
         "isActive": false, 
-        "link": "https://vk.com/" 
+        "link": "https://vk2.com/" 
       }
     ]
-  },
-  {   
-    "id": 3, 
-    "urlUserAvatar": "../img/dima.jpg", 
-    "urlUserCover": "", 
-    "userName": "Дима Ковальчук",
-    "email": "some@mail.com",
-    "isThisUser": false,
-    "userDesc": "Я Дима. Руковожу школой LoftSchool.",
-    "userSocials": []
   }
  
 ]
