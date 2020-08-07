@@ -44,6 +44,12 @@
 			background-color: $color-blue;
 			color: $color-white;
 		}
+
+		&:active, &:focus {
+			background-color: transparent;
+			color: rgba($color-blue, 0.7);
+			border: 2px solid rgba($color-blue, 0.7);
+		}
 	}
 
 	&_theme-just-text {

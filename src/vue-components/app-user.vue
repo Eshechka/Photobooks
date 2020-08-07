@@ -2,8 +2,12 @@
     <div class="wrapper">
         <!-- <pre>{{currentUserObject}}</pre> -->
 
-        <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigCardSlider || openEditProfile || openChangeMyAlbum"></div>
-        <div class="wrapper__overlay wrapper__overlay_white" v-if="openEditHeader"></div>
+        <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigCardSlider || openEditProfile || openChangeMyAlbum"
+            @click="openBigCardSlider = openEditProfile = openChangeMyAlbum = false"
+        ></div>
+        <div class="wrapper__overlay wrapper__overlay_white" v-if="openEditHeader"
+            @click="openEditHeader = false"
+        ></div>
 
         <header class="header"
             :style="bgCurrentUser"

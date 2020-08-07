@@ -1,8 +1,12 @@
 <template>
     <div class="wrapper">
 
-        <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigMyPhoto || openEditPhoto || openAddPhoto"></div>
-        <div class="wrapper__overlay wrapper__overlay_white" v-if="openEditHeader"></div>
+        <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigMyPhoto || openEditPhoto || openAddPhoto"
+            @click="openBigMyPhoto = openEditPhoto = openAddPhoto = false"
+        ></div>
+        <div class="wrapper__overlay wrapper__overlay_white" v-if="openEditHeader"
+            @click="openEditHeader = false"
+        ></div>
 
 		<header class="header">
 	
