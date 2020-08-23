@@ -815,15 +815,11 @@
         }
 
         &__edit-photo, &__add-photo {
-            @include popup-container;
-            position: fixed;
-            top: 50%;
-            left: 0;
-            transform: translateY(-50%);
+            @include fixed-popup-container;
         }
 
         &__big-card-slider {
-            @include fixed-popup-container;
+            @include popup-container;
             top: 100px;
         }
 

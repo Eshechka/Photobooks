@@ -196,7 +196,7 @@
                                                     <div class="soc-edit__buttons">
                                                         <button type="submit" class="site-button site-button_theme_light">Сохранить</button>
                                                         <button type="button" class="site-button site-button_theme-just-text"
-                                                            @click="openEditHeader=false"
+                                                            @click="socEditCancel"
                                                         >Отменить</button>
                                                     </div>
 
@@ -515,7 +515,7 @@
                         });
 
                     } else if (e.type=='mouseleave') {
-
+                        
                         let elem = e.relatedTarget;
 
                         while(elem && elem != this.socEdit) {
@@ -523,7 +523,7 @@
                         }
                         
                         if (elem !== this.socEdit) {
-                            this.userSocials.map(social => { 
+                            this.currentUserObject.userSocials.map(social => { 
                                 social.isActive = false;
                             });
                             this.isActiveSocial = false;
@@ -604,6 +604,10 @@
                         window.scrollTo({top: posTop});                        
                     });
 
+            },
+
+            socEditCancel() {
+                //метод по нажатию отмена при редактировании адреса соцсети
             },
 
             next() {
@@ -1231,7 +1235,7 @@
         }
 
         &__big-card-slider {
-            @include fixed-popup-container;
+            @include popup-container;
         }
 
     }
@@ -1408,7 +1412,7 @@
         }
 
         &__change-album {
-            @include popup-container;
+            @include fixed-popup-container;
         }
         
     }

@@ -46,8 +46,10 @@
 
 @mixin fixed-popup-container() {
   @include popup-container;
-  // position: fixed;
-  top: 30px;
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
 }
 
 @mixin popup-input() {

@@ -28,7 +28,9 @@
 
                 <h3 class="big-card__title">{{cardObject.title}}</h3>
             
-                <div class="big-card__desc-text">{{cardObject.desc}}</div>
+                <div class="big-card__desc-text"
+                    v-html="descriptionHandle()"
+                ></div>
 
             </div> 
 
@@ -158,6 +160,42 @@
                 let thisUser = this.users.find(user => user.id === this.userId);
                 this.cardObject.userName = thisUser.userName;
                 this.cardObject.urlUserAvatar = thisUser.urlUserAvatar;
+            },
+            descriptionHandle() {
+                let text = this.cardObject.desc;
+                let textWithHashtags = '';
+                let startPos = 0;
+
+                while (true) {
+                    let foundHashtag = text.indexOf('#', startPos);
+                        // console.log('foundHashtag: ', foundHashtag);
+
+                    if (foundHashtag == -1) {
+                        textWithHashtags += text.slice(startPos, text.length);
+                        // console.log('textWithHashtags: ', textWithHashtags);
+                        break;
+                    }
+
+                    let sliceText = text.slice(foundHashtag + 1);
+                    console.log('sliceText: ', sliceText);
+                    
+                    let endPos = sliceText.match(/[^A-Za-z0-9а-яА-ЯёЁ_]/).index + foundHashtag + 1;
+                    // console.log('startPos: ', startPos);
+                    // console.log('endPos: ', endPos);
+
+                    if (endPos === -1) {
+                        textWithHashtags += text.slice(startPos, foundHashtag) + '<span class="site-tag">' + text.slice(foundHashtag, text.length) + '</span>';
+                        // console.log('textWithHashtags: ', textWithHashtags);
+                        break;
+                    }
+                    else {
+                        textWithHashtags += text.slice(startPos, foundHashtag) + '<span class="site-tag">' + text.slice(foundHashtag, endPos) + '</span>';    
+                        // console.log('textWithHashtags: ', textWithHashtags);    
+                        startPos = endPos;
+                    }
+                    
+                }
+                    return textWithHashtags;
             },
         },
 
