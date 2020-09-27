@@ -5,9 +5,11 @@
 
                 <div class="login__greeting">
                     
-                    <h1 class="login__title">{{login.title}}</h1>
+                    <h1 class="login__title">{{logindata.title}}</h1>
 
-                    <p class="login__text">{{login.text}}</p>
+                    <p class="login__text">{{logindata.text}}</p>
+
+					<pre>{{user.email}}</pre>
 
                 </div>
 
@@ -59,7 +61,8 @@
                     </form>
 
 
-                    <form 
+                    <form
+						@submit.prevent="submitlogin"
                         v-if="stateEnter"
                         class="enter">
 
@@ -68,7 +71,9 @@
                             <svg class="enter__icon enter__icon_email">
                                 <use :xlink:href="urlInlineSvgSprite+'#envelope'"></use>
                             </svg>
-                            <input class="enter__input enter__input_email" type="text" placeholder="Электронная почта">
+                            <input class="enter__input enter__input_email" type="text" placeholder="Электронная почта"
+								v-model="user.email"
+							>
 
                         </label>
 
@@ -77,7 +82,9 @@
                             <svg class="enter__icon enter__icon_password">
                                 <use :xlink:href="urlInlineSvgSprite+'#password'"></use>
                             </svg>
-                            <input class="enter__input enter__input_password" type="text" placeholder="Пароль">
+                            <input class="enter__input enter__input_password" type="text" placeholder="Пароль"
+								v-model="user.password"
+							>
 
                         </label>
                         
@@ -152,7 +159,9 @@
 
 
 <script>
+
 //   import appCard from '../vue-components/app-card.vue'
+  import axios from '../requests';
 
   export default {   
 
@@ -162,25 +171,40 @@
 
     data() {
         return {
-            stateEnter: !!false,
+            stateEnter: !false,
             stateRegistration: !!false,
             stateForgotPassword: !false,
             
             // urlAvatar: require('../img/anton.png').default,
             urlInlineSvgSprite: require('../img/spriteIcons.svg').default,
 
-            login: {
+            logindata: {
                 title: this.stateRegistration ? 'Регистрация' : 'Добро пожаловать',
                 text: this.stateRegistration ? '' : 'Перед вами сервис, который поможет вам организовать свои фотографии в альбомы и поделиться ими со всем миром!',
-
-            }
+			},
+			
+			user: {
+				email: '',
+				password: '',
+			},
            
         }
     },
 
 
     methods: {      
-
+		submitlogin() {
+			console.log('tut');
+			
+			axios.post('/login', this.user).then(response => { 
+				console.log(response);
+				const token = response.data.token;
+				localStorage.setItem('token', token);
+				axios.defaults.headers['Authorization'] = `Bearer ${token}`;
+			}).catch(error => {
+				console.log(error);
+			});
+		},
     },
 
         

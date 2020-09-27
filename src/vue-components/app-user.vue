@@ -1,6 +1,5 @@
 <template>
     <div class="wrapper">
-        <!-- <pre>{{currentUserObject}}</pre> -->
 
         <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigCardSlider || openEditProfile || openChangeMyAlbum"
             @click="openBigCardSlider = openEditProfile = openChangeMyAlbum = false"
@@ -161,7 +160,6 @@
                                     <input class="form-edit-header__input" type="text" placeholder="Антон Черепов">
                                 </label>
 
-
                                 <label class="form-edit-header__label">
                                     <textarea class="form-edit-header__input form-edit-header__input_textarea" cols="20" rows="2" placeholder="Описание альбома"></textarea>
                                 </label>
@@ -218,7 +216,6 @@
 
                                 </div>
 
-
                                 
                                 <div class="form-edit-header__buttons">
                                     <button class="site-button" type="submit">Сохранить</button>
@@ -238,117 +235,133 @@
 
         </header>
 
-
-        <div class="my-search" v-if="!openEditHeader">
-            <form class="form-search">
-                <input type="search" placeholder="Исследовать мир" class="form-search__input">
-                <button type="submit" class="form-search__submit">
-                    <svg class="form-search__icon">
-                        <use :xlink:href="urlInlineSvgSprite+'#search'"></use>
-                    </svg>
-                </button>
-            </form>
-        </div>
-
-
-        <section class="new">
-
-            <div class="new__container">
-
-                <h2 class="new__title">Новое в мире</h2>
-
-                <ul class="new__card-list">
-                    <li v-for="card in loadedCards" :key="card.id" class="new__card-item">
-                        <appCard
-                            :cardObject="card"
-                            @clickCard="cardClickHandler"
-                        >
-                        </appCard>
-                    </li>
-                </ul> 
-
-                <div class="new__button-show-more">
-                    <button type="button" class="site-button site-button_theme-light"
-                        @click="loadedCardsPush(startPhotoLoadingPos)"
-                        :class="{disabled : amountLoadedPhotos===-1}"
-                    >Показать ещё</button>
-                </div>
-
+        <main class="maincontent">
+            <div class="my-search" v-if="!openEditHeader">
+                <form class="form-search">
+                    <input type="search" placeholder="Исследовать мир" class="form-search__input">
+                    <button type="submit" class="form-search__submit">
+                        <svg class="form-search__icon">
+                            <use :xlink:href="urlInlineSvgSprite+'#search'"></use>
+                        </svg>
+                    </button>
+                </form>
             </div>
 
 
-            <div class="new__big-card-slider" v-if="openBigCardSlider"
-                :style="{top : bigCardSliderTop+'px'}"
-            >
+            <section class="new"
+                v-if="currentUserObject.isThisUser">
 
-                    <div class="big-card-slider">
+                <div class="new__container">
 
-                        <flickity ref="flickity" :options="flickityOptions" class="big-card-slider__container">
+                    <h2 class="new__title">Новое в мире</h2>
 
-                                <appBigCard v-for="bigCard in cards" :key="bigCard.id"
-                                    :cardObject="bigCard"
-                                    :userId="bigCard.authorId"
-                                    >                                                               
-                                </appBigCard>
+                    <p class="new__empty-text"
+                        v-if="!loadedCards.length"
+                    >Увы, пока ничего не загружено. Загрузите что-нибудь и станьте первым.</p>
 
-                        </flickity>
+                    <ul class="new__card-list">
+                        <li v-for="card in loadedCards" :key="card.id" class="new__card-item">
+                            <appCard
+                                :cardObject="card"
+                                @clickCard="cardClickHandler"
+                            >
+                            </appCard>
+                        </li>
+                    </ul> 
 
-                        <div class="big-card-slider__close">
-                            <button class="round-button round-button_close-transparent" type="button"
-                                @click="openBigCardSlider=false"
+                    <div class="new__button-show-more">
+                        <button type="button" class="site-button site-button_theme-light"
+                            v-if="loadedCards.length"
+                            @click="loadedCardsPush(startPhotoLoadingPos)"
+                            :class="{disabled : amountLoadedPhotos===-1}"
+                        >Показать ещё</button>
+                    </div>
+
+                </div>
+
+
+                <div class="new__big-card-slider" v-if="openBigCardSlider"
+                    :style="{top : bigCardSliderTop+'px'}"
+                >
+
+                        <div class="big-card-slider">
+
+                            <flickity ref="flickity" :options="flickityOptions" class="big-card-slider__container">
+
+                                    <appBigCard v-for="bigCard in loadedCards" :key="bigCard.id"
+                                        :cardObject="bigCard"
+                                        :userId="bigCard.authorId"
+                                        :currentUserObject="currentUserObject"
+                                        >                                                               
+                                    </appBigCard>
+
+                            </flickity>
+
+                            <div class="big-card-slider__close">
+                                <button class="round-button round-button_close-transparent" type="button"
+                                    @click="openBigCardSlider=false"
+                                ></button>
+                            </div>
+
+                            <button type="button" class="big-card-slider__control big-card-slider__control_prev"
+                                @click="previous()"
+                            ></button>
+                            <button type="button" class="big-card-slider__control big-card-slider__control_next"
+                                @click="next()"
+                            ></button>
+
+                        </div>
+                </div>
+
+
+            </section>
+
+
+            <section class="my-albums">
+
+                <div class="my-albums__container">
+
+                    <div class="my-albums__topgroup">
+                        <h2 class="my-albums__title" 
+                            v-if="currentUserObject.isThisUser">Мои альбомы</h2>                        
+                        <h2 class="my-albums__title" 
+                            v-else>Альбомы</h2>
+                        <div class="my-albums__button-plus"
+                            v-if="currentUserObject.isThisUser">
+                            <button class="round-button round-button_plus"                            
+                                @click="openChangeMyAlbum=true; 
+                                        albumChangeMode='add';"
                             ></button>
                         </div>
-
-                        <button type="button" class="big-card-slider__control big-card-slider__control_prev"
-                            @click="previous()"
-                        ></button>
-                        <button type="button" class="big-card-slider__control big-card-slider__control_next"
-                            @click="next()"
-                        ></button>
-
                     </div>
-            </div>
+
+                    <p class="my-albums__empty-text"
+                        v-if="!thisUserAlbums.length"
+                    >Альбомы еще не созданы. Создайте альбом с помощью кнопки "Добавить".</p>
 
 
-        </section>
+                    <ul class="my-albums__albums-list">
+                        <li v-for="myAlbum in thisUserAlbums" :key="myAlbum.id" class="my-albums__albums-item">
+                            <appMyalbum 
+                                @clickEditMyAlbum="clickEditAlbumHandler"
+                                :myAlbumObject="myAlbum"                            
+                            ></appMyalbum>
+                        </li>
+                    </ul> 
 
-
-        <section class="my-albums">
-
-            <div class="my-albums__container">
-
-                <div class="my-albums__topgroup">
-                    <h2 class="my-albums__title">Мои альбомы</h2>
-                    <div class="my-albums__button-plus">
-                        <button class="round-button round-button_plus"                            
-                            @click="openChangeMyAlbum=true; 
-                                    albumChangeMode='add'"
-                        ></button>
-                    </div>
                 </div>
 
-                <ul class="my-albums__albums-list">
-                    <li v-for="myAlbum in myAlbums" :key="myAlbum.id" class="my-albums__albums-item">
-                        <appMyalbum 
-                            @clickEditMyAlbum="clickEditAlbumHandler"
-                            :myAlbumObject="myAlbum"                            
-                        ></appMyalbum>
-                    </li>
-                </ul> 
 
-            </div>
+                <div class="my-albums__change-album" v-if="openChangeMyAlbum">
+                    <appChangeAlbum
+                        @clickCloseChangeMyAlbum="openChangeMyAlbum=false"
+                        :myAlbumObject="currentAlbum"                    
+                        :mode="albumChangeMode"
+                    ></appChangeAlbum>
 
-
-            <div class="my-albums__change-album" v-if="openChangeMyAlbum">
-                <appChangeAlbum
-                    @clickCloseChangeMyAlbum="openChangeMyAlbum=false"
-                    :myAlbumObject="currentAlbum"                    
-                    :mode="albumChangeMode"
-                ></appChangeAlbum>
-
-            </div>
-        </section>
-
+                </div>
+            </section>
+        </main>
 
         <footer class="footer"
             :style="bgCurrentUser">
@@ -412,7 +425,7 @@
                 idCurrentPhoto: 0,
 
                 cards: dataJSON_cards,
-                myAlbums: dataJSON_albums,
+                albums: dataJSON_albums,
                 socials: dataJSON_socials,
                 users: dataJSON_users,
 
@@ -440,11 +453,11 @@
             socEdit() {
                 return this.$refs['soc-edit'];
                 },
-            // idCurrentUser() {
-            //     return this.$route.params.id;
-            //     },
+            idCurrentUser() {
+                return this.$route.params.id;
+                },//!!!!!! это потом должно быть в local storage?
             currentUserObject() {                
-                return this.users.find(user => user.id == this.$route.params.id);
+                return this.users.find(user => user.id == this.idCurrentUser);
                 },
             bgCurrentUser() {
                 let bgUser = "";
@@ -452,6 +465,9 @@
                     bgUser = "backgroundImage: url(" + this.currentUserObject.urlUserCover + ")";
                 return bgUser;
                 },
+            thisUserAlbums() {
+                return this.albums.filter(album => album.author == this.idCurrentUser);
+            }
         },
 
 
@@ -556,14 +572,13 @@
 
             checkWidth() {
 
-                if (this.$route.params.id && this.currentUserObject) {
+                if (this.idCurrentUser && this.currentUserObject) {
 
                     this.windowWidth = window.innerWidth;
     
                     if (this.windowWidth > 480) {
     
                         this.isActiveSocial = false;
-                        // console.log('= ',this.currentUserObject);
                         
                         this.currentUserObject.userSocials.map(social => 
                             {

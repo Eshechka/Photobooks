@@ -29,7 +29,7 @@
                 <h3 class="big-card__title">{{cardObject.title}}</h3>
             
                 <div class="big-card__desc-text"
-                    v-html="descriptionHandle()"
+                    v-html="descriptionHandle(cardObject.desc)"
                 ></div>
 
             </div> 
@@ -102,13 +102,15 @@
         props: {
             cardObject: Object,
             userId: Number,
+            currentUserObject: Object,
         },
 
 
         data() {
           return {
-            userAvatarUrl: require('../img/anton.png').default,
-            userName: "Антон Черепов",
+            userAvatarUrl: this.currentUserObject.urlUserAvatar,
+            userName: this.currentUserObject.userName,
+
             comments: dataJSON_comments,
             users: dataJSON_users,
             isActiveLike: this.cardObject.isLikedByMe,
@@ -159,43 +161,40 @@
             upgradeCardObject() {
                 let thisUser = this.users.find(user => user.id === this.userId);
                 this.cardObject.userName = thisUser.userName;
-                this.cardObject.urlUserAvatar = thisUser.urlUserAvatar;
+                this.cardObject.urlUserAvatar = thisUser.urlUserAvatar;                
             },
-            descriptionHandle() {
-                let text = this.cardObject.desc;
+            descriptionHandle(text) {
                 let textWithHashtags = '';
-                let startPos = 0;
 
-                while (true) {
-                    let foundHashtag = text.indexOf('#', startPos);
-                        // console.log('foundHashtag: ', foundHashtag);
+                if (text) {
+                    let startPos = 0;
 
-                    if (foundHashtag == -1) {
-                        textWithHashtags += text.slice(startPos, text.length);
-                        // console.log('textWithHashtags: ', textWithHashtags);
-                        break;
+                    while (true) {
+                        let foundHashtag = text.indexOf('#', startPos);
+
+                        if (foundHashtag == -1) {
+                            textWithHashtags += text.slice(startPos, text.length);
+                            break;
+                        }
+
+                        let sliceText = text.slice(foundHashtag + 1);
+                        
+                        let endPos = sliceText.match(/[^A-Za-z0-9а-яА-ЯёЁ_]/).index + foundHashtag + 1;
+
+                        if (endPos === -1) {
+                            textWithHashtags += text.slice(startPos, foundHashtag) + '<span class="site-tag">' + text.slice(foundHashtag, text.length) + '</span>';
+                            break;
+                        }
+                        else {
+                            textWithHashtags += text.slice(startPos, foundHashtag) + '<span class="site-tag">' + text.slice(foundHashtag, endPos) + '</span>';    
+                            startPos = endPos;
+                        }
+                        
                     }
 
-                    let sliceText = text.slice(foundHashtag + 1);
-                    console.log('sliceText: ', sliceText);
-                    
-                    let endPos = sliceText.match(/[^A-Za-z0-9а-яА-ЯёЁ_]/).index + foundHashtag + 1;
-                    // console.log('startPos: ', startPos);
-                    // console.log('endPos: ', endPos);
-
-                    if (endPos === -1) {
-                        textWithHashtags += text.slice(startPos, foundHashtag) + '<span class="site-tag">' + text.slice(foundHashtag, text.length) + '</span>';
-                        // console.log('textWithHashtags: ', textWithHashtags);
-                        break;
-                    }
-                    else {
-                        textWithHashtags += text.slice(startPos, foundHashtag) + '<span class="site-tag">' + text.slice(foundHashtag, endPos) + '</span>';    
-                        // console.log('textWithHashtags: ', textWithHashtags);    
-                        startPos = endPos;
-                    }
-                    
                 }
-                    return textWithHashtags;
+
+                return textWithHashtags;
             },
         },
 
@@ -328,7 +327,12 @@
         }
 
         &__desc-text {
-            height: 70px;
+            height: 104px;
+            overflow: hidden;
+
+            @include tablets {
+                height: 70px;
+            }
         }
 
         &__comments {

@@ -12,6 +12,9 @@ import router from './router';
 
 import appIndex from './vue-pages/app-index.vue';
 
+import Vuelidate from 'vuelidate';
+Vue.use(Vuelidate)
+
 new Vue({
     el: "#wrapper-index",
     store,

@@ -114,8 +114,10 @@
             position: absolute;
             left: 20px;
             bottom: 20px;
-            background-color: rgba(#{$color-text}, 0.05);
-            box-shadow: 0 0 0 5px rgba(#{$color-text}, 0.1);
+            background-color: rgba(50, 50, 50, 0.1);
+            box-shadow: 0 0 11px 5px rgba(50,50,50,.1);
+            /* background-color: rgba(#{$color-text}, 0.05); */
+
         }
 
         &__info-button {

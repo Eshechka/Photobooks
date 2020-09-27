@@ -27,14 +27,20 @@
 
                     <div class="form-changeAlbum__cover">
 
-                        <div class="form-changeAlbum__cover-img-wrapper">
-                            <img class="form-changeAlbum__cover-img" :src="coverImg" alt="album cover image">
-                        </div>
+                        <label for="load-bgcover-album" class="form-changeAlbum__label form-changeAlbum__label_file-load">
 
-                        <div class="form-changeAlbum__cover-button">
-                            <button class="site-button site-button_theme-light" type="button">{{coverTitle}}</button>
-                            <div class="form-changeAlbum__notice-size">(файл должен быть размером не более 1024 КБ)</div>
-                        </div>
+                            <div class="form-changeAlbum__cover-img-wrapper">
+                                <input type="file" id="load-bgcover-album" class="form-changeAlbum__input-load">
+                                <img class="form-changeAlbum__cover-img" :src="coverImg" alt="album cover image">
+                            </div>
+
+                            <div class="form-changeAlbum__cover-button">
+                                <button class="site-button site-button_theme-light" type="button">{{coverTitle}}</button>
+                            </div>
+
+                        </label>
+
+                        <div class="form-changeAlbum__notice-size">(файл должен быть размером не более 1024 КБ)</div>
 
                     </div>
                     
@@ -181,14 +187,31 @@
         flex-direction: column;
         background-color: $color-white;
 
+
+        &__input-load {
+            cursor: pointer;
+            opacity: 0;    
+            width: 100%;   
+            height: 100%;    
+            position: absolute;
+            top: 0;
+            font-size: 0;
+        }
+
         &__label {
             font-family: 'Proxima Nova Semibold';
             font-size: 14px;
             padding: 15px 10px 10px;
 
+            display: block;
+
             @include tablets {
                 margin-left: 80px;
                 margin-right: 20px;
+            }
+
+            &_file-load {
+                position: relative;
             }
         }
 

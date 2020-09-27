@@ -11,8 +11,7 @@
 		<header class="header">
 	
 			<div class="header__container"
-                ref='header-container'
-            >
+                ref='header-container'>
 
                 <div class="header__button-edit">
                     <button type='button' class="round-button round-button_edit"
@@ -31,11 +30,11 @@
 					<div class="header__user" :class="{header__user_scrolled : isScrolledHeader}">
 						<div class="header__avatar">
 							<div class="avatar">
-								<img class="avatar__img" :src='userAvatarUrl' alt="avatar">
+								<img class="avatar__img" :src='currentUserObject.urlUserAvatar' alt="avatar">
 							</div>
 						</div>
 						<h1 class="header__title" v-if="isScrolledHeader"> {{albums[idCurrentAlbum].albumName}} </h1>
-						<h1 class="header__title" v-else > {{userName}} </h1>
+						<h1 class="header__title" v-else> {{currentUserObject.userName}} </h1>
 
 					</div>
 
@@ -45,14 +44,14 @@
 						<div class="header__text"> {{albums[idCurrentAlbum].description}} </div>
 					</div>
 			</div>
-					<div class="header__album-info">
-						<div class="header__album-info-wrapper">					
-							<div class="header__info-button header__info-button_photos"> {{albums[idCurrentAlbum].photos.length}} </div>
-							<div class="header__info-button header__info-button_likes"> {{albums[idCurrentAlbum].photos.reduce((sum, myPhoto) => sum + myPhoto.likes, 0)}} </div>
-							<div class="header__info-button header__info-button_comments"> {{albums[idCurrentAlbum].photos.reduce((sum, myPhoto) => sum + myPhoto.comments, 0)}} </div>
-						</div>
-					</div>
 
+            <div class="header__album-info">
+                <div class="header__album-info-wrapper">					
+                    <div class="header__info-button header__info-button_photos"> {{albums[idCurrentAlbum].photos.length}} </div>
+                    <div class="header__info-button header__info-button_likes"> {{albums[idCurrentAlbum].photos.reduce((sum, myPhoto) => sum + myPhoto.likes, 0)}} </div>
+                    <div class="header__info-button header__info-button_comments"> {{albums[idCurrentAlbum].photos.reduce((sum, myPhoto) => sum + myPhoto.comments, 0)}} </div>
+                </div>
+            </div>
             
             <div class="header__edit-header" v-if="openEditHeader">
 
@@ -61,7 +60,7 @@
                     <div class="edit-header__card">
                     
                             <div class="edit-header__user">
-                                    <img class="edit-header__user-img" :src="userAvatarUrl" alt="avatar image">
+                                    <img class="edit-header__user-img" :src="currentUserObject.urlUserAvatar" alt="avatar image">
                                     <div class="edit-header__user-name">Антон Черепов</div>
                             </div>
 
@@ -105,178 +104,198 @@
                 </div>
 
             </div>
+
 		</header>
 	
+        <main class="maincontent">
 
-		<section class="my-photos">
-			<div class="my-photos__container">
-				<div class="my-photos__topgroup">
-					<div class="my-photos__button-plus">
-						<button class="round-button round-button_plus"
-                            @click="openAddPhoto = true"
-                        ></button>
-					</div>
-				</div>
-	
-				<ul class="my-photos__photos-list">
-                    
-					<li v-for="myPhoto in albums[idCurrentAlbum].photos" :key="myPhoto.id" class="my-photos__photos-item" >
-						<appMyPhoto 
-                            :myPhotoObject="myPhoto"
-                            @clickEditMyPhoto="openEditPhoto=true"
-                            @clickMyPhoto="clickMyPhotoHandler"
-                        ></appMyPhoto>
-					</li>
+            <section class="my-photos">
+                <div class="my-photos__container">
 
-
-                    <div class="my-photos__edit-photo" v-if="openEditPhoto">
-                        
-                       <div class="edit-photo">
-                            <div class="edit-photo__card">
-
-                                <div class="edit-photo__topgroup">
-                                    <h4 class="edit-photo__title">Редактировать фотографию</h4>
-                                    <button type="button" class="edit-photo__button edit-photo__button_close"
-                                        @click="openEditPhoto=false"
-                                    ></button>
-                                </div>
-                                
-                                <div class="edit-photo__form">
-
-                                    <form class="form-editPhoto">
-
-                                        <label class="form-editPhoto__label">Название
-                                            <input class="form-editPhoto__input" type="text" placeholder="Домик в лесу">
-                                        </label>
-
-                                        <label class="form-editPhoto__label">Описание
-                                            <textarea class="form-editPhoto__input form-editPhoto__input_textarea" cols="10" rows="2" placeholder="Описание альбома">Описание фотографии может быть с #хештегами. Чтобы было красиво описание должно быть на несколько строк. Убедитесь сами!</textarea>
-                                        </label>
-                                
-                                        <div class="form-editPhoto__buttons">
-                                            <button class="site-button" type="submit">Сохранить</button>
-                                            <button class="site-button site-button_theme-just-text" type="button">Отменить</button>
-                                            <button class="round-button round-button_delete" type="button">Удалить</button>
-                                        </div>
-
-                                    </form>
-                                </div>      
-
-                            </div>
+                    <div class="my-photos__topgroup">
+                        <div class="my-photos__button-plus">
+                            <button class="round-button round-button_plus"
+                                @click="openAddPhoto=true"
+                            ></button>
                         </div>
-
-
                     </div>
-
-                    
-                    <div class="my-photos__add-photo" v-if="openAddPhoto">
+        
+                    <ul class="my-photos__photos-list">
                         
-                       <div class="add-photo">
-                            <div class="add-photo__card">
+                        <li v-for="myPhoto in albums[idCurrentAlbum].photos" :key="myPhoto.id" class="my-photos__photos-item" >
+                            <appMyPhoto 
+                                :myPhotoObject="myPhoto"
+                                @clickEditMyPhoto="openEditPhoto=true"
+                                @clickMyPhoto="clickMyPhotoHandler"
+                            ></appMyPhoto>
+                        </li>
 
-                                <div class="add-photo__topgroup">
-                                    <h4 class="add-photo__title">Добавить фотографии</h4>
-                                    <button type="button" class="add-photo__button add-photo__button_close"
-                                        @click="openAddPhoto=false"
-                                    ></button>
-                                </div>
-                                
-                                <div class="add-photo__form">
 
-                                    <form class="form-addPhoto">
+                        <div class="my-photos__edit-photo" v-if="openEditPhoto">
+                            
+                        <div class="edit-photo">
+                                <div class="edit-photo__card">
 
-                                        <div class="form-addPhoto__album-name-label">Название
-                                            <span class="form-addPhoto__album-name" type="text"> {{albums[idCurrentAlbum].albumName}} </span>
-                                        </div>
+                                    <div class="edit-photo__topgroup">
+                                        <h4 class="edit-photo__title">Редактировать фотографию</h4>
+                                        <button type="button" class="edit-photo__button edit-photo__button_close"
+                                            @click="openEditPhoto=false"
+                                        ></button>
+                                    </div>
+                                    
+                                    <div class="edit-photo__form">
 
-                                        <div class="form-addPhoto__load-cover">
+                                        <form class="form-editPhoto">
 
-                                            <div class="form-addPhoto__added-photos" v-if="isPhotosLoaded">
-                                                <ul class="added-photos">
-                                                    <li class="added-photos__item" 
-                                                        v-for="photo in renderedPhotos" :key="photo.id"
-                                                        :style="{ backgroundImage : `url(${photo.pic})` }"
-                                                    >                                                        
-                                                        <button class="round-button round-button_close">
-                                                        </button>
-                                                    </li>
-
-                                                </ul>
-                                            </div>
-
-                                            <label for="load-photo" class="form-addPhoto__label form-addPhoto__label_file-load" v-if="openAddPhoto && !isPhotosLoaded">
-                                                <input type="file" id="load-photo" multiple="multiple" class="form-addPhoto__input-load"
-                                                    @change='loadPhotosFiles'
-                                                >
-                                                <div class="form-addPhoto__load-photo-img"></div>                                                
-
-                                                <div class="form-addPhoto__load-photo-text-button">
-                                                    Выберите файл
-                                                </div>
-                                                <div class="form-addPhoto__load-photo-text">
-                                                    <span class="form-addPhoto__load-photo-drag-text">Перетащите фото сюда или </span>
-                                                    выберите файл
-                                                </div>
-
+                                            <label class="form-editPhoto__label">Название
+                                                <input class="form-editPhoto__input" type="text" placeholder="Домик в лесу">
                                             </label>
 
-                                        </div>
-                                
-                                        <div class="form-addPhoto__buttons">
-                                            <button class="site-button" type="submit">Сохранить</button>
-                                            <button class="site-button site-button_theme-just-text" type="button"
-                                                @click="openAddPhoto=false"
-                                            >Отменить</button>
-                                        </div>
+                                            <label class="form-editPhoto__label">Описание
+                                                <textarea class="form-editPhoto__input form-editPhoto__input_textarea" cols="10" rows="2" placeholder="Описание фотографии"
+                                                    v-model="albumObject.desc"
+                                                ></textarea>
 
-                                    </form>
-                                </div>      
+                                                
+                                                    <!-- v-if="checkForm && $v.albumObject.desc.$invalid" -->
+                                                <div class="form-editPhoto__error form-editPhoto__error_desc-text"
+                                                    v-if="$v.albumObject.desc.$invalid"
+                                                >
+                                                    <span
+                                                        v-if="!$v.albumObject.desc.maxLength"
+                                                    >Максимум символов в описании: {{ $v.albumObject.desc.$params.maxLength.max }}</span>
+                                                </div>
+                                            </label>
+                                    
+                                            <div class="form-editPhoto__buttons">
+                                                <button class="site-button" type="submit">Сохранить</button>
+                                                <button class="site-button site-button_theme-just-text" type="button"
+                                                    @click="openEditPhoto=false"
+                                                >Отменить</button>
+                                                <button class="round-button round-button_delete" type="button">Удалить</button>
+                                            </div>
 
+                                        </form>
+                                    </div>      
+
+                                </div>
                             </div>
+
+
+                        </div>
+
+                        
+                        <div class="my-photos__add-photo" v-if="openAddPhoto">
+                            
+                        <div class="add-photo">
+                                <div class="add-photo__card">
+
+                                    <div class="add-photo__topgroup">
+                                        <h4 class="add-photo__title">Добавить фотографии</h4>
+                                        <button type="button" class="add-photo__button add-photo__button_close"
+                                            @click="openAddPhoto=false"
+                                        ></button>
+                                    </div>
+                                    
+                                    <div class="add-photo__form">
+
+                                        <form class="form-addPhoto"
+                                         @submit.prevent='handleAddPhoto'>
+
+                                            <div class="form-addPhoto__album-name-label">Название
+                                                <span class="form-addPhoto__album-name" type="text"> {{albums[idCurrentAlbum].albumName}} </span>
+                                            </div>
+
+                                            <div class="form-addPhoto__load-cover">
+
+                                                <div class="form-addPhoto__added-photos" v-if="isPhotosLoaded">
+                                                    <ul class="added-photos">
+                                                        <li class="added-photos__item" 
+                                                            v-for="photo in renderedPhotos" :key="photo.id"
+                                                            :style="{ backgroundImage : `url(${photo.pic})` }"
+                                                        >                                                        
+                                                            <button class="round-button round-button_close">
+                                                            </button>
+                                                        </li>
+
+                                                    </ul>
+                                                </div>
+
+                                                <label for="load-photo" class="form-addPhoto__label form-addPhoto__label_file-load" v-if="openAddPhoto && !isPhotosLoaded">
+                                                    <input type="file" id="load-photo" multiple="multiple" class="form-addPhoto__input-load"
+                                                        @change='loadPhotosFiles'
+                                                    >
+                                                    <div class="form-addPhoto__load-photo-img"></div>                                                
+
+                                                    <div class="form-addPhoto__load-photo-text-button">
+                                                        Выберите файл
+                                                    </div>
+                                                    <div class="form-addPhoto__load-photo-text">
+                                                        <span class="form-addPhoto__load-photo-drag-text">Перетащите фото сюда или </span>
+                                                        выберите файл
+                                                    </div>
+
+                                                </label>
+
+                                            </div>
+                                    
+                                            <div class="form-addPhoto__buttons">
+                                                <button class="site-button" type="submit">Сохранить</button>
+                                                <button class="site-button site-button_theme-just-text" type="button"
+                                                    @click="openAddPhoto=false"
+                                                >Отменить</button>
+                                            </div>
+
+                                        </form>
+                                    </div>      
+
+                                </div>
+                            </div>
+
+
                         </div>
 
 
-                    </div>
-
-
-				</ul>
-			</div>
-
-            
-
-            <div class="my-photos__big-card-slider" v-if="openBigMyPhoto"
-                :style="{top : bigCardSliderTop+'px'}"
-            >
-
-                <div class="big-card-slider">
-
-                    <flickity ref="flickity" :options="flickityOptions" class="big-card-slider__container">
-
-                        <appBigCard v-for="bigCard in albums[idCurrentAlbum].photos" :key="bigCard.id"
-                            :cardObject="bigCard"
-                            :userId="albums[idCurrentAlbum].author"
-                        ></appBigCard>
-                        
-                    </flickity>
-
-                    <div class="big-card-slider__close">
-                        <button class="round-button round-button_close-transparent" type="button"
-                            @click="openBigMyPhoto=false"
-                        ></button>
-                    </div>
-
-                    <button type="button" class="big-card-slider__control big-card-slider__control_prev"
-                        @click="previous()"
-                    ></button>
-                    <button type="button" class="big-card-slider__control big-card-slider__control_next"
-                        @click="next()"
-                    ></button>
-
+                    </ul>
                 </div>
-            </div>
 
-		</section>
+                
 
+                <div class="my-photos__big-card-slider" v-if="openBigMyPhoto"
+                    :style="{top : bigCardSliderTop+'px'}"
+                >
+
+                    <div class="big-card-slider">
+
+                        <flickity ref="flickity" :options="flickityOptions" class="big-card-slider__container">
+
+                            <appBigCard v-for="bigCard in albums[idCurrentAlbum].photos" :key="bigCard.id"
+                                :cardObject="bigCard"
+                                :userId="albums[idCurrentAlbum].author"
+                                :currentUserObject="currentUserObject"
+                            ></appBigCard>
+                            
+                        </flickity>
+
+                        <div class="big-card-slider__close">
+                            <button class="round-button round-button_close-transparent" type="button"
+                                @click="openBigMyPhoto=false"
+                            ></button>
+                        </div>
+
+                        <button type="button" class="big-card-slider__control big-card-slider__control_prev"
+                            @click="previous()"
+                        ></button>
+                        <button type="button" class="big-card-slider__control big-card-slider__control_next"
+                            @click="next()"
+                        ></button>
+
+                    </div>
+                </div>
+
+            </section>
+            
+        </main>
 	
 		<footer class="footer">
 	
@@ -305,9 +324,13 @@
     import appMyPhoto from '../vue-components/app-my-photo.vue';
     import appBigCard from '../vue-components/app-big-card.vue';
     import dataJSON_albums from '../json/albums.json';
+    import dataJSON_users from '../json/users.json';
     
     import Flickity from 'vue-flickity';
 
+    import { maxLength } from 'vuelidate/lib/validators';
+
+    import $axios from 'axios'
 
     const renderer = file => {
         const reader = new FileReader();
@@ -335,6 +358,7 @@
             return {
 
                 albums: dataJSON_albums,
+                users: dataJSON_users,
 
                 openEditPhoto: false,
                 openAddPhoto: false,
@@ -345,9 +369,6 @@
                 isPhotosLoaded: false,
 
                 idCurrentClickedPhoto: 0,
-
-                userAvatarUrl: require('../img/anton.png').default,
-                userName: "Антон Черепов",
 
                 renderedPhotos: [],
 
@@ -362,6 +383,12 @@
                     groupCells: true,
                     contain: true
                 },
+
+                albumObject: {
+                    desc: '',
+                },
+
+                addedPhotos: [],
             }
         },
 
@@ -372,14 +399,17 @@
             idCurrentAlbum() {
                 return this.$route.params.albumid-1;
             },
+            currentUserObject() {                
+                return this.users.find(user => user.isThisUser == true);
+            },
         },
 
-        watch: {
-            openBigMyPhoto(value) {
-                if (value) {
-                    console.log('openBigMyPhoto');
-                    
-                }
+        validations: {
+
+            albumObject: {
+                desc: {
+                    maxLength: maxLength(600),
+                },
             },
         },
 
@@ -423,6 +453,49 @@
 
                 this.openBigMyPhoto = true;
 
+            },
+
+            handleAddPhoto() {
+                let photosObject = []
+                if (this.renderedPhotos.length) {
+                    this.renderedPhotos.forEach(photo => {
+                        const formData = new FormData();
+                        formData.append('id', 100);
+                        formData.append('photo', photo);
+                        formData.append('title', '');
+                        formData.append('desc', '');
+                        formData.append('comments', 0);
+                        formData.append('likes', 0);
+                        formData.append('isLikedByMe', false);
+                        formData.append('authorId', this.currentUserObject.id);
+                        formData.append('authorName', this.currentUserObject.userName);
+                        formData.append('urlUserAvatar', this.currentUserObject.urlUserAvatar);
+                        // formData.append('albumId', this.idCurrentAlbum);
+                        // formData.append('albumName', this.albums[idCurrentAlbum].albumName);
+                        photosObject.push(formData)
+                    })
+
+                    console.log('photosObject: ', photosObject);
+
+                    (async (photosObject) => {
+                        console.log('tutatuta');
+                        
+                        try {
+                            const data = await this.$axios.POST('https://my-json-server.typicode.com/Eshechka/Photobooks/cards', photosObject);
+                            console.log(data);
+                        }
+                        catch(error) { 
+                            throw new Error ( error.response.data.error || error.response.data.message ); 
+                        }
+                        finally {
+                            this.isPhotosLoaded = false;
+                            this.renderedPhotos = [];
+                            this.openAddPhoto=false;
+                        }
+                    })();
+                }
+                else
+                    console.log('no files');//!!!!!!! validation
             },
 
             scrollToTop() {
