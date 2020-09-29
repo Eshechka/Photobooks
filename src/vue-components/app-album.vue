@@ -30,26 +30,29 @@
 					<div class="header__user" :class="{header__user_scrolled : isScrolledHeader}">
 						<div class="header__avatar">
 							<div class="avatar">
-								<img class="avatar__img" :src='currentUserObject.urlUserAvatar' alt="avatar">
+								<img class="avatar__img" :src='users.find(user => user.id == currentAlbumObject.author).urlUserAvatar' alt="avatar">
+								<!-- <img class="avatar__img" :src='currentUserObject.urlUserAvatar' alt="avatar"> -->
 							</div>
 						</div>
-						<h1 class="header__title" v-if="isScrolledHeader"> {{albums[idCurrentAlbum].albumName}} </h1>
-						<h1 class="header__title" v-else> {{currentUserObject.userName}} </h1>
+						<h1 class="header__title" v-if="isScrolledHeader"> {{currentAlbumObject.albumName}} </h1>
+                        
+						<h1 class="header__title" v-else> {{users.find(user => user.id == currentAlbumObject.author).userName}} </h1>
+						<!-- <h1 class="header__title" v-else> {{currentUserObject.userName}} </h1> -->
 
 					</div>
 
 					<div class="header__album-desc">
-						<h2 class="header__album-title"> {{albums[idCurrentAlbum].albumName}} </h2>
+						<h2 class="header__album-title"> {{currentAlbumObject.albumName}} </h2>
                         
-						<div class="header__text"> {{albums[idCurrentAlbum].description}} </div>
+						<div class="header__text"> {{currentAlbumObject.description}} </div>
 					</div>
 			</div>
 
             <div class="header__album-info">
                 <div class="header__album-info-wrapper">					
-                    <div class="header__info-button header__info-button_photos"> {{albums[idCurrentAlbum].photos.length}} </div>
-                    <div class="header__info-button header__info-button_likes"> {{albums[idCurrentAlbum].photos.reduce((sum, myPhoto) => sum + myPhoto.likes, 0)}} </div>
-                    <div class="header__info-button header__info-button_comments"> {{albums[idCurrentAlbum].photos.reduce((sum, myPhoto) => sum + myPhoto.comments, 0)}} </div>
+                    <div class="header__info-button header__info-button_photos"> {{thisAlbumPhotos.length}} </div>
+                    <div class="header__info-button header__info-button_likes"> {{thisAlbumPhotos.reduce((sum, myPhoto) => sum + myPhoto.likes, 0)}} </div>
+                    <div class="header__info-button header__info-button_comments"> {{thisAlbumPhotos.reduce((sum, myPhoto) => sum + myPhoto.comments, 0)}} </div>
                 </div>
             </div>
             
@@ -60,7 +63,7 @@
                     <div class="edit-header__card">
                     
                             <div class="edit-header__user">
-                                    <img class="edit-header__user-img" :src="currentUserObject.urlUserAvatar" alt="avatar image">
+                                    <img class="edit-header__user-img" :src="users[currentAlbumObject.author].urlUserAvatar" alt="avatar image">
                                     <div class="edit-header__user-name">Антон Черепов</div>
                             </div>
 
@@ -122,7 +125,7 @@
         
                     <ul class="my-photos__photos-list">
                         
-                        <li v-for="myPhoto in albums[idCurrentAlbum].photos" :key="myPhoto.id" class="my-photos__photos-item" >
+                        <li v-for="myPhoto in thisAlbumPhotos" :key="myPhoto.id" class="my-photos__photos-item" >
                             <appMyPhoto 
                                 :myPhotoObject="myPhoto"
                                 @clickEditMyPhoto="openEditPhoto=true"
@@ -203,7 +206,7 @@
                                          @submit.prevent='handleAddPhoto'>
 
                                             <div class="form-addPhoto__album-name-label">Название
-                                                <span class="form-addPhoto__album-name" type="text"> {{albums[idCurrentAlbum].albumName}} </span>
+                                                <span class="form-addPhoto__album-name" type="text"> {{currentAlbumObject.albumName}} </span>
                                             </div>
 
                                             <div class="form-addPhoto__load-cover">
@@ -255,23 +258,19 @@
 
                         </div>
 
-
                     </ul>
                 </div>
-
                 
 
                 <div class="my-photos__big-card-slider" v-if="openBigMyPhoto"
-                    :style="{top : bigCardSliderTop+'px'}"
-                >
+                    :style="{top : bigCardSliderTop+'px'}">
 
                     <div class="big-card-slider">
 
                         <flickity ref="flickity" :options="flickityOptions" class="big-card-slider__container">
-
-                            <appBigCard v-for="bigCard in albums[idCurrentAlbum].photos" :key="bigCard.id"
+                            <appBigCard v-for="bigCard in thisAlbumPhotos" :key="bigCard.id"
                                 :cardObject="bigCard"
-                                :userId="albums[idCurrentAlbum].author"
+                                :userId="currentAlbumObject.author"
                                 :currentUserObject="currentUserObject"
                             ></appBigCard>
                             
@@ -323,14 +322,15 @@
 <script>
     import appMyPhoto from '../vue-components/app-my-photo.vue';
     import appBigCard from '../vue-components/app-big-card.vue';
-    import dataJSON_albums from '../json/albums.json';
+    
     import dataJSON_users from '../json/users.json';
+    import dataJSON_all from '../../db.json';
     
     import Flickity from 'vue-flickity';
 
     import { maxLength } from 'vuelidate/lib/validators';
 
-    import $axios from 'axios'
+    import $axios from 'axios';
 
     const renderer = file => {
         const reader = new FileReader();
@@ -356,9 +356,9 @@
 
         data() {
             return {
-
-                albums: dataJSON_albums,
+                albums: dataJSON_all.albums,
                 users: dataJSON_users,
+                cards: dataJSON_all.cards,
 
                 openEditPhoto: false,
                 openAddPhoto: false,
@@ -370,6 +370,7 @@
 
                 idCurrentClickedPhoto: 0,
 
+                loadedPhotos: [],
                 renderedPhotos: [],
 
                 bigCardSliderTop: 0,
@@ -396,11 +397,14 @@
             headerContainer() {
                 return this.$refs['header-container'];
             },
-            idCurrentAlbum() {
-                return this.$route.params.albumid-1;
+            thisAlbumPhotos() {
+                return this.cards.filter(card => card.albumId == this.$route.params.albumid);
             },
             currentUserObject() {                
                 return this.users.find(user => user.isThisUser == true);
+            },
+            currentAlbumObject() {                
+                return this.albums.find(album => album.id == this.$route.params.albumid);
             },
         },
 
@@ -419,13 +423,13 @@
                 let id=0;
                 let photosAmount = e.target.files.length;
 
-                let photos = [];
+                // let photos = [];
                 for (let i=0; i<photosAmount; i++) {
-                    photos.push(e.target.files[i]);
+                    this.loadedPhotos.push(e.target.files[i]);
                     this.renderedPhotos.push({pic: '', id: i,});
                 }
 
-                photos.forEach(photo => {
+                this.loadedPhotos.forEach(photo => {
 
                     renderer(photo).then(pic => {
                         
@@ -434,9 +438,9 @@
                         id++;
                     
                         if (id === photosAmount) this.isPhotosLoaded = !this.isPhotosLoaded;
-                        
                     })                    
-                })                
+                });
+
             },
 
             clickMyPhotoHandler(myPhotoId) {
@@ -445,7 +449,7 @@
 
                 let photoIndex = 0;
                 
-                this.albums[this.idCurrentAlbum].photos.find(photo => {
+                this.thisAlbumPhotos.find(photo => {
                     if (photo.id !== myPhotoId) photoIndex++;
                     else this.idCurrentClickedPhoto = photoIndex;
                 });                
@@ -456,43 +460,59 @@
             },
 
             handleAddPhoto() {
-                let photosObject = []
+
                 if (this.renderedPhotos.length) {
-                    this.renderedPhotos.forEach(photo => {
-                        const formData = new FormData();
-                        formData.append('id', 100);
-                        formData.append('photo', photo);
-                        formData.append('title', '');
-                        formData.append('desc', '');
-                        formData.append('comments', 0);
-                        formData.append('likes', 0);
-                        formData.append('isLikedByMe', false);
-                        formData.append('authorId', this.currentUserObject.id);
-                        formData.append('authorName', this.currentUserObject.userName);
-                        formData.append('urlUserAvatar', this.currentUserObject.urlUserAvatar);
-                        // formData.append('albumId', this.idCurrentAlbum);
-                        // formData.append('albumName', this.albums[idCurrentAlbum].albumName);
-                        photosObject.push(formData)
+                    this.loadedPhotos.forEach(photo => {
+                    // this.renderedPhotos.forEach(photo => {                        
+                        // const formData = new FormData();
+                        // formData.append('photo', photo);
+                        // formData.append('title', '');
+                        // formData.append('desc', '');
+                        // formData.append('comments', 0);
+                        // formData.append('likes', 0);
+                        // formData.append('isLikedByMe', false);
+                        // formData.append('authorId', this.users[this.currentAlbumObject.author].id);
+                        // formData.append('authorName', this.users[this.currentAlbumObject.author].userName);
+                        // formData.append('urlUserAvatar', this.users[this.currentAlbumObject.author].urlUserAvatar);
+                        // formData.append('albumId', this.currentAlbumObject.id);
+                        // formData.append('albumName', this.currentAlbumObject.albumName);
+
+                        const createdAt = new Date();
+                        const formData = {
+                            "title": "",
+                            "desc": "",
+                            "photo": `../img/${photo.name}`,
+                            "comments": 0,
+                            "likes": 0,
+                            "isLikedByMe": false,
+                            "authorId": this.users[this.currentAlbumObject.author].id,
+                            "authorName": this.users[this.currentAlbumObject.author].userName,
+                            "urlUserAvatar": this.users[this.currentAlbumObject.author].urlUserAvatar,
+                            "albumId": this.currentAlbumObject.id,
+                            "albumName": this.currentAlbumObject.albumName,
+                            "created-at": createdAt
+                        };
+
+
+                        (async () => {                        
+                            
+                            try {
+                                // const headers = {'Content-Type': 'multipart/form-data'};
+                                const headers = {'Content-Type': 'application/json'};
+                                const {data} = await $axios.post('http://localhost:3004/cards', formData,  {headers});
+                            }
+                            catch(error) { 
+                                throw new Error ( error.response.data.error || error.response.data.message ); 
+                            }
+                            finally {
+                                this.isPhotosLoaded = false;
+                                this.renderedPhotos = [];
+                                this.openAddPhoto=false;
+                            }
+                        })();
                     })
 
-                    console.log('photosObject: ', photosObject);
 
-                    (async (photosObject) => {
-                        console.log('tutatuta');
-                        
-                        try {
-                            const data = await this.$axios.POST('https://my-json-server.typicode.com/Eshechka/Photobooks/cards', photosObject);
-                            console.log(data);
-                        }
-                        catch(error) { 
-                            throw new Error ( error.response.data.error || error.response.data.message ); 
-                        }
-                        finally {
-                            this.isPhotosLoaded = false;
-                            this.renderedPhotos = [];
-                            this.openAddPhoto=false;
-                        }
-                    })();
                 }
                 else
                     console.log('no files');//!!!!!!! validation
@@ -528,7 +548,7 @@
         },
 
         mounted() {
-            window.addEventListener('scroll', this.scrollHandle);
+            window.addEventListener('scroll', this.scrollHandle);            
         },
        
     }

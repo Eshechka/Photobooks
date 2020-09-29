@@ -11,7 +11,8 @@
     "likes": 2,
     "isLikedByMe": true,
     "albumId": 1,
-    "albumName": "Прогулки по воде"
+    "albumName": "Прогулки по воде",
+    "created-at": ""
   },
   {
     "id": 2, 

@@ -1,15 +1,5 @@
 [
   {   
-    "id": 3, 
-    "urlUserAvatar": "../img/dima.jpg", 
-    "urlUserCover": "", 
-    "userName": "Дима Ковальчук",
-    "email": "some@mail.com",
-    "isThisUser": false,
-    "userDesc": "Я Дима. Руковожу школой LoftSchool.",
-    "userSocials": []
-  },
-  {   
     "id": 1, 
     "urlUserAvatar": "../img/anton.png", 
     "urlUserCover": "../img/bg-main-header.png", 
@@ -79,6 +69,16 @@
         "link": "https://vk2.com/" 
       }
     ]
+  },
+  {   
+    "id": 3, 
+    "urlUserAvatar": "../img/dima.jpg", 
+    "urlUserCover": "", 
+    "userName": "Дима Ковальчук",
+    "email": "some@mail.com",
+    "isThisUser": false,
+    "userDesc": "Я Дима. Руковожу школой LoftSchool.",
+    "userSocials": []
   }
  
 ]

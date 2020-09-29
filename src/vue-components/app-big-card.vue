@@ -159,9 +159,9 @@
                     this.myCommentToggler.style.transform = 'rotate(270deg)';
             },
             upgradeCardObject() {
-                let thisUser = this.users.find(user => user.id === this.userId);
-                this.cardObject.userName = thisUser.userName;
-                this.cardObject.urlUserAvatar = thisUser.urlUserAvatar;                
+                let albumAuthor = this.users.find(user => user.id === this.userId);
+                this.cardObject.userName = albumAuthor.userName;
+                this.cardObject.urlUserAvatar = albumAuthor.urlUserAvatar;                
             },
             descriptionHandle(text) {
                 let textWithHashtags = '';
@@ -199,7 +199,7 @@
         },
 
         created() {
-            this.upgradeCardObject();            
+            this.upgradeCardObject();
         },
     }
 </script>
