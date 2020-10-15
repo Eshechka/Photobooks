@@ -3,25 +3,24 @@
 	<div class="my-photo">
 		<div class="my-photo__img-my-photo">
 
-			<img class="my-photo__img" :src="myPhotoObject.photo" alt="photo image">
+			<img class="my-photo__img" :src="`${url}/${myPhotoObject.photo}`" alt="photo image">
             <div class="my-photo__img-overlay"
-                 @click="$emit('clickMyPhoto', myPhotoObject.id)"
+                 @click="$emit('click-my-photo', myPhotoObject)"
             ></div>
 		
 			<div class="my-photo__comments-likes-wrapper">					
-				<div class="my-photo__info-button my-photo__info-button_comments">{{myPhotoObject.comments}}</div>
-				<div class="my-photo__info-button my-photo__info-button_likes">{{myPhotoObject.likes}}</div>
+				<div class="my-photo__info-button my-photo__info-button_comments">{{myPhotoObject.commentCount}}</div>
+				<div class="my-photo__info-button my-photo__info-button_likes">{{myPhotoObject.likeCount}}</div>
 			</div>
 		</div>
 
 		<div class="my-photo__name-wrapper">
 			<button type="button" class="my-photo__button my-photo__button_edit"
-                @click="$emit('clickEditMyPhoto', myPhotoObject.id)"
+                @click="$emit('click-edit-my-photo', myPhotoObject)"
             ></button>
 			<div class="my-photo__name"> {{myPhotoObject.title}} </div>			
 		</div>
 
-	
 	</div>
 
 
@@ -29,6 +28,9 @@
 
 
 <script >
+    import requests from '../requests';
+    const basePhotosUrl = requests.defaults.basePhotosUrl;
+    
     export default {
         props: {
           myPhotoObject: Object,
@@ -36,13 +38,14 @@
 
         data() {
           return {
-            
+            url: basePhotosUrl,
           }
         },
 
         methods: {
 
         },
+
     }
 </script>
 
@@ -53,7 +56,6 @@
     @import '../fonts/fonts.pcss';
     @import '../styles/mixins.pcss';
     @import '../styles/layout.pcss';
-
 
     .my-photo {
         min-width: 300px;
@@ -116,8 +118,6 @@
             bottom: 20px;
             background-color: rgba(50, 50, 50, 0.1);
             box-shadow: 0 0 11px 5px rgba(50,50,50,.1);
-            /* background-color: rgba(#{$color-text}, 0.05); */
-
         }
 
         &__info-button {
@@ -127,6 +127,8 @@
             padding-left: 30px;
             margin-right: 5px;
             display: inline-block;
+            vertical-align: middle;
+            height: 20px;
 
             background-repeat: no-repeat;
             background-size: 20px;

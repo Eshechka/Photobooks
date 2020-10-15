@@ -4,22 +4,22 @@
         <div class="big-card__card">
 
             <div class="big-card__card-img">
-                <img class="big-card__img" :src="cardObject.photo" alt="big card image">
+                <img class="big-card__img" :src="`${url}/${cardObject.photo}`" alt="big card image">                
             </div>
 
             <div class="big-card__author-info">
 
                 <div class="big-card__avatar">
-                    <img class="big-card__avatar-img" alt="card avatar" :src="cardObject.urlUserAvatar">
+                    <img class="big-card__avatar-img" alt="card avatar" :src="cardObject.author.avatar">
                 </div>
                 
-                <div class="big-card__name">{{cardObject.userName}}</div>
+                <div class="big-card__name">{{cardObject.author.name}}</div>
 
                 <div class="big-card__likes">
                     <button type="button" class="big-card__button-likes"
-                        @click="plusMyLike()"
+                        @click.prevent="plusMyLike"
                         :class="{'big-card__button-likes_active' : isActiveLike}"
-                    >{{cardObject.likes}}</button>
+                    >{{cardObject.likeCount}}</button>
                 </div>
 
             </div>
@@ -29,7 +29,7 @@
                 <h3 class="big-card__title">{{cardObject.title}}</h3>
             
                 <div class="big-card__desc-text"
-                    v-html="descriptionHandle(cardObject.desc)"
+                    v-html="descriptionHandle(cardObject.description)"
                 ></div>
 
             </div> 
@@ -97,24 +97,35 @@
 
     import dataJSON_comments from '../json/comments.json';
     import dataJSON_users from '../json/users.json';
+    import dataJSON_likes from '../json/likes.json';
+    import dataJSON_all from '../../db.json';
+
+    import $axios from 'axios';
+    import requests from '../requests';
+    const basePhotosUrl = requests.defaults.basePhotosUrl;
 
     export default {
         props: {
             cardObject: Object,
-            userId: Number,
+            // userId: Number,
             currentUserObject: Object,
         },
 
 
         data() {
           return {
+            url: basePhotosUrl,
+            comments: dataJSON_comments,
+            users: dataJSON_users,
+            likes: dataJSON_all.likes,
+
             userAvatarUrl: this.currentUserObject.urlUserAvatar,
             userName: this.currentUserObject.userName,
 
-            comments: dataJSON_comments,
-            users: dataJSON_users,
             isActiveLike: this.cardObject.isLikedByMe,
-
+            activeLike: [],
+            // isActiveLike: false,
+            // nowlikes: this.cardObject.likes,
             isVisibleMyComment: true,
           }
 
@@ -140,16 +151,45 @@
 
             myCommentToggler() {
                 return this.$refs['my-comment-toggler'];
-            },
+            }
 
         },
 
         methods: {
             plusMyLike() {
                 this.isActiveLike = !this.isActiveLike;
-                if (this.isActiveLike) this.cardObject.likes++;
-                else this.cardObject.likes--;
-                // запись в cards значения  this.cardObject.likes !!!!!
+                if (this.isActiveLike) {
+                    this.cardObject.likeCount++;
+                    const myLikeObject = {
+                        "userId": this.currentUserObject.id,
+                        "photoId": this.cardObject.id
+                    };
+                    const headers = {'Content-Type': 'application/json'};
+
+                    (async () => {
+                        try {
+                            const {data} = await $axios.post('http://localhost:3004/likes', myLikeObject,  {headers});
+                        }
+                        catch(error) { 
+                            throw new Error ( error.response.data.error || error.response.data.message ); 
+                        }
+                    })();
+                }
+                else if (!this.isActiveLike && this.activeLike) {
+                    this.cardObject.likes--;
+                    (async () => {                            
+                        try {
+                            const headers = {'Content-Type': 'application/json'};
+                            const {data} = await $axios.delete(`http://localhost:3004/likes/${this.activeLike.id}`,  {headers});
+                        }
+                        catch(error) { 
+                            throw new Error ( error.response.data.error || error.response.data.message ); 
+                        }
+                        finally {}
+                    })();
+                }
+
+
             },
             myCommentVisibleHandle() {
                 this.isVisibleMyComment=!this.isVisibleMyComment;
@@ -159,9 +199,12 @@
                     this.myCommentToggler.style.transform = 'rotate(270deg)';
             },
             upgradeCardObject() {
-                let albumAuthor = this.users.find(user => user.id === this.userId);
-                this.cardObject.userName = albumAuthor.userName;
-                this.cardObject.urlUserAvatar = albumAuthor.urlUserAvatar;                
+
+                this.cardObject.author.avatar = this.users.find(user => user.id === this.cardObject.author.id).urlUserAvatar;
+                this.cardObject.author.name = this.users.find(user => user.id === this.cardObject.author.id).userName;
+                // let albumAuthor = this.users.find(user => user.id === this.userId);
+                // this.cardObject.userName = albumAuthor.userName;
+                // this.cardObject.urlUserAvatar = albumAuthor.urlUserAvatar;
             },
             descriptionHandle(text) {
                 let textWithHashtags = '';
@@ -199,7 +242,15 @@
         },
 
         created() {
-            this.upgradeCardObject();
+            console.log('this props cardObject', this.cardObject);
+
+            this.upgradeCardObject();          
+            console.log('created BIG');
+        },
+        mounted() {
+            this.activeLike= this.likes.find(like => (like.userId == this.currentUserObject.id && like.photoId == this.cardObject.id));
+            // this.isActiveLike= !!this.activeLike;
+            console.log('mounted BIG');            
         },
     }
 </script>
@@ -295,6 +346,7 @@
         &__button-likes {
             font-family: 'Panton-Bold';
             font-size: 16px;
+            height: 20px;
             color: $color-white;
             padding-left: 50px;
 

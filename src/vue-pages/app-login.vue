@@ -9,23 +9,22 @@
 
                     <p class="login__text">{{logindata.text}}</p>
 
-					<pre>{{user.email}}</pre>
-
                 </div>
 
                 <div class="login__form">
 
                     <form
                         v-if="stateRegistration"
-                        class="registration">
+                        class="registration"
+						@submit.prevent="registerHandle"
+						>
 
                         <label class="registration__label registration__label_name">
                             
                             <svg class="registration__icon registration__icon_name">
-                                <use :xlink:href="urlInlineSvgSprite+'#name'"></use>
-                                
+                                <use :xlink:href="urlInlineSvgSprite+'#name'"></use>                                
                             </svg>
-                            <input class="registration__input registration__input_name" type="text" placeholder="Имя">
+                            <input class="registration__input registration__input_name" type="text" placeholder="Имя" v-model="registerUser.name">
 
                         </label>
                         <label class="registration__label registration__label_email">					
@@ -33,7 +32,7 @@
                             <svg class="registration__icon registration__icon_email">
                                 <use :xlink:href="urlInlineSvgSprite+'#envelope'"></use>
                             </svg>
-                            <input class="registration__input registration__input_email" type="text" placeholder="Электронная почта">
+                            <input class="registration__input registration__input_email" type="text" placeholder="Электронная почта" v-model="registerUser.email">
 
                         </label>
                         <label class="registration__label registration__label_password">					
@@ -41,7 +40,14 @@
                             <svg class="registration__icon registration__icon_password">
                                 <use :xlink:href="urlInlineSvgSprite+'#password'"></use>
                             </svg>
-                            <input class="registration__input registration__input_password" type="text" placeholder="Пароль">
+                            <input class="registration__input registration__input_password" type="password" placeholder="Пароль" v-model="registerUser.password">
+                        </label>
+                        <label class="registration__label registration__label_password">					
+                            
+                            <svg class="registration__icon registration__icon_password">
+                                <use :xlink:href="urlInlineSvgSprite+'#password'"></use>
+                            </svg>
+                            <input class="registration__input registration__input_password" type="password" placeholder="Подтвердите пароль" v-model="registerUser.password_confirmation">
                         </label>
 
                         <div class="registration__wrapper">
@@ -53,7 +59,9 @@
                             </div>
                             <div class="registration__toenter">
                                 <p class="registration__text">Уже зарегистрированы?</p>
-                                <button class="site-button site-button_theme-just-text" type="button">Войти</button>
+                                <button class="site-button site-button_theme-just-text" type="button"
+									@click.prevent="stateRegistration=!stateRegistration; stateEnter=!stateEnter"
+								>Войти</button>
                             </div>
 
                         </div>
@@ -62,7 +70,7 @@
 
 
                     <form
-						@submit.prevent="submitlogin"
+						@submit.prevent="loginHandle"
                         v-if="stateEnter"
                         class="enter">
 
@@ -72,7 +80,7 @@
                                 <use :xlink:href="urlInlineSvgSprite+'#envelope'"></use>
                             </svg>
                             <input class="enter__input enter__input_email" type="text" placeholder="Электронная почта"
-								v-model="user.email"
+								v-model="loginUser.email"
 							>
 
                         </label>
@@ -82,8 +90,8 @@
                             <svg class="enter__icon enter__icon_password">
                                 <use :xlink:href="urlInlineSvgSprite+'#password'"></use>
                             </svg>
-                            <input class="enter__input enter__input_password" type="text" placeholder="Пароль"
-								v-model="user.password"
+                            <input class="enter__input enter__input_password" type="password" placeholder="Пароль"
+								v-model="loginUser.password"
 							>
 
                         </label>
@@ -171,11 +179,10 @@
 
     data() {
         return {
-            stateEnter: !false,
-            stateRegistration: !!false,
-            stateForgotPassword: !false,
+            stateEnter: !!false,
+            stateRegistration: !false,
+            stateForgotPassword: !!false,
             
-            // urlAvatar: require('../img/anton.png').default,
             urlInlineSvgSprite: require('../img/spriteIcons.svg').default,
 
             logindata: {
@@ -183,7 +190,13 @@
                 text: this.stateRegistration ? '' : 'Перед вами сервис, который поможет вам организовать свои фотографии в альбомы и поделиться ими со всем миром!',
 			},
 			
-			user: {
+			registerUser: {
+				name: '',
+				email: '',
+				password: '',
+				password_confirmation: ''
+			},
+			loginUser: {
 				email: '',
 				password: '',
 			},
@@ -192,11 +205,20 @@
     },
 
 
-    methods: {      
-		submitlogin() {
-			console.log('tut');
-			
-			axios.post('/login', this.user).then(response => { 
+    methods: {  
+		registerHandle() {
+			console.log('registerHandle');			
+			axios.post('/register', this.registerUser).then(response => { 
+				console.log(response);
+				const token = response.data.token;
+				localStorage.setItem('token', token);
+				axios.defaults.headers['Authorization'] = `Bearer ${token}`;
+			}).catch(error => {
+				console.log(error);
+			});
+		},
+		loginHandle() {
+			axios.post('/login', this.loginUser).then(response => { 
 				console.log(response);
 				const token = response.data.token;
 				localStorage.setItem('token', token);

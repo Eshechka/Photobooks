@@ -342,10 +342,10 @@
 
                     <ul class="my-albums__albums-list">
                         <li v-for="myAlbum in thisUserAlbums" :key="myAlbum.id" class="my-albums__albums-item">
-                            <appMyalbum 
+                            <appMyAlbum 
                                 @clickEditMyAlbum="clickEditAlbumHandler"
                                 :myAlbumObject="myAlbum"                            
-                            ></appMyalbum>
+                            ></appMyAlbum>
                         </li>
                     </ul> 
 
@@ -389,20 +389,22 @@
 <script>
     import appCard from '../vue-components/app-card.vue'
     import appBigCard from '../vue-components/app-big-card.vue'
-    import appMyalbum from '../vue-components/app-my-album.vue'
+    import appMyAlbum from '../vue-components/app-my-album.vue'
     import appChangeAlbum from '../vue-components/app-change-album.vue'
 
-    import dataJSON_cards from '../json/cards.json'
+    // import dataJSON_cards from '../json/cards.json'
     import dataJSON_albums from '../json/albums.json'
     import dataJSON_socials from '../json/socials.json'
     import dataJSON_users from '../json/users.json'
+
+    import { mapState, mapActions } from 'vuex';
 
     import Flickity from 'vue-flickity';
 
     export default {   
 
         components: {
-            appCard, appBigCard, appMyalbum, appChangeAlbum,
+            appCard, appBigCard, appMyAlbum, appChangeAlbum,
             Flickity,
         },
 
@@ -424,7 +426,7 @@
 
                 idCurrentPhoto: 0,
 
-                cards: dataJSON_cards,
+                // cards: dataJSON_cards,
                 albums: dataJSON_albums,
                 socials: dataJSON_socials,
                 users: dataJSON_users,
@@ -450,6 +452,12 @@
 
 
         computed: {
+            ...mapState('cards', {
+                allCards: state => state.cards
+            }),
+            cards() {
+                return this.allCards.sort( (a, b) => b.id - a.id );
+            },
             socEdit() {
                 return this.$refs['soc-edit'];
                 },
@@ -472,6 +480,7 @@
 
 
         methods: {
+            ...mapActions('cards', ['refreshAllCards']),
 
             socEditMouseLeaveHandler() {
                 if (this.windowWidth > 480) {
@@ -635,12 +644,15 @@
         },
 
         created() {
+            this.refreshAllCards();
             window.addEventListener('resize', this.checkWidth);            
-            this.loadedCardsPush(this.startPhotoLoadingPos);
+            this.loadedCardsPush(this.startPhotoLoadingPos);            
         },
 
         mounted() {
             this.windowWidth = window.innerWidth;
+            console.log('this.cards - ',this.cards);
+            console.log('typeof - ', typeof this.cards);
         },
             
     }

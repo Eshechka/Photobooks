@@ -1,6 +1,5 @@
 <template>
     <div class="wrapper">
-
         <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigMyPhoto || openEditPhoto || openAddPhoto"
             @click="openBigMyPhoto = openEditPhoto = openAddPhoto = false"
         ></div>
@@ -8,7 +7,7 @@
             @click="openEditHeader = false"
         ></div>
 
-		<header class="header">
+		<header class="header" :style="{ backgroundImage: `url(${this.currentAlbumObject.preview})` }">
 	
 			<div class="header__container"
                 ref='header-container'>
@@ -30,19 +29,17 @@
 					<div class="header__user" :class="{header__user_scrolled : isScrolledHeader}">
 						<div class="header__avatar">
 							<div class="avatar">
-								<img class="avatar__img" :src='users.find(user => user.id == currentAlbumObject.author).urlUserAvatar' alt="avatar">
-								<!-- <img class="avatar__img" :src='currentUserObject.urlUserAvatar' alt="avatar"> -->
+								<img class="avatar__img" :src='`${urlAvatars}/${currentAlbumObject.author.avatar}`' alt="avatar">
 							</div>
 						</div>
-						<h1 class="header__title" v-if="isScrolledHeader"> {{currentAlbumObject.albumName}} </h1>
+						<h1 class="header__title" v-if="isScrolledHeader"> {{currentAlbumObject.title}} </h1>
                         
-						<h1 class="header__title" v-else> {{users.find(user => user.id == currentAlbumObject.author).userName}} </h1>
-						<!-- <h1 class="header__title" v-else> {{currentUserObject.userName}} </h1> -->
+						<h1 class="header__title" v-else> {{currentAlbumObject.author.name}} </h1>
 
 					</div>
 
 					<div class="header__album-desc">
-						<h2 class="header__album-title"> {{currentAlbumObject.albumName}} </h2>
+						<h2 class="header__album-title"> {{currentAlbumObject.title}} </h2>
                         
 						<div class="header__text"> {{currentAlbumObject.description}} </div>
 					</div>
@@ -51,8 +48,8 @@
             <div class="header__album-info">
                 <div class="header__album-info-wrapper">					
                     <div class="header__info-button header__info-button_photos"> {{thisAlbumPhotos.length}} </div>
-                    <div class="header__info-button header__info-button_likes"> {{thisAlbumPhotos.reduce((sum, myPhoto) => sum + myPhoto.likes, 0)}} </div>
-                    <div class="header__info-button header__info-button_comments"> {{thisAlbumPhotos.reduce((sum, myPhoto) => sum + myPhoto.comments, 0)}} </div>
+                    <div class="header__info-button header__info-button_likes"> {{thisAlbumPhotos.reduce((sum, myPhoto) => sum + myPhoto.likeCount, 0)}} </div>
+                    <div class="header__info-button header__info-button_comments"> {{thisAlbumPhotos.reduce((sum, myPhoto) => sum + myPhoto.commentCount, 0)}} </div>
                 </div>
             </div>
             
@@ -63,8 +60,8 @@
                     <div class="edit-header__card">
                     
                             <div class="edit-header__user">
-                                    <img class="edit-header__user-img" :src="users[currentAlbumObject.author].urlUserAvatar" alt="avatar image">
-                                    <div class="edit-header__user-name">Антон Черепов</div>
+                                    <img class="edit-header__user-img" :src="`${urlAvatars}/${currentAlbumObject.author.avatar}`" alt="avatar image">
+                                    <div class="edit-header__user-name">{{currentAlbumObject.author.name}}</div>
                             </div>
 
                         <div class="edit-header__form">                            
@@ -128,15 +125,15 @@
                         <li v-for="myPhoto in thisAlbumPhotos" :key="myPhoto.id" class="my-photos__photos-item" >
                             <appMyPhoto 
                                 :myPhotoObject="myPhoto"
-                                @clickEditMyPhoto="openEditPhoto=true"
-                                @clickMyPhoto="clickMyPhotoHandler"
+                                @click-edit-my-photo="editMyPhotoHandler"
+                                @click-my-photo="clickMyPhotoHandler"
                             ></appMyPhoto>
                         </li>
 
 
                         <div class="my-photos__edit-photo" v-if="openEditPhoto">
                             
-                        <div class="edit-photo">
+                            <div class="edit-photo">
                                 <div class="edit-photo__card">
 
                                     <div class="edit-photo__topgroup">
@@ -148,15 +145,18 @@
                                     
                                     <div class="edit-photo__form">
 
-                                        <form class="form-editPhoto">
+                                        <form class="form-editPhoto"
+                                            @submit.prevent="saveChangePhotoHandler"
+                                        >
 
                                             <label class="form-editPhoto__label">Название
-                                                <input class="form-editPhoto__input" type="text" placeholder="Домик в лесу">
+                                                <input class="form-editPhoto__input" type="text" placeholder="Название фотографии"
+                                                v-model="changedPhoto.title">
                                             </label>
 
                                             <label class="form-editPhoto__label">Описание
                                                 <textarea class="form-editPhoto__input form-editPhoto__input_textarea" cols="10" rows="2" placeholder="Описание фотографии"
-                                                    v-model="albumObject.desc"
+                                                    v-model="changedPhoto.description"
                                                 ></textarea>
 
                                                 
@@ -175,7 +175,9 @@
                                                 <button class="site-button site-button_theme-just-text" type="button"
                                                     @click="openEditPhoto=false"
                                                 >Отменить</button>
-                                                <button class="round-button round-button_delete" type="button">Удалить</button>
+                                                <button class="round-button round-button_delete" type="button"
+                                                    @click.prevent="deletePhotoHandle"
+                                                >Удалить</button>
                                             </div>
 
                                         </form>
@@ -184,13 +186,12 @@
                                 </div>
                             </div>
 
-
                         </div>
 
                         
                         <div class="my-photos__add-photo" v-if="openAddPhoto">
                             
-                        <div class="add-photo">
+                            <div class="add-photo">
                                 <div class="add-photo__card">
 
                                     <div class="add-photo__topgroup">
@@ -201,12 +202,11 @@
                                     </div>
                                     
                                     <div class="add-photo__form">
-
                                         <form class="form-addPhoto"
                                          @submit.prevent='handleAddPhoto'>
 
                                             <div class="form-addPhoto__album-name-label">Название
-                                                <span class="form-addPhoto__album-name" type="text"> {{currentAlbumObject.albumName}} </span>
+                                                <span class="form-addPhoto__album-name" type="text"> {{currentAlbumObject.title}} </span>
                                             </div>
 
                                             <div class="form-addPhoto__load-cover">
@@ -270,10 +270,9 @@
                         <flickity ref="flickity" :options="flickityOptions" class="big-card-slider__container">
                             <appBigCard v-for="bigCard in thisAlbumPhotos" :key="bigCard.id"
                                 :cardObject="bigCard"
-                                :userId="currentAlbumObject.author"
                                 :currentUserObject="currentUserObject"
-                            ></appBigCard>
-                            
+                            ></appBigCard>                            
+                                <!-- :userId="currentAlbumObject.author.id" -->
                         </flickity>
 
                         <div class="big-card-slider__close">
@@ -296,7 +295,7 @@
             
         </main>
 	
-		<footer class="footer">
+		<footer class="footer" :style="{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.3)), url(${this.currentAlbumObject.preview})`}" >
 	
 			<div class="footer__container">	
 	
@@ -320,17 +319,19 @@
 
 
 <script>
-    import appMyPhoto from '../vue-components/app-my-photo.vue';
-    import appBigCard from '../vue-components/app-big-card.vue';
-    
     import dataJSON_users from '../json/users.json';
-    import dataJSON_all from '../../db.json';
+
+    import appMyPhoto from '../vue-components/app-my-photo.vue';
+    import appBigCard from '../vue-components/app-big-card.vue';    
     
     import Flickity from 'vue-flickity';
 
     import { maxLength } from 'vuelidate/lib/validators';
 
-    import $axios from 'axios';
+    import { mapState, mapActions } from 'vuex';
+
+    import axios from '../requests.js';
+    let baseUrl = `https://xeniaweb.online/storage`;
 
     const renderer = file => {
         const reader = new FileReader();
@@ -350,15 +351,16 @@
     export default {
 
         components: {
-            appMyPhoto, appBigCard,
-            Flickity,
+            appBigCard,
+            Flickity, 
+            appMyPhoto,
         },
 
         data() {
             return {
-                albums: dataJSON_all.albums,
+                urlPhotos: baseUrl+'/photos',
+                urlAvatars: baseUrl+'/avatars',
                 users: dataJSON_users,
-                cards: dataJSON_all.cards,
 
                 openEditPhoto: false,
                 openAddPhoto: false,
@@ -376,7 +378,6 @@
                 bigCardSliderTop: 0,
 
                 flickityOptions: {
-                    // initialIndex: this.idCurrentPhoto,
                     prevNextButtons: false,
                     pageDots: false,
                     wrapAround: true,
@@ -385,27 +386,41 @@
                     contain: true
                 },
 
-                albumObject: {
-                    desc: '',
+                currentAlbumObject: {//!!!!!!если честно, это костыль. Над ним надо подумать (но сначала обнять и плакать)
+                    author: {},
+                    photos: {},
+                },
+
+                changedPhoto: {                    
+                    title: '',
+                    description: ''
                 },
 
                 addedPhotos: [],
+                
             }
         },
 
-        computed: {
+        computed: {          
+            ...mapState('cards', {
+                allCards: state => state.currentAlbumCards
+            }),                        
+            ...mapState('albums', {
+                // current: state => state.currentAlbum
+                currentAlbum: state => state.currentAlbum
+                // currentAlbumObject: state => state.currentAlbum
+            }),
+            thisAlbumPhotos() {
+                return this.allCards.sort( (a, b) => b.id - a.id );
+            },
+
             headerContainer() {
                 return this.$refs['header-container'];
-            },
-            thisAlbumPhotos() {
-                return this.cards.filter(card => card.albumId == this.$route.params.albumid);
             },
             currentUserObject() {                
                 return this.users.find(user => user.isThisUser == true);
             },
-            currentAlbumObject() {                
-                return this.albums.find(album => album.id == this.$route.params.albumid);
-            },
+            
         },
 
         validations: {
@@ -416,14 +431,23 @@
                 },
             },
         },
+            
+        watch: {
+            allCards() {
+                if (this.$refs.flickity) this.$nextTick(this.$refs.flickity.rerender);
+            }
+
+        },
 
         methods: {
+            ...mapActions('cards', ['addCard', 'deleteCard', 'changeCard', 'refreshAlbumCards']),
+            // ...mapActions('albums', ['addAlbum', 'deleteAlbum', 'changeAlbum', 'refreshThisAlbum']),
+            ...mapActions('albums', ['refreshThisAlbum']),
+
             loadPhotosFiles(e) {
-                        
                 let id=0;
                 let photosAmount = e.target.files.length;
 
-                // let photos = [];
                 for (let i=0; i<photosAmount; i++) {
                     this.loadedPhotos.push(e.target.files[i]);
                     this.renderedPhotos.push({pic: '', id: i,});
@@ -443,63 +467,75 @@
 
             },
 
-            clickMyPhotoHandler(myPhotoId) {
+            editMyPhotoHandler(myPhotoObject) {
+                this.openEditPhoto=true;
+                this.changedPhoto = {...myPhotoObject};
+                console.log('this.changedPhoto.photo', this.changedPhoto.photo);
+                console.log('this.changedPhoto', this.changedPhoto);
+            },
 
+            clickMyPhotoHandler(myPhotoObject) {
                 this.bigCardSliderTop = window.pageYOffset + 100;
-
                 let photoIndex = 0;
                 
                 this.thisAlbumPhotos.find(photo => {
-                    if (photo.id !== myPhotoId) photoIndex++;
+                    if (photo.id !== myPhotoObject.id) photoIndex++;
                     else this.idCurrentClickedPhoto = photoIndex;
                 });                
                 this.flickityOptions.initialIndex = this.idCurrentClickedPhoto;
-
                 this.openBigMyPhoto = true;
+            },
 
+            async saveChangePhotoHandler() {                  
+                try {
+                    let newPhotoData = {};
+                    newPhotoData.id = this.changedPhoto.id;
+                    newPhotoData.description = this.changedPhoto.description;
+                    newPhotoData.title = this.changedPhoto.title;
+                    await this.changeCard(newPhotoData);
+                }
+                catch(error) { 
+                    console.log('error');
+                    throw new Error ( error.response.data.error || error.response.data.message ); 
+                }
+                finally {
+                    this.openEditPhoto = false;
+                }
+            },
+
+            async deletePhotoHandle() {                  
+                try {
+                    await this.deleteCard(this.changedPhoto.id);
+                    }
+                catch(error) { 
+                    throw new Error ( error.response.data.error || error.response.data.message ); 
+                }
+                finally {
+                    this.openEditPhoto = false;
+                }
             },
 
             handleAddPhoto() {
 
                 if (this.renderedPhotos.length) {
                     this.loadedPhotos.forEach(photo => {
-                    // this.renderedPhotos.forEach(photo => {                        
-                        // const formData = new FormData();
-                        // formData.append('photo', photo);
-                        // formData.append('title', '');
-                        // formData.append('desc', '');
-                        // formData.append('comments', 0);
-                        // formData.append('likes', 0);
-                        // formData.append('isLikedByMe', false);
-                        // formData.append('authorId', this.users[this.currentAlbumObject.author].id);
-                        // formData.append('authorName', this.users[this.currentAlbumObject.author].userName);
-                        // formData.append('urlUserAvatar', this.users[this.currentAlbumObject.author].urlUserAvatar);
-                        // formData.append('albumId', this.currentAlbumObject.id);
-                        // formData.append('albumName', this.currentAlbumObject.albumName);
 
-                        const createdAt = new Date();
-                        const formData = {
-                            "title": "",
-                            "desc": "",
-                            "photo": `../img/${photo.name}`,
-                            "comments": 0,
-                            "likes": 0,
-                            "isLikedByMe": false,
-                            "authorId": this.users[this.currentAlbumObject.author].id,
-                            "authorName": this.users[this.currentAlbumObject.author].userName,
-                            "urlUserAvatar": this.users[this.currentAlbumObject.author].urlUserAvatar,
-                            "albumId": this.currentAlbumObject.id,
-                            "albumName": this.currentAlbumObject.albumName,
-                            "created-at": createdAt
-                        };
+                        const formData = new FormData();
 
-
-                        (async () => {                        
-                            
+                        formData.append('photo', photo);
+                        formData.append('title', 'это обязательное поле?');
+                        formData.append('description', 'это обязательное поле? это обязательное поле? это обязательное поле?');
+                        formData.append('commentCount', 0);
+                        formData.append('likeCount', 0);
+                        formData.append('isLikedByMe', 0);
+                        formData.append('authorId', this.currentAlbumObject.author.id);
+                        formData.append('albumId', this.currentAlbumObject.id);
+                        // formData.append('authorName', this.users[this.currentAlbumObject.author.id].userName);
+                        // formData.append('urlUserAvatar', this.users[this.currentAlbumObject.author.id].urlUserAvatar);
+                        // formData.append('albumName', this.currentAlbumObject.title);
+                        (async () => {
                             try {
-                                // const headers = {'Content-Type': 'multipart/form-data'};
-                                const headers = {'Content-Type': 'application/json'};
-                                const {data} = await $axios.post('http://localhost:3004/cards', formData,  {headers});
+                                await this.addCard(formData);
                             }
                             catch(error) { 
                                 throw new Error ( error.response.data.error || error.response.data.message ); 
@@ -511,7 +547,6 @@
                             }
                         })();
                     })
-
 
                 }
                 else
@@ -547,10 +582,24 @@
             }
         },
 
-        mounted() {
-            window.addEventListener('scroll', this.scrollHandle);            
+        async created () {
+            this.refreshAlbumCards(this.$route.params.albumid);
+            try {
+                this.currentAlbumObject.author.name = '';
+                this.currentAlbumObject.author.avatar = '/no_album_cover.jpg';
+                await this.refreshThisAlbum(this.$route.params.albumid);
+            }
+            finally {
+                this.currentAlbumObject = {...this.currentAlbum};
+                this.currentAlbumObject.preview = this.currentAlbumObject.preview ? baseUrl+'/photos/'+this.currentAlbumObject.preview : '/img/no_album_cover.jpg';
+            }
+
         },
-       
+
+        mounted() {
+            window.addEventListener('scroll', this.scrollHandle);
+        }
+
     }
 
 </script>
@@ -567,7 +616,7 @@
 
 
     .header {
-        background-image: url('/img/bg-album-header.png');
+        background-image: url('/img/no_album_cover.jpg');
         background-repeat: no-repeat;
         background-size: cover;
         padding-bottom: 45px;
@@ -624,7 +673,6 @@
             
         }
 
-
         &__button-edit {
             position: absolute;
             top: 20px;
@@ -637,6 +685,7 @@
             vertical-align: middle;
             font-family: 'Panton-Bold';
             font-size: 16px;
+            mix-blend-mode: difference;
         }
 
         &__album-title {
@@ -645,6 +694,7 @@
             line-height: 24px;
             text-align: center;
             margin-bottom: 10px;
+            mix-blend-mode: difference;
 
             @include tablets {
                 font-size: 21px;
@@ -658,6 +708,8 @@
             font-size: 14px;
             line-height: 21px;
             text-align: center;
+            mix-blend-mode: difference;
+
 
             @include tablets {
                 font-size: 16px;
@@ -894,7 +946,7 @@
             @include tablets {
                 display: flex;
                 flex-wrap: wrap;
-                justify-content: space-between;
+                /* justify-content: space-between; */
             }
         }
 
@@ -904,6 +956,17 @@
             @include tablets {
                 width: 48%;
                 margin-bottom: 20px;
+
+                &:nth-child(2n) {
+                    margin-left: 4%;
+                }
+            }      
+            @include desktopHd {
+                width: 22%;
+
+                &:nth-child(4n+3) {
+                    margin-left: 4%;
+                }
             }            
         }
 
@@ -1349,7 +1412,7 @@
 
 
     .footer {
-        background-image: linear-gradient(rgba(black, 0.2), rgba(black, 0.3)), url('/img/bg-album-header.png');
+        background-image: linear-gradient(rgba(black, 0.2), rgba(black, 0.3)), url('/img/no_album_cover.jpg');
         background-repeat: no-repeat;
         background-size: cover;
         background-position: bottom center;

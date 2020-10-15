@@ -1,0 +1,77 @@
+[
+  {
+    "id": "1",
+    "userId": "1",
+    "photoId": "2"
+  },
+  {
+    "id": "2",
+    "userId": "1",
+    "photoId": "3"
+  },
+  {
+    "id": "3",
+    "userId": "2",
+    "photoId": "1"
+  },
+  {
+    "id": "4",
+    "userId": "2",
+    "photoId": "4"
+  },
+  {
+    "id": "5",
+    "userId": "2",
+    "photoId": "5"
+  },
+  {
+    "id": "6",
+    "userId": "2",
+    "photoId": "6"
+  },
+  {
+    "id": "7",
+    "userId": "2",
+    "photoId": "9"
+  },
+  {
+    "id": "8",
+    "userId": "2",
+    "photoId": "10"
+  },
+  {
+    "id": "9",
+    "userId": "3",
+    "photoId": "5"
+  },
+  {
+    "id": "10",
+    "userId": "3",
+    "photoId": "11"
+  },
+  {
+    "id": "11",
+    "userId": "3",
+    "photoId": "12"
+  },
+  {
+    "id": "12",
+    "userId": "3",
+    "photoId": "17"
+  },
+  {
+    "id": "13",
+    "userId": "3",
+    "photoId": "18"
+  },
+  {
+    "id": "14",
+    "userId": "2",
+    "photoId": "19"
+  },
+  {
+    "id": "15",
+    "userId": "1",
+    "photoId": "20"
+  }
+]

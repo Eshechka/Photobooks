@@ -7,18 +7,21 @@ importAll(require.context('', true, /\.(eot|woff|svg|ttf|png|jpe?g|gif)$/));
 import Vue from 'vue';
 
 import { store } from './store/index';
+import $axios from './requests';
+store.$axios = $axios;
 
 import router from './router';
 
 import appIndex from './vue-pages/app-index.vue';
 
-import Vuelidate from 'vuelidate';
-Vue.use(Vuelidate)
+import vuelidate from 'vuelidate';
+Vue.use(vuelidate)
 
 new Vue({
     el: "#wrapper-index",
     store,
     router,
+    vuelidate,
     
     render: h => h(appIndex)
   });

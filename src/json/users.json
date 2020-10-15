@@ -79,6 +79,65 @@
     "isThisUser": false,
     "userDesc": "Я Дима. Руковожу школой LoftSchool.",
     "userSocials": []
+  },
+  {   
+    "id": 4, 
+    "urlUserAvatar": "../img/kate.png", 
+    "urlUserCover": "", 
+    "userName": "Катя Прекрасная",
+    "email": "somekate@gmail.com",
+    "isThisUser": false,
+    "userDesc": "Я Катя. Руковожу крупной нефтяной компанией.",
+    "userSocials": []
+  },
+  {   
+    "id": 5, 
+    "urlUserAvatar": "../img/fed.png", 
+    "urlUserCover": "", 
+    "userName": "Федор Бондарчук",
+    "email": "fed@gmail.com",
+    "isThisUser": false,
+    "userDesc": "Я Федя. Руковожу крупным лейблом.",
+    "userSocials": []
+  },
+  {   
+    "id": 6, 
+    "urlUserAvatar": "../img/fed.png", 
+    "urlUserCover": "", 
+    "userName": "Федор Бондарчук",
+    "email": "fed@gmail.com",
+    "isThisUser": false,
+    "userDesc": "Я Федя. Руковожу крупным лейблом.",
+    "userSocials": []
+  },
+  {   
+    "id": 7, 
+    "urlUserAvatar": "../img/fed.png", 
+    "urlUserCover": "", 
+    "userName": "Федор Бондарчук",
+    "email": "fed@gmail.com",
+    "isThisUser": false,
+    "userDesc": "Я Федя. Руковожу крупным лейблом.",
+    "userSocials": []
+  },
+  {   
+    "id": 8, 
+    "urlUserAvatar": "../img/fed.png", 
+    "urlUserCover": "", 
+    "userName": "Федор Бондарчук",
+    "email": "fed@gmail.com",
+    "isThisUser": false,
+    "userDesc": "Я Федя. Руковожу крупным лейблом.",
+    "userSocials": []
+  },
+  {   
+    "id": 9, 
+    "urlUserAvatar": "../img/fed.png", 
+    "urlUserCover": "", 
+    "userName": "Федор Бондарчук",
+    "email": "fed@gmail.com",
+    "isThisUser": false,
+    "userDesc": "Я Федя. Руковожу крупным лейблом.",
+    "userSocials": []
   }
- 
 ]

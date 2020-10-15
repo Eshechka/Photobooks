@@ -47,18 +47,20 @@ module.exports = {
 	output: {
 		filename: 'js/[name].[hash].js',
 		path: path.resolve(__dirname, 'dist'),
-		// publicPath: '',
 		publicPath: isProd ? '/Photobooks/' : '',
 	},
 
 	devServer: {
 		port: 4300,
 		stats: 'errors-only',
-		
 		// openPage: '',
 		historyApiFallback: true,
 		noInfo: false,
 		overlay: true,
+		hot: true,
+		proxy: {
+			'/': 'http://localhost:4300'
+		  }
 	},
 
 	plugins: [

@@ -6,8 +6,12 @@
 
 
 <script>
-    export default {
+    import appAlbum from '../vue-components/app-album.vue';
 
+    export default {
+        components: {
+            appAlbum,
+        },
     }
 </script>
 
