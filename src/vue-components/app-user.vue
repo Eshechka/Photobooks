@@ -263,7 +263,7 @@
                         <li v-for="card in loadedCards" :key="card.id" class="new__card-item">
                             <appCard
                                 :cardObject="card"
-                                @clickCard="cardClickHandler"
+                                @click-card="cardClickHandler"
                             >
                             </appCard>
                         </li>
@@ -313,7 +313,6 @@
                         </div>
                 </div>
 
-
             </section>
 
 
@@ -336,14 +335,14 @@
                     </div>
 
                     <p class="my-albums__empty-text"
-                        v-if="!thisUserAlbums.length"
+                        v-if="!userAlbums.length"
                     >Альбомы еще не созданы. Создайте альбом с помощью кнопки "Добавить".</p>
 
 
                     <ul class="my-albums__albums-list">
-                        <li v-for="myAlbum in thisUserAlbums" :key="myAlbum.id" class="my-albums__albums-item">
+                        <li v-for="myAlbum in userAlbums" :key="myAlbum.id" class="my-albums__albums-item">
                             <appMyAlbum 
-                                @clickEditMyAlbum="clickEditAlbumHandler"
+                                @click-edit-my-album="clickEditAlbumHandler"
                                 :myAlbumObject="myAlbum"                            
                             ></appMyAlbum>
                         </li>
@@ -377,7 +376,7 @@
                     Перед вами сервис, который поможет вам организовать свои фотографии в альбомы и поделиться ими со всем миром!
                 </div>
                 <div class="footer__copyright">
-                    2016 | Создано командой профессионалов на продвинутом курсе по веб-разработке от LoftSchool
+                    2020 | Создано командой Лидии и Оксаны xeniaweb по проекту LoftSchool
                 </div>
 
             </div>
@@ -393,7 +392,7 @@
     import appChangeAlbum from '../vue-components/app-change-album.vue'
 
     // import dataJSON_cards from '../json/cards.json'
-    import dataJSON_albums from '../json/albums.json'
+    // import dataJSON_albums from '../json/albums.json'
     import dataJSON_socials from '../json/socials.json'
     import dataJSON_users from '../json/users.json'
 
@@ -427,7 +426,9 @@
                 idCurrentPhoto: 0,
 
                 // cards: dataJSON_cards,
-                albums: dataJSON_albums,
+                // albums: dataJSON_albums,
+                cards: [],
+                userAlbums: [],
                 socials: dataJSON_socials,
                 users: dataJSON_users,
 
@@ -455,9 +456,10 @@
             ...mapState('cards', {
                 allCards: state => state.cards
             }),
-            cards() {
-                return this.allCards.sort( (a, b) => b.id - a.id );
-            },
+            ...mapState('albums', {
+                thisUserAlbums: state => state.userAlbums
+            }),
+
             socEdit() {
                 return this.$refs['soc-edit'];
                 },
@@ -473,14 +475,15 @@
                     bgUser = "backgroundImage: url(" + this.currentUserObject.urlUserCover + ")";
                 return bgUser;
                 },
-            thisUserAlbums() {
-                return this.albums.filter(album => album.author == this.idCurrentUser);
-            }
+            // thisUserAlbums() {
+            //     return this.albums.filter(album => album.author == this.idCurrentUser);
+            // }
         },
 
 
         methods: {
             ...mapActions('cards', ['refreshAllCards']),
+            ...mapActions('albums', ['refreshUserAlbum']),
 
             socEditMouseLeaveHandler() {
                 if (this.windowWidth > 480) {
@@ -643,16 +646,24 @@
             }
         },
 
-        created() {
-            this.refreshAllCards();
+        async created() {
+            try {
+                await this.refreshAllCards();
+                await this.refreshUserAlbum(this.idCurrentUser);
+            }
+            finally {
+                this.cards = this.allCards;
+                this.userAlbums = this.thisUserAlbums;
+            }
             window.addEventListener('resize', this.checkWidth);            
             this.loadedCardsPush(this.startPhotoLoadingPos);            
+            console.log('refreshAllCards');
         },
 
         mounted() {
             this.windowWidth = window.innerWidth;
             console.log('this.cards - ',this.cards);
-            console.log('typeof - ', typeof this.cards);
+            console.log('this.userAlbums - ',this.userAlbums);
         },
             
     }

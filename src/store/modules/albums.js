@@ -3,12 +3,15 @@ import $axios from '../../requests';
 export default {
     namespaced: true,
     state: {
-    //   albums: [],
-    currentAlbum: {}
+        userAlbums: [],
+        currentAlbum: {}
     },
     mutations: {
         SET_CURRENT_ALBUM(state, album) {
             state.currentAlbum = album;
+        },
+        SET_USER_ALBUMS(state, albums) {
+            state.userAlbums = albums;
         },
         // SET_CURRENT_CARD(state, cardId) {
         //     state.currentAlbum = state.albums.filter(card => card.id === cardId)[0] || {};
@@ -51,6 +54,17 @@ export default {
         //     }
         //     catch(error) { throw new Error ( error.response.data.error || error.response.data.message ); }
         // },
+        async refreshUserAlbum(store, userId) {               
+                try {               
+                const { data } = await $axios.get(`/v1/albums`,
+                                    { params: {'where':`author.id:eq:${userId}`} },
+                                    {'Content-Type': 'application/json'}
+                    );
+                              
+                store.commit('SET_USER_ALBUMS', data.albums);
+            }
+            catch(error) { throw new Error ( error.response.data.error || error.response.data.message ); }
+        },
         async refreshThisAlbum(store, albumId) {               
                 try {               
                 const { data } = await $axios.get(`/v1/albums/${albumId}`

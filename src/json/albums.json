@@ -1,26 +1,5 @@
 [
   {
-    "id": 1,
-    "albumName": "Лесные прогулки",
-    "author": 2,
-    "description": "Фотографии природы леса, енотов и оленей. Как прекрасно сойти на дальней станции и пройтись по полю босиком. И чтобы никто не беспокоил бродить влюбленным в тишину. Запах мёда, лесных оленей и енотов будоражит нутро.",
-    "preview": 11
-  },
-  {
-    "id": 2,
-    "albumName": "Животные",
-    "author": 2,
-    "description": "Фотографии животных...",
-    "preview": 7
-  },
-  {
-    "id": 3,
-    "albumName": "Тачки",
-    "author": 1,
-    "description": "Тачки...",
-    "preview": 9
-  },
-  {
     "id": 4,
     "albumName": "Cartoons",
     "author": 3,
@@ -42,12 +21,5 @@
         "likes": 15
       }
     ]
-  },
-  {
-    "id": 5,
-    "albumName": "Workspaces",
-    "author": 3,
-    "description": "Workspaces' pictures",
-    "preview": 19
   }
 ]

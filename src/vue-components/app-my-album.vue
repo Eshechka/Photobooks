@@ -5,7 +5,7 @@
 				tag="div"
 				:to="'/album/'+myAlbumObject.id"
 		>
-			<img class="my-album__img" :src="previewUrl" alt="album image">
+			<img class="my-album__img" :src="`${urlPhotos}/${myAlbumObject.preview}`" alt="album image">
             <div class="my-album__img-overlay"
 				
 			>{{myAlbumObject.description}}</div>
@@ -14,7 +14,7 @@
         
         <div class="my-album__folder">
             <button type="button" class="my-album__button my-album__button_edit"
-				 @click="$emit('clickEditMyAlbum', myAlbumObject)"
+				 @click="$emit('click-edit-my-album', myAlbumObject)"
 			></button>
 			<router-link  class="my-album__folder-name" 
 				:to="'/album/'+myAlbumObject.id"
@@ -29,7 +29,9 @@
 
 
 <script >
-
+    import axios from '../requests.js';
+	const baseUrl = `https://xeniaweb.online/storage`;
+	
     export default {
         props: {
           myAlbumObject: Object,
@@ -37,19 +39,14 @@
 
 		data() {
 			return {
-				previewUrl: this.getPreviewUrl(),				
+				urlPhotos: baseUrl+'/photos',
 			}
 		},
 		methods: {
 			getPreviewUrl() {
-				let previewPhoto = this.myAlbumObject.photos.find(item => item.id === this.myAlbumObject.preview);
-				let previewUrl = '';
-
-				if (!previewPhoto)
-					previewUrl = this.myAlbumObject.photos[0].photo;
-				else
-					previewUrl = previewPhoto.photo;
-				return previewUrl;
+				if (!this.myAlbumObject.preview)
+					console.log('No preview');
+					// previewUrl = this.myAlbumObject.preview; !!!!! тут запрос первой фотки этого альбома
 			},
 		},
 		

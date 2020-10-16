@@ -308,7 +308,7 @@
 					Перед вами сервис, который поможет вам организовать свои фотографии в альбомы и поделиться ими со всем миром!
 				</div>
 				<div class="footer__copyright">
-					2016 | Создано командой профессионалов на продвинутом курсе по веб-разработке от LoftSchool
+					2020 | Создано командой Лидии и Оксаны xeniaweb по проекту LoftSchool
 				</div>
 	
 			</div>
@@ -406,9 +406,7 @@
                 allCards: state => state.currentAlbumCards
             }),                        
             ...mapState('albums', {
-                // current: state => state.currentAlbum
                 currentAlbum: state => state.currentAlbum
-                // currentAlbumObject: state => state.currentAlbum
             }),
             thisAlbumPhotos() {
                 return this.allCards.sort( (a, b) => b.id - a.id );
@@ -591,7 +589,7 @@
             }
             finally {
                 this.currentAlbumObject = {...this.currentAlbum};
-                this.currentAlbumObject.preview = this.currentAlbumObject.preview ? baseUrl+'/photos/'+this.currentAlbumObject.preview : '/img/no_album_cover.jpg';
+                this.currentAlbumObject.preview = this.currentAlbumObject.preview ? baseUrl+'/photos/'+this.currentAlbumObject.preview : 'img/no_album_cover.jpg';
             }
 
         },

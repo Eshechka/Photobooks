@@ -2,9 +2,9 @@
 
     <div class="card">
         <div class="card__img-card">
-            <img  class="card__img" :src="cardObject.photo" alt="card image">
+            <img  class="card__img" :src="`${urlPhotos}/${cardObject.photo}`" alt="card image">
             <div class="card__img-overlay"
-                @click="$emit('clickCard', cardObject.id)"
+                @click="$emit('click-card', cardObject.id)"
             ></div>
         </div>
 
@@ -12,9 +12,9 @@
 
             <router-link class="card__avatar"
                 tag="div"
-                :to="'/'+cardObject.authorId"
+                :to="'/'+cardObject.author.id"
             >
-                <img class="card__avatar-img" :src="cardObject.urlUserAvatar" alt="card avatar">
+                <img class="card__avatar-img" :src="`${urlAvatars}/${cardObject.author.avatar}`" alt="card avatar">
                 <div class="card__avatar-overlay"></div>
             </router-link>
 
@@ -22,8 +22,8 @@
                 <div class="card__desc-title"> {{cardObject.title}} </div>
 
                 <div class="card__signs-wrapper">
-                    <div class="card__signs card__signs_comments card__signs_mini">{{cardObject.comments}}</div>
-                    <div class="card__signs card__signs_likes card__signs_mini">{{cardObject.likes}}</div>
+                    <div class="card__signs card__signs_comments card__signs_mini">{{cardObject.commentCount}}</div>
+                    <div class="card__signs card__signs_likes card__signs_mini">{{cardObject.likeCount}}</div>
                 </div>
 
             </div>
@@ -41,19 +41,25 @@
 
 
 <script >
+    const baseUrl = `https://xeniaweb.online/storage`;
+    
     export default {
         props: {
-          cardObject: Object,
+          cardObject: Object
         },
 
         data() {
           return {
-            
-          }
+                urlAvatars: baseUrl+'/avatars',
+                urlPhotos: baseUrl+'/photos',
+
+            }
         },
 
         methods: {
-
+            mounted() {
+                console.log('this.cardObject', this.cardObject);
+            }
         },
     }
 </script>

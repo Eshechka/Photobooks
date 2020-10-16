@@ -4,13 +4,13 @@
         <div class="big-card__card">
 
             <div class="big-card__card-img">
-                <img class="big-card__img" :src="`${url}/${cardObject.photo}`" alt="big card image">                
+                <img class="big-card__img" :src="`${urlPhotos}/${cardObject.photo}`" alt="big card image">                
             </div>
 
             <div class="big-card__author-info">
 
                 <div class="big-card__avatar">
-                    <img class="big-card__avatar-img" alt="card avatar" :src="cardObject.author.avatar">
+                    <img class="big-card__avatar-img" alt="card avatar" :src="`${urlAvatars}/${cardObject.author.avatar}`">
                 </div>
                 
                 <div class="big-card__name">{{cardObject.author.name}}</div>
@@ -102,7 +102,7 @@
 
     import $axios from 'axios';
     import requests from '../requests';
-    const basePhotosUrl = requests.defaults.basePhotosUrl;
+    const baseUrl = `https://xeniaweb.online/storage`;
 
     export default {
         props: {
@@ -114,7 +114,9 @@
 
         data() {
           return {
-            url: basePhotosUrl,
+            urlPhotos: baseUrl+'/photos',
+            urlAvatars: baseUrl+'/avatars',
+
             comments: dataJSON_comments,
             users: dataJSON_users,
             likes: dataJSON_all.likes,
@@ -200,8 +202,8 @@
             },
             upgradeCardObject() {
 
-                this.cardObject.author.avatar = this.users.find(user => user.id === this.cardObject.author.id).urlUserAvatar;
-                this.cardObject.author.name = this.users.find(user => user.id === this.cardObject.author.id).userName;
+                // this.cardObject.author.avatar = this.users.find(user => user.id === this.cardObject.author.id).urlUserAvatar;
+                // this.cardObject.author.name = this.users.find(user => user.id === this.cardObject.author.id).userName;
                 // let albumAuthor = this.users.find(user => user.id === this.userId);
                 // this.cardObject.userName = albumAuthor.userName;
                 // this.cardObject.urlUserAvatar = albumAuthor.urlUserAvatar;
