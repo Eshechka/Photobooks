@@ -168,14 +168,10 @@
 
 <script>
 
-//   import appCard from '../vue-components/app-card.vue'
-  import axios from '../requests';
+	import { mapState, mapActions } from 'vuex';
+	import axios from '../requests';
 
   export default {   
-
-    components: {
-    //   appCard,
-    },
 
     data() {
         return {
@@ -206,27 +202,40 @@
 
 
     methods: {  
+		...mapActions('user', ['login']),
+
+        async loginHandle() {
+            await axios.post('/login', this.loginUser).then(response => { 
+				const token = response.data.access_token;
+				localStorage.setItem('token', token);
+				axios.defaults.headers['Authorization'] = `Bearer ${token}`;
+
+				const user = response.data.user;
+				this.login(user);
+				this.$router.replace(`/`);
+				// this.$router.replace(`/${user.id}`);
+
+			}).catch(error => {
+				alert('я ошибка login: ' + error.message);
+			});
+		}, 
+
 		registerHandle() {
 			console.log('registerHandle');			
 			axios.post('/register', this.registerUser).then(response => { 
-				console.log(response);
 				const token = response.data.token;
 				localStorage.setItem('token', token);
 				axios.defaults.headers['Authorization'] = `Bearer ${token}`;
+
+				const user = response.data.user;
+				this.login(user);
+				this.$router.replace(`/${user.id}`);
+
 			}).catch(error => {
-				console.log(error);
+				alert('я ошибка register: ' + error.message);
 			});
 		},
-		loginHandle() {
-			axios.post('/login', this.loginUser).then(response => { 
-				console.log(response);
-				const token = response.data.token;
-				localStorage.setItem('token', token);
-				axios.defaults.headers['Authorization'] = `Bearer ${token}`;
-			}).catch(error => {
-				console.log(error);
-			});
-		},
+
     },
 
         

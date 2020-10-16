@@ -408,6 +408,7 @@
             ...mapState('albums', {
                 currentAlbum: state => state.currentAlbum
             }),
+
             thisAlbumPhotos() {
                 return this.allCards.sort( (a, b) => b.id - a.id );
             },
@@ -655,6 +656,7 @@
             position: absolute;
             top: 20px;
             left: 0;
+            z-index: 9;
 
             @include tablets {
                 top: 70px;
@@ -675,6 +677,7 @@
             position: absolute;
             top: 20px;
             right: 0;
+            z-index: 9;
         }
 
 
@@ -1439,6 +1442,8 @@
 
         &__button-up {
             height: 60px;
+            z-index: 9;
+
             /* width: 100%; */
             @include tablets {
                 position: absolute;

@@ -459,6 +459,9 @@
             ...mapState('albums', {
                 thisUserAlbums: state => state.userAlbums
             }),
+            ...mapState('user', {
+                thisloguser: state => state.user
+            }),
 
             socEdit() {
                 return this.$refs['soc-edit'];
@@ -483,7 +486,7 @@
 
         methods: {
             ...mapActions('cards', ['refreshAllCards']),
-            ...mapActions('albums', ['refreshUserAlbum']),
+            ...mapActions('albums', ['refreshUserAlbum']),            
 
             socEditMouseLeaveHandler() {
                 if (this.windowWidth > 480) {
@@ -662,8 +665,7 @@
 
         mounted() {
             this.windowWidth = window.innerWidth;
-            console.log('this.cards - ',this.cards);
-            console.log('this.userAlbums - ',this.userAlbums);
+            console.log('thisloguser',this.thisloguser);
         },
             
     }
@@ -709,6 +711,7 @@
             position: absolute;
             top: 20px;
             left: 0;
+            z-index: 9;
             
             @include tablets {
                 top: 70px;
@@ -721,6 +724,7 @@
             position: absolute;
             top: 20px;
             right: 0;
+            z-index: 9;
         }
         
 
@@ -1409,6 +1413,7 @@
             position: absolute;
             right: 0;
             top: 50%;
+            z-index: 9;
             transform: translateY(-50%);
         }
 

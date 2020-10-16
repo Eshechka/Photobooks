@@ -138,6 +138,7 @@
             border-radius: 50%;
             position: relative;
             overflow: hidden;
+            flex-shrink: 0;
         }
 
         &__avatar-overlay {
