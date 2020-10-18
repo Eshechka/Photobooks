@@ -6,16 +6,16 @@ import axios from 'axios';
 
 Vue.use(VueRouter);
 
-// const guard = axios.create({
-//     baseURL: 'https://xeniaweb.online/api',    
-// });
+const guard = axios.create({
+    baseURL: 'https://xeniaweb.online/api',    
+});
 const userId = localStorage.getItem('userId');
 
 const routes = [
     {
         path: '/',
-        // redirect: `/${userId}`,        
-        redirect: `/1`,        
+        redirect: `/${userId}`,        
+        // redirect: `/1`,        
         component: () => import('./vue-components/app-user.vue'),
     },
     {
@@ -43,15 +43,30 @@ const router = new VueRouter({
     }
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
+    // console.log('tut');
+    // store.actions['user/login()'];
     const isPublicRoute = to.matched.some(route => route.meta.public);
-    const isUserLogged = store.getters['user/userIsLogged'];    
 
-    if (!isPublicRoute && !isUserLogged) {
-        console.log('unlogged!!!!!!!');
-        router.replace('/login');
-        // localStorage.clear();
-        // next('/');
+    // console.log('tut isUserLogged', isUserLogged);
+    // const isUserLogged = store.getters['user/userIsLogged'];
+
+
+    if (!isPublicRoute) {
+    // if (!isPublicRoute && !isUserLogged) {
+        const token = localStorage.getItem('token');
+        guard.defaults.headers["Authorization"] = `Bearer ${token}`;
+
+       try {
+            const {data} = await guard.get('/user');
+            console.log('Ответ от сервера: ',data);
+            store.commit('user/SET_USER', data.user);
+            next();
+       } 
+       catch (error) {        
+            router.replace('/login');
+            localStorage.clear();
+       }
     }
     else {
         console.log('next()');

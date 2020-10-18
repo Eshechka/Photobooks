@@ -139,5 +139,30 @@
     "isThisUser": false,
     "userDesc": "Я Федя. Руковожу крупным лейблом.",
     "userSocials": []
+  },
+  {   
+    "id": 19, 
+    "urlUserAvatar": "../img/fed.png", 
+    "urlUserCover": "", 
+    "userName": "Lidia",
+    "email": "some@gmail.com",
+    "isThisUser": true,
+    "userDesc": "Я Lidia. Руковожу 2мя обезьянками.",
+    "userSocials": [
+      {   
+        "id": "google", 
+        "icon": "../icons/social_google.svg", 
+        "text": "google", 
+        "isActive": false, 
+        "link": "https://googleLi.com/" 
+      },
+      {   
+        "id": "email", 
+        "icon": "../icons/soc_email.svg", 
+        "text": "email", 
+        "isActive": false, 
+        "link": "https://vkLi.com/" 
+      }
+    ]
   }
 ]

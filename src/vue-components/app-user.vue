@@ -1,6 +1,5 @@
 <template>
     <div class="wrapper">
-
         <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigCardSlider || openEditProfile || openChangeMyAlbum"
             @click="openBigCardSlider = openEditProfile = openChangeMyAlbum = false"
         ></div>
@@ -9,37 +8,37 @@
         ></div>
 
         <header class="header"
-            :style="bgCurrentUser"
+            :style="currentAuthorObject.cover"
         >
 
             <div class="header__container" v-if="!openEditHeader">		
                 <div class="header__button-logout"
-                    v-if="currentUserObject.isThisUser"
+                    v-if="currentAuthorObject.id==idCurrentUser"
                 >
                     <button type='button' class="round-button round-button_logout">Выйти</button>
                 </div>
                 <div class="header__button-edit"
-                    v-if="currentUserObject.isThisUser"
+                    v-if="currentAuthorObject.id==idCurrentUser"
                 >
                     <button type='button' class="round-button round-button_edit"
-                        @click="openEditHeader=true"
+                        @click="editUserHeaderHandler"
                     >Редактировать</button>
                 </div>
 
                 <div class="header__avatar">
-                    <img class="header__avatar-img" :src='currentUserObject.urlUserAvatar' alt="avatar">
+                    <img class="header__avatar-img" :src='`${urlAvatars}/${currentAuthorObject.avatar}`' alt="avatar">
                 </div>
                 <div class="header__info">
-                    <h1 class="header__title">{{currentUserObject.userName}}</h1>
+                    <h1 class="header__title">{{currentAuthorObject.name}}</h1>
 
                     <div class="header__text">		
-                        {{currentUserObject.userDesc}}		
+                        {{currentAuthorObject.description}}		
                     </div>
 
                     <div class="header__socials">
                         <ul class="socials__list">
                             <li class="socials__item"
-                                v-for="social in currentUserObject.userSocials" :key="social.id"
+                                v-for="social in currentAuthorObject.userSocials" :key="social.id"
                             >
                                 <a class="socials__link" target="blank"
                                     :class="`socials__link_${social.id}`"
@@ -96,7 +95,7 @@
                                 <div class="form-edit-profile__load-image">
 
                                     <div class="form-edit-profile__img-wrapper">
-                                        <img class="form-edit-profile__img" :src="currentUserObject.urlUserCover" alt="background cover image">
+                                        <img class="form-edit-profile__img" :src="`${urlPhotos}/${currentAuthorObject.cover}`" alt="background cover image">
                                     </div>
 
                                     <div class="form-edit-profile__button">
@@ -139,7 +138,6 @@
 
             </div>
 
-
             <div class="header__edit-header" v-if="openEditHeader">
 
                 <div class="edit-header">
@@ -148,27 +146,33 @@
                     
                         <div class="edit-header__form">
                             
-                            <form class="form-edit-header">
+                            <form class="form-edit-header"
+                                @submit.prevent="submitUserHeaderHandler"
+                            >
 
                                 <div class="form-edit-header__load-image">
                                     <div class="form-edit-header__img-wrapper">
-                                        <img class="form-edit-header__img" :src="currentUserObject.urlUserAvatar" alt="avatar image">
+                                        <img class="form-edit-header__img" :src="`${urlAvatars}/${currentAuthorObject.avatar}`" alt="avatar image">
                                     </div>
                                 </div>   
 
                                 <label class="form-edit-header__label">
-                                    <input class="form-edit-header__input" type="text" placeholder="Антон Черепов">
+                                    <input class="form-edit-header__input" type="text" placeholder="Введите имя"
+                                        v-model="changedUser.name"
+                                    >
                                 </label>
 
                                 <label class="form-edit-header__label">
-                                    <textarea class="form-edit-header__input form-edit-header__input_textarea" cols="20" rows="2" placeholder="Описание альбома"></textarea>
+                                    <textarea class="form-edit-header__input form-edit-header__input_textarea" cols="20" rows="2" placeholder="Краткая информация о пользователе"
+                                        v-model="changedUser.description"
+                                    ></textarea>
                                 </label>
 
                                 <div class="form-edit-header__socials">
                                     <div class="socials">
 
                                         <ul class="socials__list">
-                                            <li v-for="social in currentUserObject.userSocials" :key="social.id" class="socials__item"> 
+                                            <li v-for="social in currentAuthorObject.userSocials" :key="social.id" class="socials__item"> 
                                                 <a
                                                     @mouseenter="socialMouseHandler(social.id, $event)" 
                                                     @mouseleave="socialMouseHandler(social.id, $event)" 
@@ -249,7 +253,7 @@
 
 
             <section class="new"
-                v-if="currentUserObject.isThisUser">
+                v-if="currentAuthorObject.id==idCurrentUser">
 
                 <div class="new__container">
 
@@ -291,7 +295,7 @@
                                     <appBigCard v-for="bigCard in loadedCards" :key="bigCard.id"
                                         :cardObject="bigCard"
                                         :userId="bigCard.authorId"
-                                        :currentUserObject="currentUserObject"
+                                        :currentUserObject="currentAuthorObject"
                                         >                                                               
                                     </appBigCard>
 
@@ -322,11 +326,11 @@
 
                     <div class="my-albums__topgroup">
                         <h2 class="my-albums__title" 
-                            v-if="currentUserObject.isThisUser">Мои альбомы</h2>                        
+                            v-if="currentAuthorObject.id==idCurrentUser">Мои альбомы</h2>                        
                         <h2 class="my-albums__title" 
                             v-else>Альбомы</h2>
                         <div class="my-albums__button-plus"
-                            v-if="currentUserObject.isThisUser">
+                            v-if="currentAuthorObject.id==idCurrentUser">
                             <button class="round-button round-button_plus"                            
                                 @click="openChangeMyAlbum=true; 
                                         albumChangeMode='add';"
@@ -335,12 +339,12 @@
                     </div>
 
                     <p class="my-albums__empty-text"
-                        v-if="!userAlbums.length"
+                        v-if="!authorAlbums.length"
                     >Альбомы еще не созданы. Создайте альбом с помощью кнопки "Добавить".</p>
 
 
                     <ul class="my-albums__albums-list">
-                        <li v-for="myAlbum in userAlbums" :key="myAlbum.id" class="my-albums__albums-item">
+                        <li v-for="myAlbum in authorAlbums" :key="myAlbum.id" class="my-albums__albums-item">
                             <appMyAlbum 
                                 @click-edit-my-album="clickEditAlbumHandler"
                                 :myAlbumObject="myAlbum"                            
@@ -363,7 +367,7 @@
         </main>
 
         <footer class="footer"
-            :style="bgCurrentUser">
+            :style="`${urlPhotos}/${currentAuthorObject.cover}`">
 
             <div class="footer__container">	
 
@@ -391,10 +395,8 @@
     import appMyAlbum from '../vue-components/app-my-album.vue'
     import appChangeAlbum from '../vue-components/app-change-album.vue'
 
-    // import dataJSON_cards from '../json/cards.json'
-    // import dataJSON_albums from '../json/albums.json'
     import dataJSON_socials from '../json/socials.json'
-    import dataJSON_users from '../json/users.json'
+    const baseUrl = `https://xeniaweb.online/storage`;
 
     import { mapState, mapActions } from 'vuex';
 
@@ -414,6 +416,9 @@
                 openEditHeader: false,
                 openChangeMyAlbum: false,
 
+                urlPhotos: baseUrl+'/photos',
+                urlAvatars: baseUrl+'/avatars',
+
                 urlInlineSvgSprite: require('../img/spriteIcons.svg').default,
 
                 isActiveSocial: false,            
@@ -425,12 +430,14 @@
 
                 idCurrentPhoto: 0,
 
-                // cards: dataJSON_cards,
-                // albums: dataJSON_albums,
                 cards: [],
-                userAlbums: [],
+                authorAlbums: [],
+                currentAuthorObject: {
+                    albums: [],
+                },
+                users: [],
                 socials: dataJSON_socials,
-                users: dataJSON_users,
+                // users: dataJSON_users,
 
                 loadedCards: [],
                 amountLoadedPhotos: 0,
@@ -447,7 +454,17 @@
                     freeScroll: false,
                     groupCells: true,
                     contain: true
-                },                
+                },
+                changedUser: {
+                    name: '',
+                    description: '',                    
+                },
+
+                // currentUserObject: {
+                //     id: Number,
+                //     cover: '',
+                //     userSocials: [],
+                // }
             }
         },
 
@@ -462,37 +479,38 @@
             ...mapState('user', {
                 thisloguser: state => state.user
             }),
+            ...mapState('authors', {
+                thisAuthor: state => state.author
+            }),
+            
 
             socEdit() {
                 return this.$refs['soc-edit'];
                 },
             idCurrentUser() {
                 return this.$route.params.id;
-                },//!!!!!! это потом должно быть в local storage?
-            currentUserObject() {                
-                return this.users.find(user => user.id == this.idCurrentUser);
                 },
-            bgCurrentUser() {
-                let bgUser = "";
-                if (this.currentUserObject.urlUserCover) 
-                    bgUser = "backgroundImage: url(" + this.currentUserObject.urlUserCover + ")";
-                return bgUser;
-                },
-            // thisUserAlbums() {
-            //     return this.albums.filter(album => album.author == this.idCurrentUser);
-            // }
         },
 
 
         methods: {
             ...mapActions('cards', ['refreshAllCards']),
-            ...mapActions('albums', ['refreshUserAlbum']),            
+            ...mapActions('albums', ['refreshUserAlbum']),
+            ...mapActions('authors', ['refreshAuthor']),            
+
+            editUserHeaderHandler() {
+                this.openEditHeader=true;
+                this.changedUser = {...this.currentAuthorObject};
+            },
+            submitUserHeaderHandler() {
+                //!!!!!!!!!!!!! запрос на редактирование инфо про юзера в шапке
+            },
 
             socEditMouseLeaveHandler() {
                 if (this.windowWidth > 480) {
                     this.isActiveSocial = false;
 
-                    this.currentUserObject.userSocials.map(social => { 
+                    this.currentAuthorObject.userSocials.map(social => { 
                         social.isActive = false;
                     });
                 }
@@ -504,7 +522,7 @@
                     
                     this.currentSocialId = socialId;
 
-                    this.currentUserObject.userSocials.map(social => { 
+                    this.currentAuthorObject.userSocials.map(social => { 
                             if (this.currentSocialId) {
                                 if (social.id !== this.currentSocialId) {
                                     social.isActive = false;
@@ -530,7 +548,7 @@
 
                     this.currentSocialId = socialId; 
 
-                    this.currentUserObject.userSocials.map(social => { 
+                    this.currentAuthorObject.userSocials.map(social => { 
                             if (this.currentSocialId) {
 
                                 if (social.id !== this.currentSocialId) {
@@ -554,7 +572,7 @@
                         }
                         
                         if (elem !== this.socEdit) {
-                            this.currentUserObject.userSocials.map(social => { 
+                            this.currentAuthorObject.userSocials.map(social => { 
                                 social.isActive = false;
                             });
                             this.isActiveSocial = false;
@@ -587,15 +605,15 @@
 
             checkWidth() {
 
-                if (this.idCurrentUser && this.currentUserObject) {
+                if (this.idCurrentUser && this.currentAuthorObject) {
 
                     this.windowWidth = window.innerWidth;
     
                     if (this.windowWidth > 480) {
     
                         this.isActiveSocial = false;
-                        
-                        this.currentUserObject.userSocials.map(social => 
+
+                        if (this.currentAuthorObject.userSocials) this.currentAuthorObject.userSocials.map(social => 
                             {
                                 social.isActive = false;
                             }
@@ -653,19 +671,21 @@
             try {
                 await this.refreshAllCards();
                 await this.refreshUserAlbum(this.idCurrentUser);
+                await this.refreshAuthor(this.idCurrentUser);
             }
             finally {
                 this.cards = this.allCards;
-                this.userAlbums = this.thisUserAlbums;
+                this.authorAlbums = this.thisUserAlbums;
+                this.currentAuthorObject = this.thisAuthor;
             }
             window.addEventListener('resize', this.checkWidth);            
-            this.loadedCardsPush(this.startPhotoLoadingPos);            
-            console.log('refreshAllCards');
+            this.loadedCardsPush(this.startPhotoLoadingPos);
         },
 
         mounted() {
             this.windowWidth = window.innerWidth;
-            console.log('thisloguser',this.thisloguser);
+            // this.currentUserObject = {...this.thisloguser};
+            console.log('WWTTFF',this.currentAuthorObject);
         },
             
     }

@@ -331,7 +331,7 @@
     import { mapState, mapActions } from 'vuex';
 
     import axios from '../requests.js';
-    let baseUrl = `https://xeniaweb.online/storage`;
+    const baseUrl = `https://xeniaweb.online/storage`;
 
     const renderer = file => {
         const reader = new FileReader();

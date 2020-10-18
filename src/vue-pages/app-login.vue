@@ -175,8 +175,8 @@
 
     data() {
         return {
-            stateEnter: !!false,
-            stateRegistration: !false,
+            stateEnter: !false,
+            stateRegistration: !!false,
             stateForgotPassword: !!false,
             
             urlInlineSvgSprite: require('../img/spriteIcons.svg').default,
@@ -213,15 +213,13 @@
 				const user = response.data.user;
 				this.login(user);
 				this.$router.replace(`/`);
-				// this.$router.replace(`/${user.id}`);
 
 			}).catch(error => {
 				alert('я ошибка login: ' + error.message);
 			});
 		}, 
 
-		registerHandle() {
-			console.log('registerHandle');			
+		registerHandle() {			
 			axios.post('/register', this.registerUser).then(response => { 
 				const token = response.data.token;
 				localStorage.setItem('token', token);
@@ -229,7 +227,8 @@
 
 				const user = response.data.user;
 				this.login(user);
-				this.$router.replace(`/${user.id}`);
+				this.$router.replace(`/`);
+				// this.$router.replace(`/${user.id}`);
 
 			}).catch(error => {
 				alert('я ошибка register: ' + error.message);

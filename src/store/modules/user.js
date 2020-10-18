@@ -6,7 +6,9 @@ export default {
       user: {},
     },
     getters: {
-        userIsLogged: state => {            
+        userIsLogged: state => {
+            console.log('state.user', state.user);
+            console.log('state', state);
             const userObj = state.user;
             const userObjIsEmpty = Object.keys(userObj).length === 0 && userObj.constructor === Object;
 
@@ -30,6 +32,6 @@ export default {
         logout({commit}) {
             localStorage.clear();
             commit('CLEAR_USER');
-        }
+        },
     },
 };
