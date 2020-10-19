@@ -20,10 +20,9 @@
                 <div class="header__button-home"
                     :class="{'header__button-home_scrolled' : isScrolledHeader}">
                     <router-link class="round-button round-button_home"
-                        to="/1"
+                        to="/"
                         @click.prevent
                     >На главную</router-link>
-                    <!-- ПОТОМ ИСПРАВИТЬ НА to="/" !!!!!!!!!! -->
                 </div>
 
 					<div class="header__user" :class="{header__user_scrolled : isScrolledHeader}">
@@ -585,12 +584,12 @@
             this.refreshAlbumCards(this.$route.params.albumid);
             try {
                 this.currentAlbumObject.author.name = '';
-                this.currentAlbumObject.author.avatar = '/no_album_cover.jpg';
+                this.currentAlbumObject.author.avatar = 'no_album_cover.jpg';
                 await this.refreshThisAlbum(this.$route.params.albumid);
             }
             finally {
                 this.currentAlbumObject = {...this.currentAlbum};
-                this.currentAlbumObject.preview = this.currentAlbumObject.preview ? baseUrl+'/photos/'+this.currentAlbumObject.preview : 'img/no_album_cover.jpg';
+                this.currentAlbumObject.preview = this.currentAlbumObject.preview ? urlPhotos+this.currentAlbumObject.preview : 'img/no_album_cover.jpg';
             }
 
         },

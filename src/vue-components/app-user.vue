@@ -13,12 +13,14 @@
 
             <div class="header__container" v-if="!openEditHeader">		
                 <div class="header__button-logout"
-                    v-if="currentAuthorObject.id==idCurrentUser"
+                    v-if="currentAuthorObject.id==loggedUserObject.id"
                 >
-                    <button type='button' class="round-button round-button_logout">Выйти</button>
+                    <button type='button' class="round-button round-button_logout"
+                        @click="logout"
+                    >Выйти</button>
                 </div>
                 <div class="header__button-edit"
-                    v-if="currentAuthorObject.id==idCurrentUser"
+                    v-if="currentAuthorObject.id==loggedUserObject.id"
                 >
                     <button type='button' class="round-button round-button_edit"
                         @click="editUserHeaderHandler"
@@ -253,7 +255,7 @@
 
 
             <section class="new"
-                v-if="currentAuthorObject.id==idCurrentUser">
+                v-if="currentAuthorObject.id==loggedUserObject.id">
 
                 <div class="new__container">
 
@@ -326,11 +328,11 @@
 
                     <div class="my-albums__topgroup">
                         <h2 class="my-albums__title" 
-                            v-if="currentAuthorObject.id==idCurrentUser">Мои альбомы</h2>                        
+                            v-if="currentAuthorObject.id==loggedUserObject.id">Мои альбомы</h2>                        
                         <h2 class="my-albums__title" 
                             v-else>Альбомы</h2>
                         <div class="my-albums__button-plus"
-                            v-if="currentAuthorObject.id==idCurrentUser">
+                            v-if="currentAuthorObject.id==loggedUserObject.id">
                             <button class="round-button round-button_plus"                            
                                 @click="openChangeMyAlbum=true; 
                                         albumChangeMode='add';"
@@ -398,7 +400,7 @@
     import dataJSON_socials from '../json/socials.json'
     const baseUrl = `https://xeniaweb.online/storage`;
 
-    import { mapState, mapActions } from 'vuex';
+    import { mapState, mapActions, mapGetters } from 'vuex';
 
     import Flickity from 'vue-flickity';
 
@@ -418,7 +420,6 @@
 
                 urlPhotos: baseUrl+'/photos',
                 urlAvatars: baseUrl+'/avatars',
-
                 urlInlineSvgSprite: require('../img/spriteIcons.svg').default,
 
                 isActiveSocial: false,            
@@ -435,7 +436,7 @@
                 currentAuthorObject: {
                     albums: [],
                 },
-                users: [],
+                // users: [],
                 socials: dataJSON_socials,
                 // users: dataJSON_users,
 
@@ -460,11 +461,11 @@
                     description: '',                    
                 },
 
-                // currentUserObject: {
-                //     id: Number,
-                //     cover: '',
-                //     userSocials: [],
-                // }
+                loggedUserObject: {
+                    id: Number,
+                    cover: '',
+                    userSocials: [],
+                }
             }
         },
 
@@ -473,12 +474,13 @@
             ...mapState('cards', {
                 allCards: state => state.cards
             }),
-            ...mapState('albums', {
-                thisUserAlbums: state => state.userAlbums
-            }),
+            // ...mapState('albums', {
+            //     thisUserAlbums: state => state.userAlbums
+            // }),
             ...mapState('user', {
                 thisloguser: state => state.user
             }),
+            
             ...mapState('authors', {
                 thisAuthor: state => state.author
             }),
@@ -495,13 +497,14 @@
 
         methods: {
             ...mapActions('cards', ['refreshAllCards']),
-            ...mapActions('albums', ['refreshUserAlbum']),
-            ...mapActions('authors', ['refreshAuthor']),            
+            ...mapActions('authors', ['refreshAuthor']),
+            ...mapActions('user', ['logout']),
 
             editUserHeaderHandler() {
                 this.openEditHeader=true;
                 this.changedUser = {...this.currentAuthorObject};
             },
+
             submitUserHeaderHandler() {
                 //!!!!!!!!!!!!! запрос на редактирование инфо про юзера в шапке
             },
@@ -605,7 +608,8 @@
 
             checkWidth() {
 
-                if (this.idCurrentUser && this.currentAuthorObject) {
+                // if (this.idCurrentUser && this.currentAuthorObject) {
+                if (this.currentAuthorObject) {
 
                     this.windowWidth = window.innerWidth;
     
@@ -667,16 +671,18 @@
             }
         },
 
+
+
         async created() {
             try {
                 await this.refreshAllCards();
-                await this.refreshUserAlbum(this.idCurrentUser);
                 await this.refreshAuthor(this.idCurrentUser);
             }
             finally {
                 this.cards = this.allCards;
-                this.authorAlbums = this.thisUserAlbums;
+                // this.loggedUserObject = {...this.thisloguser};
                 this.currentAuthorObject = this.thisAuthor;
+                this.authorAlbums = this.thisAuthor.albums;
             }
             window.addEventListener('resize', this.checkWidth);            
             this.loadedCardsPush(this.startPhotoLoadingPos);
@@ -684,8 +690,9 @@
 
         mounted() {
             this.windowWidth = window.innerWidth;
-            // this.currentUserObject = {...this.thisloguser};
-            console.log('WWTTFF',this.currentAuthorObject);
+            
+            console.log('currentAuthorObject',this.currentAuthorObject);
+            this.loggedUserObject.id = localStorage.getItem('userId');
         },
             
     }

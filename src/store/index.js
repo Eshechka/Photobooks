@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-
 import albums from './modules/albums';
 import cards from './modules/cards';
 import authors from './modules/authors';
@@ -13,8 +12,8 @@ export const store = new Vuex.Store({
     modules: {
         cards,
         albums,
-        user,
         authors,
+        user,
         
     }
 });

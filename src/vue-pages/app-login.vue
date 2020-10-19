@@ -108,7 +108,9 @@
                             
                             <div class="enter__toregistration">
                                 <p class="enter__text">Нет аккаунта?</p> 
-                                <button class="site-button site-button_theme-just-text" type="button">Зарегистрироваться</button>
+                                <button class="site-button site-button_theme-just-text" type="button"
+									@click.prevent="stateRegistration=!stateRegistration; stateEnter=!stateEnter"
+								>Зарегистрироваться</button>
                             </div>
 
                         </div>
@@ -228,7 +230,6 @@
 				const user = response.data.user;
 				this.login(user);
 				this.$router.replace(`/`);
-				// this.$router.replace(`/${user.id}`);
 
 			}).catch(error => {
 				alert('я ошибка register: ' + error.message);

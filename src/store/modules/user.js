@@ -7,13 +7,14 @@ export default {
     },
     getters: {
         userIsLogged: state => {
-            console.log('state.user', state.user);
-            console.log('state', state);
             const userObj = state.user;
             const userObjIsEmpty = Object.keys(userObj).length === 0 && userObj.constructor === Object;
 
             return userObjIsEmpty === false;
         },
+        // getLoggedUser: state => {
+        //     return state.user;
+        // }
     },
     mutations: {
         SET_USER(state, user) {
@@ -22,7 +23,6 @@ export default {
         CLEAR_USER(state) {
             state.user = {};
         },
-       
     },
     actions: {
         login({commit}, user) {
