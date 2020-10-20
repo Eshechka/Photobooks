@@ -334,8 +334,7 @@
                         <div class="my-albums__button-plus"
                             v-if="currentAuthorObject.id==loggedUserObject.id">
                             <button class="round-button round-button_plus"                            
-                                @click="openChangeMyAlbum=true; 
-                                        albumChangeMode='add';"
+                                @click="addNewAlbumHandler"
                             ></button>
                         </div>
                     </div>
@@ -358,9 +357,10 @@
 
 
                 <div class="my-albums__change-album" v-if="openChangeMyAlbum">
-                    <appChangeAlbum
-                        @clickCloseChangeMyAlbum="openChangeMyAlbum=false"
-                        :myAlbumObject="currentAlbum"                    
+                    <appChangeAlbum                                                
+                        @click-close-change-my-album="openChangeMyAlbum=false"
+                        @submit-change-my-album="submitChangeMyAlbum"
+                        :editedObject="editedAlbum"                    
                         :mode="albumChangeMode"
                     ></appChangeAlbum>
 
@@ -444,7 +444,13 @@
                 amountLoadedPhotos: 0,
                 startPhotoLoadingPos: 0,
   
-                currentAlbum: {},
+                editedAlbum: {
+                    id: Number,
+                    name: '',
+                    description: '',
+                    author: '',
+                    preview: '',
+                    title: '',},
 
                 bigCardSliderTop: 0,
 
@@ -465,7 +471,7 @@
                     id: Number,
                     cover: '',
                     userSocials: [],
-                }
+                },
             }
         },
 
@@ -496,9 +502,32 @@
 
 
         methods: {
-            ...mapActions('cards', ['refreshAllCards']),
+            ...mapActions('cards', ['updateAllCards']),
             ...mapActions('authors', ['refreshAuthor']),
+            ...mapActions('albums', ['addAlbum']),
             ...mapActions('user', ['logout']),
+
+            addNewAlbumHandler() {
+                this.openChangeMyAlbum=true; 
+                this.albumChangeMode='add';
+            },
+            clickEditAlbumHandler(clickedAlbum) {
+                this.openChangeMyAlbum=true; 
+                this.albumChangeMode='edit';
+                this.editedAlbum={...clickedAlbum};
+            },
+
+            async submitChangeMyAlbum(myChangeCurrentObject) {
+                try {
+                    await this.addAlbum(myChangeCurrentObject);
+                }
+                catch(error) { 
+                    throw new Error ( error.response.data.error || error.response.data.message ); 
+                }
+                finally {
+                    this.openChangeMyAlbum=false;          
+                }
+            },
 
             editUserHeaderHandler() {
                 this.openEditHeader=true;
@@ -600,12 +629,6 @@
                 this.flickityOptions.initialIndex = this.idCurrentPhoto;
             },
 
-            clickEditAlbumHandler(clickedAlbumId) {
-                this.openChangeMyAlbum=true; 
-                this.albumChangeMode='edit';
-                this.currentAlbum={...clickedAlbumId};
-            },
-
             checkWidth() {
 
                 // if (this.idCurrentUser && this.currentAuthorObject) {
@@ -655,11 +678,26 @@
                     this.$nextTick(() => {
                         window.scrollTo({top: posTop});                        
                     });
-
             },
 
             socEditCancel() {
                 //метод по нажатию отмена при редактировании адреса соцсети
+            },
+
+            async updateAll() {
+                try {
+                    await this.updateAllCards();
+                    await this.refreshAuthor(this.idCurrentUser);
+                }
+                catch (error) {
+                    throw new Error ( error.response.data.error || error.response.data.message );
+                }
+                finally {
+                    this.cards = this.allCards;
+                    this.currentAuthorObject = this.thisAuthor;
+                    this.authorAlbums = this.thisAuthor.albums;
+                    this.loadedCardsPush(this.startPhotoLoadingPos);//?????!!!!!!!!!!!!!!
+                }
             },
 
             next() {
@@ -671,27 +709,29 @@
             }
         },
 
+         watch: {
+            idCurrentUser() {
+                this.updateAll();
+            },
+        },
 
+        // async created() {
+        //     try {
+        //         await this.updateAll();
+        //     }
+        //     finally {
+        //         this.loadedCardsPush(this.startPhotoLoadingPos);
+        //     }
+        //     window.addEventListener('resize', this.checkWidth);            
+        // },
 
-        async created() {
-            try {
-                await this.refreshAllCards();
-                await this.refreshAuthor(this.idCurrentUser);
-            }
-            finally {
-                this.cards = this.allCards;
-                // this.loggedUserObject = {...this.thisloguser};
-                this.currentAuthorObject = this.thisAuthor;
-                this.authorAlbums = this.thisAuthor.albums;
-            }
-            window.addEventListener('resize', this.checkWidth);            
-            this.loadedCardsPush(this.startPhotoLoadingPos);
+        created() {
+            this.updateAll();
+            window.addEventListener('resize', this.checkWidth);
         },
 
         mounted() {
             this.windowWidth = window.innerWidth;
-            
-            console.log('currentAuthorObject',this.currentAuthorObject);
             this.loggedUserObject.id = localStorage.getItem('userId');
         },
             

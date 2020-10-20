@@ -59,7 +59,7 @@ export default {
             }
             catch(error) { throw new Error ( error.response.data.error || error.response.data.message ); }
         },
-        async refreshAllCards(store) {               
+        async updateAllCards(store) {               
                 try {               
                 const { data } = await $axios.get(`/v1/photos`,
                                     { params: {'include':`author`, 'limit': 50, 'sort':'createdAt:desc'} },

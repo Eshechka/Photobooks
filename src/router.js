@@ -48,7 +48,7 @@ const router = new VueRouter({
 router.beforeEach(async (to, from, next) => {
     const isPublicRoute = to.matched.some(route => route.meta.public);
     const isUserLogged = store.getters['user/userIsLogged'];
-    console.log('isUserLogged',isUserLogged);
+    // console.log('isUserLogged',isUserLogged);
 
     if (!isPublicRoute && !isUserLogged) {
         const token = localStorage.getItem('token');
@@ -56,7 +56,7 @@ router.beforeEach(async (to, from, next) => {
 
        try {
             const {data} = await guard.get('/user');
-            console.log('servers answer: ', data);
+            // console.log('servers answer: ', data);
             store.commit('user/SET_USER', data);
             // userId = data.id;
             localStorage.setItem('userId', data.id);

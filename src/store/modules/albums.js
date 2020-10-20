@@ -16,14 +16,15 @@ export default {
         // SET_CURRENT_CARD(state, cardId) {
         //     state.currentAlbum = state.albums.filter(card => card.id === cardId)[0] || {};
         // },
-        // ADD_ALBUM(state, newCard) {
-        //     state.albums.unshift(newCard);
-        // },
-        // CHANGE_ALBUM(state, changedCard) {
-        //     state.albums = state.albums.filter(card => card.id !== changedCard.id);
-        //     state.albums.unshift(changedCard);
-        //     state.albums.sort( (a, b) => b.id - a.id );
-        // },
+        ADD_ALBUM(state, newAlbum) {
+            console.log('newAlbum:',newAlbum);
+            state.userAlbums.unshift(newAlbum);
+        },
+        CHANGE_ALBUM(state, changedAlbum) {
+            state.userAlbums = state.userAlbums.filter(album => album.id !== changedAlbum.id);
+            state.userAlbums.unshift(changedAlbum);
+            state.userAlbums.sort( (a, b) => b.id - a.id );
+        },
         // DELETE_ALBUM(state, deleteCardId) {
         //     state.albums = state.albums.filter(card => card.id !== deleteCardId);
         // },
@@ -32,13 +33,15 @@ export default {
         // setCurrentAlbum(store, cardId) {
         //     store.commit('SET_CURRENT_CARD', cardId);
         // },
-        // async addCard(store, card) {
-        //     try {
-        //         const { data } = await $axios.post('/v1/photos', card, {headers: {'Content-Type': 'multipart/form-data'}});
-        //         store.commit('ADD_ALBUM', data.album);
-        //     }
-        //     catch(error) { throw new Error ( error.response.data.error || error.response.data.message ); }
-        // },
+        async addAlbum(store, album) {
+            try {
+                const { data } = await $axios.post('/v1/albums', album, {headers: {'Content-Type': 'multipart/form-data'}});
+                store.commit('ADD_ALBUM', data.album);
+            }
+            catch(error) { 
+                throw new Error ( error.response.data.error || error.response.data.message ); 
+            }
+        },
         // async deleteCard(store, cardId) {
         //     try {
         //         await $axios.delete(`/v1/photos/${cardId}`, { headers: {'Content-Type': 'application/json'} });
@@ -46,14 +49,16 @@ export default {
         //     }
         //     catch(error) { throw new Error ( error.response.data.error || error.response.data.message ); }
         // },
-        // async changeAlbum(store, changedAlbum) {
-        //     console.log('renewAlbumData:', changedAlbum);
-        //     try {
-        //         const { data } = await this.$axios.put(`/v1/photos/${changedCard.id}`, changedCard);
-        //         store.commit('CHANGE_ALBUM', data.album);
-        //     }
-        //     catch(error) { throw new Error ( error.response.data.error || error.response.data.message ); }
-        // },
+        async changeAlbum(store, changedAlbum) {
+            // console.log('renewAlbumData:', changedAlbum);
+            try {
+                const { data } = await this.$axios.put(`/v1/albums/${changedAlbum.id}`, changedAlbum);
+                store.commit('CHANGE_ALBUM', data.album);
+            }
+            catch(error) { 
+                throw new Error ( error.response.data.error || error.response.data.message ); 
+            }
+        },
         async refreshUserAlbum(store, userId) {               
                 try {               
                 const { data } = await $axios.get(`/v1/albums`,
@@ -75,6 +80,6 @@ export default {
                 store.commit('SET_CURRENT_ALBUM', data.album);
             }
             catch(error) { throw new Error ( error.response.data.error || error.response.data.message ); }
-        },
+        }
     },
 };

@@ -1,4 +1,5 @@
 import $axios from '../../requests';
+import router from '../../router';
 
 export default {
     namespaced: true,
@@ -12,16 +13,18 @@ export default {
        
     },
     actions: {
-        async refreshAuthor(store, authorId) {               
+        async refreshAuthor(store, authorId) {
             try {               
                 const { data } = await $axios.get(`/v1/authors/${authorId}`,
                     { params: {'include':`albums`} },
                     {'Content-Type': 'application/json'}
                 );
-                
-                store.commit('SET_AUTHOR', data.author);
+                if (data.author) store.commit('SET_AUTHOR', data.author);
             }
-            catch(error) { throw new Error ( error.response.data.error || error.response.data.message ); }
+            catch(error) { 
+                console.log('error refreshAuthor');
+                router.replace('/');
+                throw new Error ( error.response.data.error || error.response.data.message ); }
         },
     },
 };
