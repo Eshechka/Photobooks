@@ -696,7 +696,6 @@
                     this.cards = this.allCards;
                     this.currentAuthorObject = this.thisAuthor;
                     this.authorAlbums = this.thisAuthor.albums;
-                    this.loadedCardsPush(this.startPhotoLoadingPos);//?????!!!!!!!!!!!!!!
                 }
             },
 
@@ -715,19 +714,14 @@
             },
         },
 
-        // async created() {
-        //     try {
-        //         await this.updateAll();
-        //     }
-        //     finally {
-        //         this.loadedCardsPush(this.startPhotoLoadingPos);
-        //     }
-        //     window.addEventListener('resize', this.checkWidth);            
-        // },
-
-        created() {
-            this.updateAll();
-            window.addEventListener('resize', this.checkWidth);
+        async created() {
+            try {
+                await this.updateAll();
+            }
+            finally {
+                this.loadedCardsPush(this.startPhotoLoadingPos);
+            }
+            window.addEventListener('resize', this.checkWidth);            
         },
 
         mounted() {

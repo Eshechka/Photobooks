@@ -28,12 +28,21 @@
             
 
                     <div class="form-changeAlbum__cover">
+                        <!-- <div class="form-changeAlbum__added-photo" v-if="isCoverLoaded">
+                                :style="{ backgroundImage : `url(${renderedCover.pic})` }">                                                        
+                                <button class="round-button round-button_close"></button>
+                        </div> -->
 
                         <label for="load-bgcover-album" class="form-changeAlbum__label form-changeAlbum__label_file-load">
 
                             <div class="form-changeAlbum__cover-img-wrapper">
-                                <input type="file" id="load-bgcover-album" class="form-changeAlbum__input-load">
-                                <img class="form-changeAlbum__cover-img" :src="coverImg" alt="album cover image">
+                                <input type="file" id="load-bgcover-album" class="form-changeAlbum__input-load"
+                                    @change='loadCover'
+                                >
+                                <div class="form-changeAlbum__added-photo" v-if="isCoverLoaded"
+                                    :style="{ backgroundImage : `url(${renderedCover.pic})` }">
+                                </div>
+                                <img class="form-changeAlbum__cover-img" :src="coverImg" alt="album cover image" v-if="!isCoverLoaded">
                             </div>
 
                             <div class="form-changeAlbum__cover-button">
@@ -64,6 +73,21 @@
 
 <script>
 
+    const renderer = file => {
+        const reader = new FileReader();
+
+        return new Promise((resolve, reject) => {
+            try {
+                reader.readAsDataURL(file);
+                reader.onloadend = () => {
+                    resolve(reader.result);
+                };
+            } catch (error) {
+                throw new Error("Ошибка при чтении файла");
+            }
+        });
+    }
+
     export default {
 
         props: {
@@ -76,6 +100,10 @@
                 title: 'Добавить альбом',
                 coverTitle: "Загрузить обложку",
                 coverImg: require("../img/no_album_cover.jpg").default,
+
+                renderedCover: {pic: ''},
+                loadedCover: {},
+                isCoverLoaded: false,
 
                 myChangeCurrentObject: {
                     // id: Number,
@@ -111,6 +139,18 @@
 
 
       methods: {
+        loadCover(e) {
+
+                this.loadedCover = e.target.files[0];
+                // this.renderedCover = {pic: ''};
+
+                renderer(this.loadedCover).then(pic => { 
+                    console.log('NEED To BE HERE');                   
+                    this.renderedCover.pic = pic;
+                    this.isCoverLoaded = !this.isCoverLoaded;
+                    this.coverTitle = "Изменить обложку";
+                });
+        },
 
         setChangedAlbum() {
             // let currentCoverImg = this.editedObject.photos.find(photo => photo.id===this.editedObject.preview);
@@ -129,14 +169,19 @@
                 };
         },
         submitHandler(object) {
-            console.log('submitHandler');
-            const formData = new FormData();
-                formData.append('preview', 'no_album_cover.png');
-                formData.append('title', object.title);
-                formData.append('description', object.description);
-                formData.append('authorId', object.author);
-                // if this.mode=='edit' 
-                this.$emit('submit-change-my-album', formData);
+            if (this.renderedCover) {
+                    
+                console.log('submitHandler');
+                const formData = new FormData();
+                    formData.append('preview', this.loadedCover);
+                    formData.append('title', object.title);
+                    formData.append('description', object.description);
+                    formData.append('authorId', object.author);
+                    // if this.mode=='edit' 
+                    this.$emit('submit-change-my-album', formData);
+            } 
+            else console.log('no file');//!!!!!!! validation
+
         },
 
       },
@@ -223,6 +268,11 @@
             font-size: 0;
         }
 
+        &__added-photo {
+            width: 100%;
+            height: 100%;
+        }
+
         &__label {
             font-family: 'Proxima Nova Semibold';
             font-size: 14px;
@@ -231,12 +281,13 @@
             display: block;
 
             @include tablets {
-                margin-left: 80px;
+                margin-left: 40px;
                 margin-right: 20px;
             }
 
             &_file-load {
                 position: relative;
+                display: flex;
             }
         }
 
@@ -250,7 +301,7 @@
             }
         }
 
-         &__cover {
+        &__cover {
             display: flex;
             align-items: center;
             padding: 10px;
@@ -268,6 +319,7 @@
             border-radius: 50%;
             overflow: hidden;
         }
+
         &__cover-img {
             object-fit: cover;
             width: 100%;
