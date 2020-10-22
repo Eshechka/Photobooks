@@ -7,7 +7,7 @@
             @click="openEditHeader = false"
         ></div>
 
-		<header class="header" :style="{ backgroundImage: `url(${this.currentAlbumObject.preview})` }">
+		<header class="header" :style="{ backgroundImage: `url(${urlPhotos}/${currentAlbumObject.preview})` }">
 	
 			<div class="header__container"
                 ref='header-container'>
@@ -294,7 +294,7 @@
             
         </main>
 	
-		<footer class="footer" :style="{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.3)), url(${this.currentAlbumObject.preview})`}" >
+		<footer class="footer" :style="{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.3)), url(${urlPhotos}/${currentAlbumObject.preview})`}" >
 	
 			<div class="footer__container">	
 	

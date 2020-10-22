@@ -16,8 +16,7 @@ const userId = localStorage.getItem('userId');
 const routes = [
     {
         path: '/',        
-        redirect: `/${userId}`,   
-        // redirect: `/${localStorage.getItem('userId')}`,   
+        redirect: `/${userId}`, 
         component: () => import('./vue-components/app-user.vue'),
     },
     {
@@ -57,13 +56,11 @@ router.beforeEach(async (to, from, next) => {
 
        try {
             const {data} = await guard.get('/user');
-            localStorage.setItem('userId', data.user.id);
-            userId = data.id;
+            localStorage.setItem('userId', data.id);
             store.commit('user/SET_USER', data);
-
             next();
         } 
-        catch (error) {        
+        catch (error) {  
             router.replace('/login');
             localStorage.clear();
         }

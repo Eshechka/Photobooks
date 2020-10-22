@@ -7,16 +7,18 @@
             @click="openEditHeader = false"
         ></div>
 
-        <header class="header"
+		<header class="header" :style="{ backgroundImage: `url(${urlPhotos}/${currentAuthorObject.cover})` }">
+
+        <!-- <header class="header"
             :style="currentAuthorObject.cover"
-        >
+        > -->
 
             <div class="header__container" v-if="!openEditHeader">		
                 <div class="header__button-logout"
                     v-if="currentAuthorObject.id==loggedUserObject.id"
                 >
                     <button type='button' class="round-button round-button_logout"
-                        @click="logout"
+                        @click="logoutUser"
                     >Выйти</button>
                 </div>
                 <div class="header__button-edit"
@@ -370,8 +372,7 @@
             </section>
         </main>
 
-        <footer class="footer"
-            :style="`${urlPhotos}/${currentAuthorObject.cover}`">
+		<footer class="footer" :style="{ backgroundImage: `url(${urlPhotos}/${currentAuthorObject.cover})`}" >
 
             <div class="footer__container">	
 
@@ -532,6 +533,10 @@
                     await this.deleteAlbum(albumId);
                     this.updateAlbums();
                     this.openChangeMyAlbum=false;
+            },
+            logoutUser() {
+                // this.logout();
+                this.$router.push('/login');
             },
 
             editUserHeaderHandler() {
@@ -710,13 +715,13 @@
         },
 
         async created() {
-            try {
+            // try {
                 await this.updateCards();
                 await this.updateAlbums();
-            }
-            finally {
+            // }
+            // finally {
                 this.loadedCardsPush(this.startPhotoLoadingPos);
-            }
+            // }
             window.addEventListener('resize', this.checkWidth);            
         },
 

@@ -157,7 +157,7 @@
 
                 </div>
 
-                <div class="login__footer"> 2016 Создано командой профессионалов на продвинутом курсе по веб-разработке от LoftSchool
+                <div class="login__footer"> 2020 | Создано командой Лидии и Оксаны xeniaweb по проекту LoftSchool
                 </div> 
                 
             </div>	
@@ -259,7 +259,7 @@
 	min-width: 320px;
 	font-family: 'Proxima Nova-Light';
 	color: $color-white;	
-
+	background-color: $color-text;
 
     background-image: url('../img/bg.png');
 	background-repeat: no-repeat;
