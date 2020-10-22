@@ -11,7 +11,7 @@
             
             <div class="change-album__form">
                 <form class="form-changeAlbum"
-                    @submit.prevent="submitHandler(myChangeCurrentObject)"                
+                    @submit.prevent="submitChangeAlbumHandler"                
                 >
 
                     <label class="form-changeAlbum__label">Название альбома
@@ -28,10 +28,6 @@
             
 
                     <div class="form-changeAlbum__cover">
-                        <!-- <div class="form-changeAlbum__added-photo" v-if="isCoverLoaded">
-                                :style="{ backgroundImage : `url(${renderedCover.pic})` }">                                                        
-                                <button class="round-button round-button_close"></button>
-                        </div> -->
 
                         <label for="load-bgcover-album" class="form-changeAlbum__label form-changeAlbum__label_file-load">
 
@@ -58,9 +54,11 @@
                     <div class="form-changeAlbum__buttons">
                         <button class="site-button" type="submit">Сохранить</button>
                         <button class="site-button site-button_theme-just-text" type="button"
-                            @click="$emit('click-close-change-my-album')"                            
+                            @click.prevent="$emit('click-close-change-my-album')"                            
                         >Отменить</button>
-                        <button class="round-button round-button_delete" type="button">Удалить</button>
+                        <button class="round-button round-button_delete" type="button"
+                            @click.prevent="deleteAlbumHandler"
+                        >Удалить</button>
                     </div>
 
                 </form>
@@ -91,7 +89,7 @@
     export default {
 
         props: {
-          editedObject: Object,
+          editedAlbumObject: Object,
           mode: String,
 		},
 
@@ -115,46 +113,18 @@
             }
         },
 
-      computed: {
-        // ...mapState('works', {
-        //   currentWork: state => state.currentWork
-        // }),
 
-        // myChangeCurrentObject() {          
-        //   return this.editedObject;          
-        // },
-
-      },
-
-      watch: {
-        // editedObject() {
-        //   if (this.mode === 'edit') {             
-        //     this.setChangedAlbum();              
-        //   }
-        //   else if (this.mode === 'add') {
-        //     this.clearChangedAlbum();              
-        //   }
-        // },
-      },
-
-
-      methods: {
+      methods: {        
         loadCover(e) {
-
                 this.loadedCover = e.target.files[0];
-                // this.renderedCover = {pic: ''};
-
-                renderer(this.loadedCover).then(pic => { 
-                    console.log('NEED To BE HERE');                   
+                renderer(this.loadedCover).then(pic => {                 
                     this.renderedCover.pic = pic;
                     this.isCoverLoaded = !this.isCoverLoaded;
                     this.coverTitle = "Изменить обложку";
                 });
         },
-
         setChangedAlbum() {
-            // let currentCoverImg = this.editedObject.photos.find(photo => photo.id===this.editedObject.preview);
-            this.myChangeCurrentObject = this.editedObject;
+            this.myChangeCurrentObject = this.editedAlbumObject;
             this.title = 'Отредактировать альбом';
             this.coverTitle = "Редактировать обложку";
         },
@@ -163,31 +133,41 @@
             this.coverTitle = "Добавить обложку";
             this.myChangeCurrentObject = {
                     description: '',
-                    author: '19',//!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    author: this.editedAlbumObject.author,
                     preview: '',
                     title: ''
                 };
         },
-        submitHandler(object) {
+        submitChangeAlbumHandler() {
             if (this.renderedCover) {
-                    
-                console.log('submitHandler');
                 const formData = new FormData();
                     formData.append('preview', this.loadedCover);
-                    formData.append('title', object.title);
-                    formData.append('description', object.description);
-                    formData.append('authorId', object.author);
+                    formData.append('title', this.myChangeCurrentObject.title);
+                    formData.append('description', this.myChangeCurrentObject.description);
+                    formData.append('authorId', this.myChangeCurrentObject.author);
                     // if this.mode=='edit' 
                     this.$emit('submit-change-my-album', formData);
             } 
             else console.log('no file');//!!!!!!! validation
 
+            // this.$emit('update-albums');
         },
+        deleteAlbumHandler() {
+            this.$emit('delete-album', this.editedAlbumObject.id);
+        },
+        // async deleteAlbumHandler() {
+            // try {
+                // await this.deleteAlbum(this.editedAlbumObject.id);
+            // }
+            // finally {
+            //     this.$emit('update-albums');
+            // }
+        // },
+
 
       },
 
         created() {
-            console.log('editedObject:',this.editedObject);
             if (this.mode === 'edit') {                
                 this.setChangedAlbum();
             }

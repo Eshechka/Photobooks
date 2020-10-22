@@ -340,12 +340,12 @@
                     </div>
 
                     <p class="my-albums__empty-text"
-                        v-if="!authorAlbums.length"
+                        v-if="!myAlbums.length"
                     >Альбомы еще не созданы. Создайте альбом с помощью кнопки "Добавить".</p>
 
 
                     <ul class="my-albums__albums-list">
-                        <li v-for="myAlbum in authorAlbums" :key="myAlbum.id" class="my-albums__albums-item">
+                        <li v-for="myAlbum in myAlbums" :key="myAlbum.id" class="my-albums__albums-item">
                             <appMyAlbum 
                                 @click-edit-my-album="clickEditAlbumHandler"
                                 :myAlbumObject="myAlbum"                            
@@ -360,9 +360,11 @@
                     <appChangeAlbum                                                
                         @click-close-change-my-album="openChangeMyAlbum=false"
                         @submit-change-my-album="submitChangeMyAlbum"
-                        :editedObject="editedAlbum"                    
+                        @delete-album="deleteAlbumHandler"
+                        :editedAlbumObject="editedAlbum"                    
                         :mode="albumChangeMode"
                     ></appChangeAlbum>
+                        <!-- @update-albums="updateAlbums" -->
 
                 </div>
             </section>
@@ -432,25 +434,30 @@
                 idCurrentPhoto: 0,
 
                 cards: [],
-                authorAlbums: [],
                 currentAuthorObject: {
                     albums: [],
                 },
-                // users: [],
+                myAlbums: [],
+
                 socials: dataJSON_socials,
-                // users: dataJSON_users,
 
                 loadedCards: [],
                 amountLoadedPhotos: 0,
                 startPhotoLoadingPos: 0,
-  
+
+                loggedUserObject: {
+                    id: Number,
+                    cover: '',
+                    userSocials: [],
+                },  
+
                 editedAlbum: {
                     id: Number,
-                    name: '',
                     description: '',
-                    author: '',
+                    author:Number,
                     preview: '',
-                    title: '',},
+                    title: ''
+                },
 
                 bigCardSliderTop: 0,
 
@@ -467,11 +474,6 @@
                     description: '',                    
                 },
 
-                loggedUserObject: {
-                    id: Number,
-                    cover: '',
-                    userSocials: [],
-                },
             }
         },
 
@@ -483,9 +485,9 @@
             // ...mapState('albums', {
             //     thisUserAlbums: state => state.userAlbums
             // }),
-            ...mapState('user', {
-                thisloguser: state => state.user
-            }),
+            // ...mapState('user', {
+            //     thisloguser: state => state.user
+            // }),
             
             ...mapState('authors', {
                 thisAuthor: state => state.author
@@ -504,7 +506,7 @@
         methods: {
             ...mapActions('cards', ['updateAllCards']),
             ...mapActions('authors', ['refreshAuthor']),
-            ...mapActions('albums', ['addAlbum']),
+            ...mapActions('albums', ['addAlbum', 'deleteAlbum']),
             ...mapActions('user', ['logout']),
 
             addNewAlbumHandler() {
@@ -516,17 +518,20 @@
                 this.albumChangeMode='edit';
                 this.editedAlbum={...clickedAlbum};
             },
-
-            async submitChangeMyAlbum(myChangeCurrentObject) {
-                try {
-                    await this.addAlbum(myChangeCurrentObject);
-                }
-                catch(error) { 
-                    throw new Error ( error.response.data.error || error.response.data.message ); 
-                }
-                finally {
-                    this.openChangeMyAlbum=false;          
-                }
+            async updateAlbums() {
+                    await this.refreshAuthor(this.idCurrentUser);
+                    this.currentAuthorObject = this.thisAuthor;
+                    this.myAlbums = this.thisAuthor.albums;
+            },
+            async submitChangeMyAlbum(formData) {
+                    await this.addAlbum(formData);
+                    this.updateAlbums();
+                    this.openChangeMyAlbum=false;
+            },
+            async deleteAlbumHandler(albumId) {
+                    await this.deleteAlbum(albumId);
+                    this.updateAlbums();
+                    this.openChangeMyAlbum=false;
             },
 
             editUserHeaderHandler() {
@@ -631,7 +636,6 @@
 
             checkWidth() {
 
-                // if (this.idCurrentUser && this.currentAuthorObject) {
                 if (this.currentAuthorObject) {
 
                     this.windowWidth = window.innerWidth;
@@ -684,19 +688,9 @@
                 //метод по нажатию отмена при редактировании адреса соцсети
             },
 
-            async updateAll() {
-                try {
-                    await this.updateAllCards();
-                    await this.refreshAuthor(this.idCurrentUser);
-                }
-                catch (error) {
-                    throw new Error ( error.response.data.error || error.response.data.message );
-                }
-                finally {
-                    this.cards = this.allCards;
-                    this.currentAuthorObject = this.thisAuthor;
-                    this.authorAlbums = this.thisAuthor.albums;
-                }
+            async updateCards() {
+                await this.updateAllCards();
+                this.cards = this.allCards;
             },
 
             next() {
@@ -710,13 +704,15 @@
 
          watch: {
             idCurrentUser() {
-                this.updateAll();
+                this.updateCards();
+                this.updateAlbums();
             },
         },
 
         async created() {
             try {
-                await this.updateAll();
+                await this.updateCards();
+                await this.updateAlbums();
             }
             finally {
                 this.loadedCardsPush(this.startPhotoLoadingPos);
@@ -727,6 +723,7 @@
         mounted() {
             this.windowWidth = window.innerWidth;
             this.loggedUserObject.id = localStorage.getItem('userId');
+            this.editedAlbum.author = this.loggedUserObject.id;
         },
             
     }
