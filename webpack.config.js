@@ -100,7 +100,12 @@ module.exports = {
 		{
 			test: /\.(p|post|)css$/,
 			use: [
-				isDev ? 'vue-style-loader' : MiniCssExtractPlugin.loader, 
+				{
+					loader: isDev ? 'vue-style-loader' : MiniCssExtractPlugin.loader,
+					options: {
+						publicPath: '../',
+					},
+				}, 
 				'css-loader',
 				'postcss-loader'
 			]

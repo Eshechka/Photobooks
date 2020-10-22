@@ -206,15 +206,15 @@
     methods: {  
 		...mapActions('user', ['login']),
 
-        async loginHandle() {
-            await axios.post('/login', this.loginUser).then(response => { 
+        loginHandle() {
+			axios.post('/login', this.loginUser).then(response => {
 				const token = response.data.access_token;
 				localStorage.setItem('token', token);
 				axios.defaults.headers['Authorization'] = `Bearer ${token}`;
 
 				const user = response.data.user;
 				this.login(user);
-				this.$router.replace(`/`);
+				this.$router.replace(`/${response.data.user.id}`);
 
 			}).catch(error => {
 				alert('я ошибка login: ' + error.message);
@@ -229,7 +229,7 @@
 
 				const user = response.data.user;
 				this.login(user);
-				this.$router.replace(`/`);
+				this.$router.replace(`/${response.data.user.id}`);
 
 			}).catch(error => {
 				alert('я ошибка register: ' + error.message);

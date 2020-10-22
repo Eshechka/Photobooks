@@ -15,9 +15,9 @@ const userId = localStorage.getItem('userId');
 
 const routes = [
     {
-        path: '/',
-        redirect: `/${userId}`,        
-        // redirect: `/1`,        
+        path: '/',        
+        redirect: `/${userId}`,   
+        // redirect: `/${localStorage.getItem('userId')}`,   
         component: () => import('./vue-components/app-user.vue'),
     },
     {
@@ -49,6 +49,7 @@ router.beforeEach(async (to, from, next) => {
     const isPublicRoute = to.matched.some(route => route.meta.public);
     const isUserLogged = store.getters['user/userIsLogged'];
     // console.log('isUserLogged',isUserLogged);
+    // console.log('isPublicRoute',isPublicRoute);
 
     if (!isPublicRoute && !isUserLogged) {
         const token = localStorage.getItem('token');
@@ -56,10 +57,10 @@ router.beforeEach(async (to, from, next) => {
 
        try {
             const {data} = await guard.get('/user');
-            // console.log('servers answer: ', data);
+            localStorage.setItem('userId', data.user.id);
+            userId = data.id;
             store.commit('user/SET_USER', data);
-            // userId = data.id;
-            localStorage.setItem('userId', data.id);
+
             next();
         } 
         catch (error) {        
