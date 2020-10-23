@@ -307,7 +307,7 @@
 					Перед вами сервис, который поможет вам организовать свои фотографии в альбомы и поделиться ими со всем миром!
 				</div>
 				<div class="footer__copyright">
-					2020 | Создано командой профессионалов: Lidia &amp; <a href="https://xeniaweb.ch/">XeniaWeb</a>
+					2020 | Создано командой профессионалов: <a target="_blank" href="https://vk.com/id594716031">Lidia</a> &amp; <a target="_blank" href="https://xeniaweb.ch/">XeniaWeb</a>
 				</div>
 	
 			</div>

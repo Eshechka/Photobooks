@@ -38,8 +38,9 @@
                                 <div class="form-changeAlbum__added-photo" v-if="isCoverLoaded"
                                     :style="{ backgroundImage : `url(${renderedCover.pic})` }">
                                 </div>
-                                <img class="form-changeAlbum__cover-img" :src="coverImg" alt="album cover image" v-if="!isCoverLoaded">
-                            </div>
+                                <img class="form-changeAlbum__cover-img" v-if="!isCoverLoaded && (mode=='edit')" :src="`${urlPhotos}/${myChangeCurrentObject.preview}`" alt="album cover image">
+                                <img class="form-changeAlbum__cover-img" v-else-if="!isCoverLoaded && (mode=='add')" :src="require('../img/no_album_cover.jpg').default" alt="album cover image">
+                            </div>                                                          
 
                             <div class="form-changeAlbum__cover-button">
                                 <button class="site-button site-button_theme-light" type="button">{{coverTitle}}</button>
@@ -70,7 +71,8 @@
 
 
 <script>
-
+    const baseUrl = `https://xeniaweb.online/storage`;
+    
     const renderer = file => {
         const reader = new FileReader();
 
@@ -95,9 +97,11 @@
 
         data() {
             return {
+                
+                urlPhotos: baseUrl+'/photos',
+
                 title: 'Добавить альбом',
                 coverTitle: "Загрузить обложку",
-                coverImg: require("../img/no_album_cover.jpg").default,
 
                 renderedCover: {pic: ''},
                 loadedCover: {},
@@ -268,12 +272,22 @@
             &_file-load {
                 position: relative;
                 display: flex;
+
+                &:hover .form-changeAlbum__cover-button button {
+                    background-color: $color-blue;
+                    color: $color-white;
+                }
+
+                &:active, &:focus .form-changeAlbum__cover-button button {
+                    background-color: transparent;
+                    color: rgba($color-blue, 0.7);
+                    border: 2px solid rgba($color-blue, 0.7);
+                }
             }
         }
 
         &__input {
             @include popup-input;
-
             margin-top: 5px;
 
             &_textarea {
@@ -306,10 +320,15 @@
             height: 100%;
         }
 
+        &__added-photo {
+            background-position: 50%;
+            background-size: cover;
+        }
+
         &__cover-button {
-             margin-left: 18px;
-             display: flex;
-             align-items: center;
+            margin-left: 18px;
+            display: flex;
+            align-items: center;
 
             @include tablets {
                 margin-left: 20px;
