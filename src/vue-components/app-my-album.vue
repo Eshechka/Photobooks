@@ -14,9 +14,10 @@
         
         <div class="my-album__folder">
             <button type="button" class="my-album__button my-album__button_edit"
+				v-if="isLoggedUser"
 				 @click="$emit('click-edit-my-album', myAlbumObject)"
 			></button>
-			<router-link  class="my-album__folder-name" 
+			<router-link class="my-album__folder-name" 
 				:to="'/album/'+myAlbumObject.id"
 				@click.prevent
 			>{{myAlbumObject.albumName}}</router-link>
@@ -34,7 +35,8 @@
 	
     export default {
         props: {
-          myAlbumObject: Object,
+		  myAlbumObject: Object,
+		  isLoggedUser: Boolean,
 		},
 
 		data() {
@@ -46,7 +48,6 @@
 			getPreviewUrl() {
 				if (!this.myAlbumObject.preview)
 					console.log('No preview');
-					// previewUrl = this.myAlbumObject.preview; !!!!! тут запрос первой фотки этого альбома
 			},
 		},
 		
@@ -118,6 +119,7 @@
 		&__folder {
 			text-align: right;	
 			padding: 15px 10px;
+			min-height: 60px;
 			display: flex;
 			justify-content: space-between;
 			align-items: center;

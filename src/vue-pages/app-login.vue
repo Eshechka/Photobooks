@@ -157,7 +157,7 @@
 
                 </div>
 
-                <div class="login__footer"> 2020 | Создано командой Лидии и Оксаны xeniaweb по проекту LoftSchool
+                <div class="login__footer"> 2020 | Создано командой профессионалов: Lidia &amp; <a href="https://xeniaweb.ch/">XeniaWeb</a>
                 </div> 
                 
             </div>	

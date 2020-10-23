@@ -12,9 +12,9 @@
 			<div class="header__container"
                 ref='header-container'>
 
-                <div class="header__button-edit">
+                <div class="header__button-edit" v-if="currentAlbumObject.author.id==loggedUserObject.id">
                     <button type='button' class="round-button round-button_edit"
-                        @click="openEditHeader=true"
+                        @click="openEditHeader=true"                        
                     >Редактировать</button>
                 </div>
                 <div class="header__button-home"
@@ -307,7 +307,7 @@
 					Перед вами сервис, который поможет вам организовать свои фотографии в альбомы и поделиться ими со всем миром!
 				</div>
 				<div class="footer__copyright">
-					2020 | Создано командой Лидии и Оксаны xeniaweb по проекту LoftSchool
+					2020 | Создано командой профессионалов: Lidia &amp; <a href="https://xeniaweb.ch/">XeniaWeb</a>
 				</div>
 	
 			</div>
@@ -385,7 +385,11 @@
                     contain: true
                 },
 
-                currentAlbumObject: {//!!!!!!если честно, это костыль. Над ним надо подумать (но сначала обнять и плакать)
+                loggedUserObject: {
+                    id: Number,
+                }, 
+
+                currentAlbumObject: {
                     author: {},
                     photos: {},
                 },
@@ -596,6 +600,7 @@
 
         mounted() {
             window.addEventListener('scroll', this.scrollHandle);
+            this.loggedUserObject.id = localStorage.getItem('userId');
         }
 
     }
@@ -1453,14 +1458,17 @@
 
         &__desc {
             margin-bottom: 20px;
-            
+            mix-blend-mode: difference;
+            color: rgba($color-white, 0.9);
+
             @include tablets {
                 flex-basis: 40%;
                 text-align: left;
             }
         }
         &__copyright {			
-            color: rgba($color-white, 0.6);
+            mix-blend-mode: difference;
+            color: rgba($color-white, 0.9);
             
             @include tablets {
                 flex-basis: 40%;

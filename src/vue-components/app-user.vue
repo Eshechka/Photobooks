@@ -9,10 +9,6 @@
 
 		<header class="header" :style="{ backgroundImage: `url(${urlPhotos}/${currentAuthorObject.cover})` }">
 
-        <!-- <header class="header"
-            :style="currentAuthorObject.cover"
-        > -->
-
             <div class="header__container" v-if="!openEditHeader">		
                 <div class="header__button-logout"
                     v-if="currentAuthorObject.id==loggedUserObject.id"
@@ -27,6 +23,14 @@
                     <button type='button' class="round-button round-button_edit"
                         @click="editUserHeaderHandler"
                     >Редактировать</button>
+                </div>
+                <div class="header__button-home" 
+                    v-if="currentAuthorObject.id!==loggedUserObject.id"
+                >                    
+                    <router-link class="round-button round-button_home"
+                        to="/"
+                        @click.prevent
+                    >На главную</router-link>
                 </div>
 
                 <div class="header__avatar">
@@ -350,7 +354,8 @@
                         <li v-for="myAlbum in myAlbums" :key="myAlbum.id" class="my-albums__albums-item">
                             <appMyAlbum 
                                 @click-edit-my-album="clickEditAlbumHandler"
-                                :myAlbumObject="myAlbum"                            
+                                :myAlbumObject="myAlbum"
+                                :isLoggedUser="currentAuthorObject.id==loggedUserObject.id"                  
                             ></appMyAlbum>
                         </li>
                     </ul> 
@@ -385,7 +390,7 @@
                     Перед вами сервис, который поможет вам организовать свои фотографии в альбомы и поделиться ими со всем миром!
                 </div>
                 <div class="footer__copyright">
-                    2020 | Создано командой Лидии и Оксаны xeniaweb по проекту LoftSchool
+                    2020 | Создано командой профессионалов: Lidia &amp; <a href="https://xeniaweb.ch/">XeniaWeb</a>
                 </div>
 
             </div>
@@ -711,6 +716,7 @@
             idCurrentUser() {
                 this.updateCards();
                 this.updateAlbums();
+                this.openBigCardSlider=this.openEditProfile=this.openChangeMyAlbum=false;
             },
         },
 
@@ -788,6 +794,20 @@
             top: 20px;
             right: 0;
             z-index: 9;
+        }
+
+        &__button-home {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            z-index: 9;
+
+            @include tablets {
+                top: 70px;
+                right: 0;
+                left: unset;
+            }
+
         }
         
 
@@ -1525,7 +1545,6 @@
 
 
     .footer {
-        text-shadow: -1px 1px 3px $color-text;
         background-image: linear-gradient(rgba(50, 50, 50, 0.5), rgba(50, 50, 50, 0.3)), url('/img/no_album_cover.jpg');
         background-repeat: no-repeat;
         background-size: cover;
@@ -1563,7 +1582,9 @@
         }
 
         &__desc {
-            margin-bottom: 20px;
+            margin-bottom: 20px;            
+            mix-blend-mode: difference;
+            color: rgba($color-white, 0.9);
             
             @include tablets {
                 flex-basis: 40%;
@@ -1571,8 +1592,8 @@
             }
         }
         &__copyright {			
-            color: rgba($color-white, 0.7);
-            text-shadow: -1px 1px 2px rgba(#000, 0.9);
+            mix-blend-mode: difference;
+            color: rgba($color-white, 0.9);
             
             @include tablets {
                 flex-basis: 40%;
