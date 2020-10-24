@@ -249,14 +249,16 @@
 
         <main class="maincontent">
             <div class="my-search" v-if="!openEditHeader">
-                <form class="form-search">
-                    <input type="search" placeholder="Исследовать мир" class="form-search__input">
-                    <button type="submit" class="form-search__submit">
-                        <svg class="form-search__icon">
-                            <use :xlink:href="urlInlineSvgSprite+'#search'"></use>
-                        </svg>
-                    </button>
-                </form>
+                <div class="my-search__container">
+                    <form class="form-search">
+                        <input type="search" placeholder="Исследовать мир" class="form-search__input">
+                        <button type="submit" class="form-search__submit">
+                            <svg class="form-search__icon">
+                                <use :xlink:href="urlInlineSvgSprite+'#search'"></use>
+                            </svg>
+                        </button>
+                    </form>
+                </div>
             </div>
 
 
@@ -368,7 +370,8 @@
                         @click-close-change-my-album="openChangeMyAlbum=false"
                         @submit-change-my-album="submitChangeMyAlbum"
                         @delete-album="deleteAlbumHandler"
-                        :editedAlbumObject="editedAlbum"                    
+                        :editedAlbumObject="editedAlbum"
+                        :authorId="currentAuthorObject.id"
                         :mode="albumChangeMode"
                     ></appChangeAlbum>
                         <!-- @update-albums="updateAlbums" -->
@@ -390,7 +393,7 @@
                     Перед вами сервис, который поможет вам организовать свои фотографии в альбомы и поделиться ими со всем миром!
                 </div>
                 <div class="footer__copyright">
-                    2020 | Создано командой профессионалов: <a target="_blank" href="https://vk.com/id594716031">Lidia</a> &amp; <a target="_blank" href="https://xeniaweb.ch/">XeniaWeb</a>
+                    2020 | Создано командой профессионалов: <a target="_blank" href="https://vk.com/id594716031">Lidia</a>&nbsp;&amp;&nbsp;<a target="_blank" href="https://xeniaweb.ch/">XeniaWeb</a>
                 </div>
 
             </div>
@@ -460,7 +463,8 @@
                 editedAlbum: {
                     id: Number,
                     description: '',
-                    author:Number,
+                    // author:Number,
+                    // authorId:Number,
                     preview: '',
                     title: ''
                 },
@@ -512,7 +516,7 @@
         methods: {
             ...mapActions('cards', ['updateAllCards']),
             ...mapActions('authors', ['refreshAuthor']),
-            ...mapActions('albums', ['addAlbum', 'deleteAlbum']),
+            ...mapActions('albums', ['addAlbum', 'deleteAlbum', 'changeAlbum']),
             ...mapActions('user', ['logout']),
 
             addNewAlbumHandler() {
@@ -529,8 +533,13 @@
                     this.currentAuthorObject = this.thisAuthor;
                     this.myAlbums = this.thisAuthor.albums;
             },
-            async submitChangeMyAlbum(formData) {
-                    await this.addAlbum(formData);
+            async submitChangeMyAlbum(data, mode) {
+                if (mode === "add") {
+                    await this.addAlbum(data);
+                }
+                else if (mode === "edit") {
+                    await this.changeAlbum(data);
+                }
                     this.updateAlbums();
                     this.openChangeMyAlbum=false;
             },
@@ -752,7 +761,6 @@
 
 
     .header {
-        text-shadow: -1px 1px 3px $color-text;
         background-image: linear-gradient(rgba(50, 50, 50, 0.5), rgba(50, 50, 50, 0.3)), url('/img/no_album_cover.jpg');
         background-repeat: no-repeat;
         background-size: cover;
@@ -770,6 +778,7 @@
             margin: 0 auto;
             width: 90%;
             position: relative;
+            @include max-with-container;
 
             @include tablets {
                 flex-direction: row;
@@ -860,6 +869,8 @@
             font-family: 'Panton-Bold';
             font-size: 21px;
             margin-bottom: 15px;
+            mix-blend-mode: difference;
+            color: rgba($color-white, 0.9);
 
              @include tablets {
                 margin-bottom: 20px;
@@ -870,7 +881,8 @@
             font-family: 'ProximaNova-Light';
             text-align: center;
             font-size: 14px;
-            color: rgba(#{$color-white}, 0.8);
+            mix-blend-mode: difference;
+            color: rgba($color-white, 0.9);
             margin-bottom: 18px;
 
             @include tablets {
@@ -1223,19 +1235,33 @@
     .my-search {
         min-width: 300px;
         font-family: 'ProximaNova-Light';
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+        /* display: flex; */
+        /* flex-direction: column; */        
+        
         background-color: #f1f1f1;
-        padding: 10px 5%;
-        position: relative;
+        /* padding: 10px 5%; */
+        /* position: relative; */
 
         height: 60px;
         overflow: hidden;
 
-        @include tablets {
-            align-items: flex-end;
+
+
+        &__container {
+            /* padding: 10px 5%; */
+            padding: 10px 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            width: 90%;
+            position: relative;
+            @include max-with-container;        
+            
+            @include tablets {
+                align-items: flex-end;
+            }
         }
         
         &__show-new {
@@ -1306,6 +1332,7 @@
             margin: 0 auto;
             width: 90%;
             min-width: 300px;
+            @include max-with-container;
         }
         
         &__title {
@@ -1469,6 +1496,7 @@
             margin: 0 auto;
             width: 90%;
             min-width: 300px;
+            @include max-with-container;
         }
 
         &__topgroup {
@@ -1564,6 +1592,7 @@
             margin: 0 auto;
             width: 90%;
             position: relative;
+            @include max-with-container;
 
             @include tablets {
                 flex-direction: row;

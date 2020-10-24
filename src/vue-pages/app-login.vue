@@ -158,7 +158,7 @@
                 </div>
 
                 <div class="login__footer"> 
-					2020 | Создано командой профессионалов: <a target="_blank" href="https://vk.com/id594716031">Lidia</a> &amp; <a target="_blank" href="https://xeniaweb.ch/">XeniaWeb</a>
+					2020 | Создано командой профессионалов: <a target="_blank" href="https://vk.com/id594716031">Lidia</a>&nbsp;&amp;&nbsp;<a target="_blank" href="https://xeniaweb.ch/">XeniaWeb</a>
                 </div> 
                 
             </div>	

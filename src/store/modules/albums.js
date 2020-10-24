@@ -48,9 +48,8 @@ export default {
             }
         },
         async changeAlbum(store, changedAlbum) {
-            // console.log('renewAlbumData:', changedAlbum);
             try {
-                const { data } = await this.$axios.put(`/v1/albums/${changedAlbum.id}`, changedAlbum);
+                const { data } = await this.$axios.patch(`/v1/albums/${changedAlbum.id}`, changedAlbum);
                 store.commit('CHANGE_ALBUM', data.album);
             }
             catch(error) { 

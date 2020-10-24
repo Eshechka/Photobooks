@@ -92,6 +92,7 @@
 
         props: {
           editedAlbumObject: Object,
+          authorId: Number,
           mode: String,
 		},
 
@@ -108,9 +109,9 @@
                 isCoverLoaded: false,
 
                 myChangeCurrentObject: {
-                    // id: Number,
+                    id: Number,
                     description: '',
-                    author: Number,
+                    authorId: Number,
                     preview: '',
                     title: '',
                 },
@@ -136,23 +137,34 @@
             this.title = 'Добавить альбом';
             this.coverTitle = "Добавить обложку";
             this.myChangeCurrentObject = {
+                    id: this.editedAlbumObject.id,
                     description: '',
-                    author: this.editedAlbumObject.author,
+                    // author: this.editedAlbumObject.author,
+                    authorId: this.authorId,
                     preview: '',
                     title: ''
                 };
         },
         submitChangeAlbumHandler() {
-            if (this.renderedCover) {
+
+            if (this.mode=='add' && this.renderedCover) {
                 const formData = new FormData();
                     formData.append('preview', this.loadedCover);
                     formData.append('title', this.myChangeCurrentObject.title);
                     formData.append('description', this.myChangeCurrentObject.description);
-                    formData.append('authorId', this.myChangeCurrentObject.author);
-                    // if this.mode=='edit' 
-                    this.$emit('submit-change-my-album', formData);
+                    formData.append('authorId', this.authorId);
+                    this.$emit('submit-change-my-album', formData, this.mode);
             } 
-            else console.log('no file');//!!!!!!! validation
+            // else console.log('no file');//!!!!!!! validation
+            else if (this.mode=='edit') {
+                const reNewData = {};
+                    // reNewData.preview=this.loadedCover;
+                    reNewData.id=this.myChangeCurrentObject.id;
+                    reNewData.title=this.myChangeCurrentObject.title;
+                    reNewData.description=this.myChangeCurrentObject.description;  
+                    reNewData.authorId=this.authorId;
+                    this.$emit('submit-change-my-album', reNewData, this.mode);
+            }
 
             // this.$emit('update-albums');
         },
@@ -179,6 +191,7 @@
                 this.clearChangedAlbum();
             }
         },
+
 
     }
 

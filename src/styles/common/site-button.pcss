@@ -193,10 +193,15 @@
 		background-image: svg-load('add.svg', fill=rgba(#{$color-text}, 0.4));
 	}
 	&_up {
-		background-color: transparent;
-		background-image: svg-load('top.svg', fill=rgba(#{$color-white}, 0.6));
-		box-shadow: unset;
-		margin: 0 auto;		
+		background-color: rgba($color-text, 0.4);
+		// background-color: transparent;
+		background-image: svg-load('top.svg', fill=rgba(#{$color-white}, 0.9));
+		// box-shadow: unset;
+		box-shadow: 0px 1px 5px 1px rgba(0, 0, 0, 0.2);
+		margin: 0 auto;	
+		&:hover {
+			background-size: 23px;
+		}
 	}
 	&_close-transparent {
 		background-color: transparent;

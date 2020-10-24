@@ -307,7 +307,7 @@
 					Перед вами сервис, который поможет вам организовать свои фотографии в альбомы и поделиться ими со всем миром!
 				</div>
 				<div class="footer__copyright">
-					2020 | Создано командой профессионалов: <a target="_blank" href="https://vk.com/id594716031">Lidia</a> &amp; <a target="_blank" href="https://xeniaweb.ch/">XeniaWeb</a>
+                    2020 | Создано командой профессионалов: <a target="_blank" href="https://vk.com/id594716031">Lidia</a>&nbsp;&amp;&nbsp;<a target="_blank" href="https://xeniaweb.ch/">XeniaWeb</a>
 				</div>
 	
 			</div>
@@ -593,7 +593,7 @@
             }
             finally {
                 this.currentAlbumObject = {...this.currentAlbum};
-                this.currentAlbumObject.preview = this.currentAlbumObject.preview ? urlPhotos+this.currentAlbumObject.preview : 'img/no_album_cover.jpg';
+                this.currentAlbumObject.preview = this.currentAlbumObject.preview ? this.currentAlbumObject.preview : 'img/no_album_cover.jpg';
             }
 
         },
@@ -634,6 +634,7 @@
             margin: 0 auto;
             width: 90%;
             position: relative;
+            @include max-with-container;
         }
 
         &__user {
@@ -656,7 +657,6 @@
         }
 
         &__button-home {
-            /* margin-left: auto; */
             position: absolute;
             top: 20px;
             left: 0;
@@ -707,7 +707,8 @@
         }
 
         &__text {
-            color: rgba($color-white, 0.8);
+            mix-blend-mode: difference;
+            color: rgba($color-white, 0.9);
             margin-bottom: 18px;
             font-family: 'ProximaNova-Light';
             font-size: 14px;
@@ -910,6 +911,7 @@
             border-radius: 50%;
             height: 50px;
             width: 50px;
+            border: 3px solid white;
 
             @include tablets {
                 height: 60px;
@@ -930,6 +932,7 @@
             margin: 0 auto;
             width: 90%;
             min-width: 300px;
+            @include max-with-container;
         }
 
         &__topgroup {
@@ -1437,6 +1440,7 @@
             margin: 0 auto;
             width: 90%;
             position: relative;
+            @include max-with-container;
 
             @include tablets {
                 flex-direction: row;
