@@ -46,9 +46,9 @@
 
             <div class="header__album-info">
                 <div class="header__album-info-wrapper">					
-                    <div class="header__info-button header__info-button_photos"> {{thisAlbumPhotos.length}} </div>
-                    <div class="header__info-button header__info-button_likes"> {{thisAlbumPhotos.reduce((sum, myPhoto) => sum + myPhoto.likeCount, 0)}} </div>
-                    <div class="header__info-button header__info-button_comments"> {{thisAlbumPhotos.reduce((sum, myPhoto) => sum + myPhoto.commentCount, 0)}} </div>
+                    <div class="header__info-button header__info-button_photos"> {{+thisAlbumPhotos.length}} </div>
+                    <div class="header__info-button header__info-button_likes"> {{+thisAlbumPhotos.reduce((sum, myPhoto) => sum + myPhoto.likeCount, 0)}} </div>
+                    <div class="header__info-button header__info-button_comments"> {{+thisAlbumPhotos.reduce((sum, myPhoto) => sum + myPhoto.commentCount, 0)}} </div>
                 </div>
             </div>
             
@@ -202,7 +202,7 @@
                                     
                                     <div class="add-photo__form">
                                         <form class="form-addPhoto"
-                                         @submit.prevent='handleAddPhoto'>
+                                         @submit.prevent='addPhotoHandler'>
 
                                             <div class="form-addPhoto__album-name-label">Название
                                                 <span class="form-addPhoto__album-name" type="text"> {{currentAlbumObject.title}} </span>
@@ -269,9 +269,8 @@
                         <flickity ref="flickity" :options="flickityOptions" class="big-card-slider__container">
                             <appBigCard v-for="bigCard in thisAlbumPhotos" :key="bigCard.id"
                                 :cardObject="bigCard"
-                                :currentUserObject="currentUserObject"
+                                :loggedUserObject="loggedUserObject"
                             ></appBigCard>                            
-                                <!-- :userId="currentAlbumObject.author.id" -->
                         </flickity>
 
                         <div class="big-card-slider__close">
@@ -419,9 +418,6 @@
             headerContainer() {
                 return this.$refs['header-container'];
             },
-            currentUserObject() {                
-                return this.users.find(user => user.isThisUser == true);
-            },
             
         },
 
@@ -517,10 +513,10 @@
                 }
             },
 
-            handleAddPhoto() {
+            addPhotoHandler() {
 
                 if (this.renderedPhotos.length) {
-                    this.loadedPhotos.forEach(photo => {
+                    this.loadedPhotos.forEach(async photo => {
 
                         const formData = new FormData();
 
@@ -532,24 +528,13 @@
                         formData.append('isLikedByMe', 0);
                         formData.append('authorId', this.currentAlbumObject.author.id);
                         formData.append('albumId', this.currentAlbumObject.id);
-                        // formData.append('authorName', this.users[this.currentAlbumObject.author.id].userName);
-                        // formData.append('urlUserAvatar', this.users[this.currentAlbumObject.author.id].urlUserAvatar);
-                        // formData.append('albumName', this.currentAlbumObject.title);
-                        (async () => {
-                            try {
-                                await this.addCard(formData);
-                            }
-                            catch(error) { 
-                                throw new Error ( error.response.data.error || error.response.data.message ); 
-                            }
-                            finally {
-                                this.isPhotosLoaded = false;
-                                this.renderedPhotos = [];
-                                this.openAddPhoto=false;
-                            }
-                        })();
-                    })
 
+                        await this.addCard(formData);
+
+                        this.isPhotosLoaded = false;
+                        this.renderedPhotos = [];
+                        this.openAddPhoto=false;
+                    })
                 }
                 else
                     console.log('no files');//!!!!!!! validation
@@ -563,15 +548,17 @@
             }, 
 
             scrollHandle() {
-                let headerContainerStyles = getComputedStyle(this.headerContainer);
-                let scrollStart = parseFloat(headerContainerStyles.height);
-                this.headerContainer.style.minHeight = scrollStart+'px';
-                    if (pageYOffset >= scrollStart) {
-                        this.isScrolledHeader = true;
-                    }
-                    else {
-                        this.isScrolledHeader = false;
-                    }
+                if (this.headerContainer) {
+                    let headerContainerStyles = getComputedStyle(this.headerContainer);
+                    let scrollStart = parseFloat(headerContainerStyles.height);
+                    this.headerContainer.style.minHeight = scrollStart+'px';
+                        if (pageYOffset >= scrollStart) {
+                            this.isScrolledHeader = true;
+                        }
+                        else {
+                            this.isScrolledHeader = false;
+                        }
+                }
                     
             },
 

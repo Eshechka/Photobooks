@@ -20,7 +20,7 @@
 			<router-link class="my-album__folder-name" 
 				:to="'/album/'+myAlbumObject.id"
 				@click.prevent
-			>{{myAlbumObject.albumName}}</router-link>
+			>{{myAlbumObject.title}}</router-link>
         </div>
 
     </div>		
@@ -130,6 +130,10 @@
 			padding-left: 30px;
 			font-family: 'Proxima Nova Semibold';
 			font-size: 14px;
+			max-height: 30px;
+			text-overflow: ellipsis;
+			overflow: hidden;
+			white-space: nowrap;
 		}
 
 		&__button {

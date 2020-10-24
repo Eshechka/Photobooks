@@ -305,7 +305,7 @@
                                     <appBigCard v-for="bigCard in loadedCards" :key="bigCard.id"
                                         :cardObject="bigCard"
                                         :userId="bigCard.authorId"
-                                        :currentUserObject="currentAuthorObject"
+                                        :loggedUserObject="currentAuthorObject"
                                         >                                                               
                                     </appBigCard>
 

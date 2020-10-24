@@ -48,11 +48,11 @@
                 <div class="big-card__my-comment" v-if="isVisibleMyComment">
 
                         <div class="big-card__my-comment-avatar-wrapper">
-                            <img class="big-card__my-comment-avatar" :src="userAvatarUrl" alt="my avatar">
+                            <img class="big-card__my-comment-avatar" :src="`${urlAvatars}/${this.loggedUserObject.avatar}`" alt="my avatar">
                         </div>
                         <div class="big-card__my-comment-info">
                             
-                        <div class="big-card__my-comment-name">{{userName}}</div>
+                        <div class="big-card__my-comment-name">{{this.loggedUserObject.name}}</div>
                     
                         <form class="big-card__my-comment-form">
 
@@ -108,7 +108,7 @@
         props: {
             cardObject: Object,
             // userId: Number,
-            currentUserObject: Object,
+            loggedUserObject: Object,
         },
 
 
@@ -121,8 +121,7 @@
             users: dataJSON_users,
             likes: dataJSON_all.likes,
 
-            userAvatarUrl: this.currentUserObject.urlUserAvatar,
-            userName: this.currentUserObject.userName,
+            userAvatarUrl: this.loggedUserObject.avatar,
 
             isActiveLike: this.cardObject.isLikedByMe,
             activeLike: [],
@@ -163,7 +162,7 @@
                 if (this.isActiveLike) {
                     this.cardObject.likeCount++;
                     const myLikeObject = {
-                        "userId": this.currentUserObject.id,
+                        "userId": this.loggedUserObject.id,
                         "photoId": this.cardObject.id
                     };
                     const headers = {'Content-Type': 'application/json'};
@@ -250,7 +249,7 @@
             console.log('created BIG');
         },
         mounted() {
-            this.activeLike= this.likes.find(like => (like.userId == this.currentUserObject.id && like.photoId == this.cardObject.id));
+            this.activeLike= this.likes.find(like => (like.userId == this.loggedUserObject.id && like.photoId == this.cardObject.id));
             // this.isActiveLike= !!this.activeLike;
             console.log('mounted BIG');            
         },
@@ -424,6 +423,7 @@
 
         &__my-comment-avatar {
             margin: auto;
+            border-radius: 50%;
         }
 
         &__my-comment-info {
