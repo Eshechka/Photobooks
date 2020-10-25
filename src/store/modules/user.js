@@ -18,6 +18,7 @@ export default {
     },
     mutations: {
         SET_USER(state, user) {
+            console.log('SET_USER: ', user);
             state.user = user;
         },
         CLEAR_USER(state) {
@@ -25,6 +26,14 @@ export default {
         },
     },
     actions: {
+        // async loginUser({commit}) {             
+        //     try {
+        //         const {data} = await $axios.get('/user');             
+        //         // localStorage.setItem('userId', data.id);
+        //         store.commit('SET_USER', data);
+        //     }
+        //     catch(error) { throw new Error ( error.response.data.error || error.response.data.message ); }
+        // },
         login({commit}, user) {
             localStorage.setItem('userId', user.id);
             commit('SET_USER', user);

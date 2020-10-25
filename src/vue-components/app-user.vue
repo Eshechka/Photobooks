@@ -10,23 +10,17 @@
 		<header class="header" :style="{ backgroundImage: `url(${urlPhotos}/${currentAuthorObject.cover})` }">
 
             <div class="header__container" v-if="!openEditHeader">		
-                <div class="header__button-logout"
-                    v-if="currentAuthorObject.id==loggedUserObject.id"
-                >
+                <div class="header__button-logout" v-if="currentAuthorObject.id==loggedUserObject.id">
                     <button type='button' class="round-button round-button_logout"
                         @click="logoutUser"
                     >Выйти</button>
                 </div>
-                <div class="header__button-edit"
-                    v-if="currentAuthorObject.id==loggedUserObject.id"
-                >
+                <div class="header__button-edit" v-if="currentAuthorObject.id==loggedUserObject.id">
                     <button type='button' class="round-button round-button_edit"
                         @click="editUserHeaderHandler"
                     >Редактировать</button>
                 </div>
-                <div class="header__button-home" 
-                    v-if="currentAuthorObject.id!==loggedUserObject.id"
-                >                    
+                <div class="header__button-home" v-if="currentAuthorObject.id!=loggedUserObject.id">                    
                     <router-link class="round-button round-button_home"
                         to="/"
                         @click.prevent
@@ -159,10 +153,17 @@
                             >
 
                                 <div class="form-edit-header__load-image">
-                                    <div class="form-edit-header__img-wrapper">
-                                        <img class="form-edit-header__img" :src="`${urlAvatars}/${currentAuthorObject.avatar}`" alt="avatar image">
-                                    </div>
-                                </div>   
+
+                                    <label for="load-avatar-header" class="form-edit-header__label form-edit-header__label_file-load">
+                                        <input type="file" id="load-avatar-header" class="form-edit-header__input-load">
+                                        <div class="form-edit-header__img-wrapper">
+                                            <img class="form-edit-header__img" :src="`${urlAvatars}/${currentAuthorObject.avatar}`" alt="avatar image">
+                                        </div>
+                                        <div class="form-edit-header__cover-img-text">Изменить фон</div>
+                                    </label>
+
+                                    
+                                </div>
 
                                 <label class="form-edit-header__label">
                                     <input class="form-edit-header__input" type="text" placeholder="Введите имя"
@@ -305,7 +306,7 @@
                                     <appBigCard v-for="bigCard in loadedCards" :key="bigCard.id"
                                         :cardObject="bigCard"
                                         :userId="bigCard.authorId"
-                                        :loggedUserObject="currentAuthorObject"
+                                        :loggedUserObject="loggedUserObject"
                                         >                                                               
                                     </appBigCard>
 
@@ -456,7 +457,7 @@
 
                 loggedUserObject: {
                     id: Number,
-                    cover: '',
+                    // cover: '',
                     userSocials: [],
                 },  
 
@@ -495,9 +496,9 @@
             // ...mapState('albums', {
             //     thisUserAlbums: state => state.userAlbums
             // }),
-            // ...mapState('user', {
-            //     thisloguser: state => state.user
-            // }),
+            ...mapState('user', {
+                loggeduser: state => state.user
+            }),
             
             ...mapState('authors', {
                 thisAuthor: state => state.author
@@ -507,7 +508,7 @@
             socEdit() {
                 return this.$refs['soc-edit'];
                 },
-            idCurrentUser() {
+            idCurrentAuthor() {
                 return this.$route.params.id;
                 },
         },
@@ -523,16 +524,13 @@
                 this.openChangeMyAlbum=true; 
                 this.albumChangeMode='add';
             },
+
             clickEditAlbumHandler(clickedAlbum) {
                 this.openChangeMyAlbum=true; 
                 this.albumChangeMode='edit';
                 this.editedAlbum={...clickedAlbum};
             },
-            async updateAlbums() {
-                    await this.refreshAuthor(this.idCurrentUser);
-                    this.currentAuthorObject = this.thisAuthor;
-                    this.myAlbums = this.thisAuthor.albums;
-            },
+
             async submitChangeMyAlbum(data, mode) {
                 if (mode === "add") {
                     await this.addAlbum(data);
@@ -543,13 +541,15 @@
                     this.updateAlbums();
                     this.openChangeMyAlbum=false;
             },
+
             async deleteAlbumHandler(albumId) {
                     await this.deleteAlbum(albumId);
                     this.updateAlbums();
                     this.openChangeMyAlbum=false;
             },
+
             logoutUser() {
-                // this.logout();
+                this.logout();
                 this.$router.push('/login');
             },
 
@@ -707,9 +707,19 @@
                 //метод по нажатию отмена при редактировании адреса соцсети
             },
 
+            async updateLoggedUser() {
+                this.loggedUserObject = {...this.loggeduser};
+            },
+
             async updateCards() {
                 await this.updateAllCards();
                 this.cards = this.allCards;
+            },
+
+            async updateAlbums() {
+                await this.refreshAuthor(this.idCurrentAuthor);
+                this.currentAuthorObject = this.thisAuthor;
+                this.myAlbums = this.thisAuthor.albums;
             },
 
             next() {
@@ -722,21 +732,21 @@
         },
 
          watch: {
-            idCurrentUser() {
+            idCurrentAuthor() {
                 this.updateCards();
                 this.updateAlbums();
                 this.openBigCardSlider=this.openEditProfile=this.openChangeMyAlbum=false;
             },
+            loggedUser() {
+                console.log('loggedUser changed: ',this.loggedUser);
+            },
         },
 
         async created() {
-            // try {
-                await this.updateCards();
-                await this.updateAlbums();
-            // }
-            // finally {
-                this.loadedCardsPush(this.startPhotoLoadingPos);
-            // }
+            await this.updateCards();
+            await this.updateAlbums();
+            await this.updateLoggedUser();
+            this.loadedCardsPush(this.startPhotoLoadingPos);
             window.addEventListener('resize', this.checkWidth);            
         },
 
@@ -944,6 +954,7 @@
         &__img-wrapper {
             width: 50px;
             height: 50px;
+            margin: auto;
             border-radius: 50%;
             overflow: hidden;
         }
@@ -995,6 +1006,7 @@
             height: 100%;    
             position: absolute;
             top: 0;
+            left: 0;
             font-size: 0;
         }
 
@@ -1102,6 +1114,7 @@
         &__img-wrapper {
             width: 50px;
             height: 50px;
+            margin: auto;
             border-radius: 50%;
             overflow: hidden;
         }

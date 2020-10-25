@@ -17,7 +17,7 @@
                         @click="openEditHeader=true"                        
                     >Редактировать</button>
                 </div>
-                <div class="header__button-home"
+                <div class="header__button-home" v-if="currentAlbumObject.author.id!==loggedUserObject.id"
                     :class="{'header__button-home_scrolled' : isScrolledHeader}">
                     <router-link class="round-button round-button_home"
                         to="/"
@@ -384,9 +384,17 @@
                     contain: true
                 },
 
+                // loggedUserObject: {
+                //     id: Number,
+                //     author: {
+                //         avatar: '',
+                //     },
+                // }, 
                 loggedUserObject: {
                     id: Number,
-                }, 
+                    // cover: '',
+                    // userSocials: [],
+                },  
 
                 currentAlbumObject: {
                     author: {},
@@ -409,6 +417,9 @@
             }),                        
             ...mapState('albums', {
                 currentAlbum: state => state.currentAlbum
+            }),
+            ...mapState('user', {
+                loggeduser: state => state.user
             }),
 
             thisAlbumPhotos() {
@@ -441,6 +452,10 @@
             ...mapActions('cards', ['addCard', 'deleteCard', 'changeCard', 'refreshAlbumCards']),
             // ...mapActions('albums', ['addAlbum', 'deleteAlbum', 'changeAlbum', 'refreshThisAlbum']),
             ...mapActions('albums', ['refreshThisAlbum']),
+
+            async updateLoggedUser() {
+                this.loggedUserObject = {...this.loggeduser};
+            },
 
             loadPhotosFiles(e) {
                 let id=0;
@@ -572,16 +587,17 @@
         },
 
         async created () {
-            this.refreshAlbumCards(this.$route.params.albumid);
-            try {
-                this.currentAlbumObject.author.name = '';
-                this.currentAlbumObject.author.avatar = 'no_album_cover.jpg';
+            await this.updateLoggedUser();
+            await this.refreshAlbumCards(this.$route.params.albumid);
+            // try {
+            //     this.currentAlbumObject.author.name = '';
+            //     this.currentAlbumObject.author.avatar = 'no_album_cover.jpg';
                 await this.refreshThisAlbum(this.$route.params.albumid);
-            }
-            finally {
+            // }
+            // finally {
                 this.currentAlbumObject = {...this.currentAlbum};
                 this.currentAlbumObject.preview = this.currentAlbumObject.preview ? this.currentAlbumObject.preview : 'img/no_album_cover.jpg';
-            }
+            // }
 
         },
 

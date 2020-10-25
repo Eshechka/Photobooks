@@ -1,6 +1,7 @@
 <template>
         
     <div class="big-card">
+        <!-- <pre>{{comments}}</pre> -->
         <div class="big-card__card">
 
             <div class="big-card__card-img">
@@ -54,9 +55,13 @@
                             
                         <div class="big-card__my-comment-name">{{this.loggedUserObject.name}}</div>
                     
-                        <form class="big-card__my-comment-form">
+                        <form class="big-card__my-comment-form"
+                            @submit.prevent="sumbitNewCommentHandler"
+                        >
 
-                            <textarea class="big-card__my-comment-input" name="" id="" cols="10" rows="1" placeholder="Добавить комментарий"></textarea>
+                            <textarea class="big-card__my-comment-input" name="" id="" cols="10" rows="1" placeholder="Добавить комментарий"
+                                v-model="newComment.commentText"
+                            ></textarea>
                             <div class="big-card__my-comment-submit">
                                 <button class="site-button site-button_theme-light" type="submit">Добавить</button>
                             </div>
@@ -68,16 +73,26 @@
                 <div class="big-card__users-comments">
 
                     <ul class="users-comments">
-                        <li
-                            v-for="comment in filteredComments" :key="comment.id"
-                        class="users-comments__item">
+                        <li v-for="comment in comments" :key="comment.id" class="users-comments__item">
 
                             <div class="users-comments__avatar-wrapper">
-                                <img class="users-comments__avatar" :src="comment.urlUserAvatar" alt="Avatar of comment's author">
+                                <img class="users-comments__avatar" :src="`${urlAvatars}/${comment.author.avatar}`" alt="Avatar of comment's author">
                             </div>
                             <div class="users-comments__info-wrapper">
-                                <div class="users-comments__author">{{comment.userName}}</div>
-                                <div class="users-comments__text">{{comment.text}}</div>
+                                <div class="users-comments__author">{{comment.author.name}}</div>
+                                <div class="users-comments__text">{{comment.commentText}}</div>
+                            </div>
+                            <div class="users-comments__buttons-wrapper">
+                                <div class="users-comments__button-edit" v-if="comment.author.id==loggedUserObject.id">
+                                    <button type='button' class="round-button round-button_edit"
+                                        @click="editCommentHandler"
+                                    >Редактировать</button>
+                                </div>
+                                <div class="users-comments__button-delete" v-if="comment.author.id==loggedUserObject.id">
+                                    <button type='button' class="round-button round-button_delete"
+                                        @click="deleteCommentHandler(comment.id)"
+                                    >Удалить</button>
+                                </div>
                             </div>
 
                         </li>
@@ -95,60 +110,50 @@
 
 <script >
 
-    import dataJSON_comments from '../json/comments.json';
-    import dataJSON_users from '../json/users.json';
+    import { mapState, mapActions } from 'vuex';
+
     import dataJSON_likes from '../json/likes.json';
     import dataJSON_all from '../../db.json';
 
-    import $axios from 'axios';
-    import requests from '../requests';
+    import $axios from '../requests';
+    
     const baseUrl = `https://xeniaweb.online/storage`;
 
     export default {
         props: {
             cardObject: Object,
-            // userId: Number,
             loggedUserObject: Object,
         },
-
 
         data() {
           return {
             urlPhotos: baseUrl+'/photos',
             urlAvatars: baseUrl+'/avatars',
 
-            comments: dataJSON_comments,
-            users: dataJSON_users,
             likes: dataJSON_all.likes,
 
-            userAvatarUrl: this.loggedUserObject.avatar,
+            comments: [],
 
             isActiveLike: this.cardObject.isLikedByMe,
             activeLike: [],
             // isActiveLike: false,
             // nowlikes: this.cardObject.likes,
             isVisibleMyComment: true,
+
+            newComment: {
+                commentText: '',
+                authorId: Number,
+                photoId: Number,
+            },
           }
 
         },
 
         
         computed: {
-            filteredComments() {
-                let commentsForThisCard = [];
-
-                this.comments.map(comment => { 
-                    if (comment.photoId === this.cardObject.id)
-                    {                        
-                        let thisUser = this.users.find(user => user.id === comment.userId);
-                        comment.urlUserAvatar = thisUser.urlUserAvatar;
-                        comment.userName = thisUser.userName;
-                        commentsForThisCard.push(comment);
-                    }
-                });                
-                
-                return commentsForThisCard;
-            },
+            ...mapState('comments', {
+                commentsCurrentPhoto: state => state.commentsCurrentPhoto
+            }),
 
             myCommentToggler() {
                 return this.$refs['my-comment-toggler'];
@@ -156,7 +161,29 @@
 
         },
 
+
         methods: {
+            ...mapActions('comments', ['addComment', 'deleteComment', 'changeComment', 'updatePhotoComments']),
+
+            async sumbitNewCommentHandler() {
+                this.newComment.photoId = this.cardObject.id;
+                this.newComment.authorId = +this.loggedUserObject.id;
+
+                await this.addComment(this.newComment);
+                this.newComment.commentText = '';
+                await this.updatePhotoComments(this.cardObject.id);            
+                this.comments = this.commentsCurrentPhoto;
+            },
+
+            async editCommentHandler() {
+                // await this.changeComment(this.comment.id);
+            },
+            async deleteCommentHandler(commentId) {
+                await this.deleteComment(commentId);
+                await this.updatePhotoComments(this.cardObject.id);
+                this.comments = this.commentsCurrentPhoto;
+            },
+
             plusMyLike() {
                 this.isActiveLike = !this.isActiveLike;
                 if (this.isActiveLike) {
@@ -199,14 +226,7 @@
                 else
                     this.myCommentToggler.style.transform = 'rotate(270deg)';
             },
-            upgradeCardObject() {
 
-                // this.cardObject.author.avatar = this.users.find(user => user.id === this.cardObject.author.id).urlUserAvatar;
-                // this.cardObject.author.name = this.users.find(user => user.id === this.cardObject.author.id).userName;
-                // let albumAuthor = this.users.find(user => user.id === this.userId);
-                // this.cardObject.userName = albumAuthor.userName;
-                // this.cardObject.urlUserAvatar = albumAuthor.urlUserAvatar;
-            },
             descriptionHandle(text) {
                 let textWithHashtags = '';
 
@@ -242,16 +262,13 @@
             },
         },
 
-        created() {
-            console.log('this props cardObject', this.cardObject);
-
-            this.upgradeCardObject();          
-            console.log('created BIG');
+        async created() {
+            await this.updatePhotoComments(this.cardObject.id);            
+            this.comments = this.commentsCurrentPhoto;
         },
         mounted() {
             this.activeLike= this.likes.find(like => (like.userId == this.loggedUserObject.id && like.photoId == this.cardObject.id));
             // this.isActiveLike= !!this.activeLike;
-            console.log('mounted BIG');            
         },
     }
 </script>
@@ -509,6 +526,9 @@
 
         &__avatar {
             margin: auto;
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
         }
 
         &__my-comment-info {
@@ -529,6 +549,10 @@
             font-family: 'ProximaNova-Light';
             font-size: 16px;
             line-height: 24px;
+        }
+
+        &__buttons-wrapper {
+            display: flex;
         }
 
     }

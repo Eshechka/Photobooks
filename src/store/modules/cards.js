@@ -42,8 +42,7 @@ export default {
         },
         async changeCard(store, changedCard) {
             try {
-                const { data } = await this.$axios.put(`/v1/photos/${changedCard.id}`, { params: {'include':`author`} }, changedCard);
-                console.log('PRIXOD: ',data.card);
+                const { data } = await this.$axios.put(`/v1/photos/${changedCard.id}`, changedCard);
                 store.commit('CHANGE_ALBUM_CARD', data.card);
             }
             catch(error) { throw new Error ( error.response.data.error || error.response.data.message ); }
