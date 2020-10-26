@@ -55,11 +55,13 @@
                             <p class="registration__text">Ваши данные остаются строго конфиденциальны</p>
 
                             <div class="registration__submit">
-                                <button class="site-button site-button_min_width" type="submit">Создать аккаунт</button>
+                                <!-- <button class="site-button site-button_min_width" type="submit">Создать аккаунт</button> -->
+                                <button class="button button_size_l" type="submit">Создать аккаунт</button>
                             </div>
                             <div class="registration__toenter">
                                 <p class="registration__text">Уже зарегистрированы?</p>
-                                <button class="site-button site-button_theme-just-text" type="button"
+                                <!-- <button class="site-button site-button_theme-just-text" type="button" -->
+                                <button class="button button_theme_minimalizm" type="button"								
 									@click.prevent="stateRegistration=!stateRegistration; stateEnter=!stateEnter"
 								>Войти</button>
                             </div>
@@ -99,16 +101,21 @@
 
                         <div class="enter__wrapper">
                             
-                            <button class="site-button site-button_theme-just-text" type="button">Забыли пароль?</button>
+                            <button class="button button_theme_minimalizm" type="button"
+								@click.prevent="stateForgotPassword=!stateForgotPassword; stateEnter=!stateEnter"
+							>Забыли пароль?</button>
+                            <!-- <button class="site-button site-button_theme-just-text" type="button">Забыли пароль?</button> -->
 
                             <div class="enter__submit">
-                                <button class="site-button site-button_min_width" type="submit">Войти</button>
+                                <!-- <button class="site-button site-button_min_width" type="submit">Войти</button> -->
+                                <button class="button button_size_l" type="submit">Войти</button>
                             </div>
                             
                             
                             <div class="enter__toregistration">
                                 <p class="enter__text">Нет аккаунта?</p> 
-                                <button class="site-button site-button_theme-just-text" type="button"
+                                <!-- <button class="site-button site-button_theme-just-text" type="button" -->
+                                <button class="button button_theme_minimalizm" type="button"
 									@click.prevent="stateRegistration=!stateRegistration; stateEnter=!stateEnter"
 								>Зарегистрироваться</button>
                             </div>
@@ -142,13 +149,17 @@
                         <div class="forgot__wrapper forgot__wrapper_bottom">
                             
                             <div class="forgot__submit">
-                                <button class="site-button site-button_min_width" type="submit">Восстановить пароль</button>
+                                <!-- <button class="site-button site-button_min_width" type="submit">Восстановить пароль</button> -->
+                                <button class="button button_size_l" type="submit">Восстановить пароль</button>
                             </div>
                             
-                            
+
                             <div class="forgot__toanotherform forgot__toanotherform_center">
                                 <p class="forgot__text">Вспомнили пароль?</p> 
-                                <button class="site-button site-button_theme-just-text" type="button">Войти</button>
+                                <!-- <button class="site-button site-button_theme-just-text" type="button">Войти</button> -->
+								<button class="button button_theme_minimalizm" type="button"
+									@click.prevent="stateForgotPassword=!stateForgotPassword; stateEnter=!stateEnter"
+								>Войти</button>
                             </div>
 
                         </div>

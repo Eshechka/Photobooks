@@ -300,6 +300,7 @@
             position: relative;
             border-radius: 3px 3px 0 0;
             overflow: hidden;
+            background-color: rgba(black, 0.7);
 
             @include tablets {
                 height: 398px;
@@ -307,7 +308,8 @@
         }
 
         &__img {
-            object-fit: cover;
+            /* object-fit: cover; */
+            object-fit: contain;
             width: 100%;
             height: 100%;
         }

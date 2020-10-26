@@ -1,5 +1,221 @@
-.site-button {
+.button {
+	display: inline-flex;
+	align-items: center;
+	// 
+	// padding: 10px 20px;
+	white-space: nowrap;
+	font-family: Panton-Bold;
+	background-color: $color-blue;
+	color: $color-white;
+	border-radius: 30px;
 
+	&:active, &:focus {
+		outline: none;
+		background-color: rgba($color-blue, 0.7);
+		color: $color-white;
+	}
+	&:not(.disabled):hover, &:not(:disabled):hover {			
+		background-color: rgba($color-blue-hover, 1);
+	}	
+	&:disabled, &.disabled {
+		outline: none;
+		background-color: rgba($color-white, 0.7);
+		color: $color-text;
+		cursor: unset;
+
+	}
+
+	&__icon {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 22px;
+		height: 22px;
+		background-repeat: no-repeat;
+		background-size: 20px;
+		background-position: 50%;
+
+		&:hover {
+			background-size: 22px;
+		}
+
+		&_plus {		
+			background-image: svg-load('add.svg', fill=rgba(#{$color-text}, 0.4));
+		}
+		&_edit {		
+			background-image: svg-load('edit.svg', fill=rgba(#{$color-text}, 0.6));
+		}
+	}
+
+// ----- views -----
+	&_icon {
+		padding-left: 30px;
+		position: relative;
+	}
+
+// ----- sizes -----
+	&_size_s {
+		border-radius: 50%;		
+		width: 40px;
+		height: 40px;  
+	}
+	&_size_m {
+		min-height: 38px;
+		padding: 10px 20px;
+	}
+	&_size_l {
+		min-width: 260px;
+		min-height: 38px;
+		padding: 10px 20px;
+		justify-content: center;
+
+		@include tablets {
+			min-width: 240px;
+		}
+	}
+	&_size_changing {
+		border-radius: 50%;		
+		width: 40px;
+		height: 40px; 
+		font-size: 0px;
+
+		@include tablets {
+
+			&:not(.disabled):hover, &:not(:disabled):hover,
+			&:active, &:focus {
+				font-size: 14px;
+				width: unset;
+				padding-left: 43px;
+				border-radius: 20px;
+				padding-right: 14px;
+
+				& .button__icon {
+					transition: left 0.7s ease;
+					left: 25px;
+				}
+			}
+		}
+	}
+
+// ----- themes -----
+	&_theme_light {
+		// min-width: unset;
+		background-color: $color-white;
+		color: $color-blue;
+		border: 2px solid $color-blue;
+
+		&.disabled, &:disabled {
+			color: rgba($color-blue, 0.3);
+			border: 2px solid rgba($color-blue, 0.3);
+		}
+		&:not(.disabled):hover, &:not(:disabled):hover {
+			background-color: $color-blue;
+			color: $color-white;
+		}
+		&:active, &:focus {
+			background-color: transparent;
+			color: rgba($color-blue, 0.7);
+			border: 2px solid rgba($color-blue, 0.7);
+		}
+	}
+
+	&_theme_pale {
+		background-color: transparent;
+		color: transparent;
+		border: none;
+		box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.22);
+
+		&.disabled, &:disabled {
+			background-color: rgba($color-text, 0.5);
+		}
+		&:not(.disabled):hover, &:not(:disabled):hover {
+			box-shadow: 0 1px 10px 5px rgba(0,0,0,.22);
+			background-color: transparent;
+			color: transparent;
+		}
+		&:active, &:focus {
+			box-shadow: 0 1px 10px 5px rgba(0,0,0,.22);
+			background-color: transparent;
+			color: transparent;
+		}
+	}
+
+	&_theme_color_changing.button {
+		background-color: $color-white;
+		color: $color-white;
+		border: none;
+
+		&.disabled, &:disabled {
+			background-color: rgba($color-text, 0.5);
+		}
+		&:hover {
+			& .button__icon {				
+				
+				&_edit {
+					background-image: svg-load('edit.svg', fill=rgba(#{$color-white}, 0.99));
+				}
+			}
+		}
+
+		& .button__icon {				
+				
+			&_edit {
+				background-position: 50%;
+				background-image: svg-load('edit.svg', fill=rgba(#{$color-text}, 0.6));
+			}
+		}
+
+	}
+
+	// 	&_theme_carrot {
+	// 		// min-width: unset;
+	// 		background-color: $color-white;
+	// 		color: $color-blue;
+	// 		border: 2px solid $color-blue;
+
+	// 		&.disabled, &:disabled {
+	// 			color: rgba($color-blue, 0.3);
+	// 			border: 2px solid rgba($color-blue, 0.3);
+	// 		}
+	// 		&:not(.disabled):hover, &:not(:disabled):hover {
+	// 			background-color: $color-blue;
+	// 			color: $color-white;
+	// 		}
+	// 		&:active, &:focus {
+	// 			background-color: transparent;
+	// 			color: rgba($color-blue, 0.7);
+	// 			border: 2px solid rgba($color-blue, 0.7);
+	// 		}
+	// 	}
+
+	&_theme_minimalizm {
+		padding: 0;
+		color: $color-blue;
+		font-family: 'Proxima Nova Semibold';
+		// min-width: unset;
+		// min-height: unset;
+
+		&:active, &:focus {
+			background-color: transparent;
+			color: rgba($color-blue, 0.7);
+		}
+		&:disabled, &.disabled {
+			background-color: transparent;
+			color: rgba($color-text, 0.9);
+		}
+		&:not(.disabled):hover, &:not(:disabled):hover {			
+			background-color: transparent;
+			color: rgba($color-blue-hover, 1);
+		}
+	}
+
+}
+
+
+
+
+.site-button {
 	min-height: 38px;
 	padding: 10px 14px;
 	white-space: nowrap;
@@ -15,7 +231,7 @@
 		color: $color-white;
 	}
 
-	&:not(.disabled):hover {			
+	&:not(.disabled):hover, &:not(:disabled):hover {			
 		background-color: rgba($color-blue-hover, 1);
 	}
 
@@ -40,7 +256,7 @@
 			cursor: unset;
 		}
 
-		&:not(.disabled):hover {
+		&:not(.disabled):hover, &:not(:disabled):hover {
 			background-color: $color-blue;
 			color: $color-white;
 		}
@@ -65,7 +281,7 @@
 			color: rgba($color-blue, 0.7);
 		}
 
-		&:not(.disabled):hover {			
+		&:not(.disabled):hover, &:not(:disabled):hover {			
 			background-color: transparent;
 			color: rgba($color-blue-hover, 1);
 		}

@@ -16,12 +16,16 @@
                     >Выйти</button>
                 </div>
                 <div class="header__button-edit" v-if="currentAuthorObject.id==loggedUserObject.id">
-                    <button type='button' class="round-button round-button_edit"
+                    <!-- <button type='button' class="round-button round-button_edit" -->
+                    <button type='button' class="button button_icon button_size_changing button_theme_color_changing"
                         @click="editUserHeaderHandler"
-                    >Редактировать</button>
+                    >Редактировать
+                        <span class="button__icon button__icon_edit"></span>
+                    </button>
                 </div>
                 <div class="header__button-home" v-if="currentAuthorObject.id!=loggedUserObject.id">                    
-                    <router-link class="round-button round-button_home"
+                    <!-- <router-link class="round-button round-button_home" -->
+                    <router-link class="button button_icon button_size_changing button_theme_color_changing"
                         to="/"
                         @click.prevent
                     >На главную</router-link>
@@ -285,7 +289,8 @@
                     </ul> 
 
                     <div class="new__button-show-more">
-                        <button type="button" class="site-button site-button_theme-light"
+                        <!-- <button type="button" class="site-button site-button_theme-light" -->
+                        <button type="button" class="button button_size_m button_theme_light"
                             v-if="loadedCards.length"
                             @click="loadedCardsPush(startPhotoLoadingPos)"
                             :class="{disabled : amountLoadedPhotos===-1}"
@@ -342,9 +347,10 @@
                             v-else>Альбомы</h2>
                         <div class="my-albums__button-plus"
                             v-if="currentAuthorObject.id==loggedUserObject.id">
-                            <button class="round-button round-button_plus"                            
-                                @click="addNewAlbumHandler"
-                            ></button>
+                            <button class="button button_icon button_size_s button_theme_pale"                            
+                                @click="addNewAlbumHandler">
+                                <span class="button__icon button__icon_plus"></span>
+                            </button>
                         </div>
                     </div>
 
