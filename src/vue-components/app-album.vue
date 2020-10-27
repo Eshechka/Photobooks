@@ -13,17 +13,30 @@
                 ref='header-container'>
 
                 <div class="header__button-edit" v-if="currentAlbumObject.author.id==loggedUserObject.id">
-                    <button type='button' class="round-button round-button_edit"
-                        @click="openEditHeader=true"                        
-                    >Редактировать</button>
+                    <button type='button' class="button button_icon_space button_size_changing button_theme_color_changing"
+                        @click="openEditHeader=true">
+                        <span class="button__text">Редактировать</span>
+                        <span class="button__icon button__icon_edit"></span>
+                    </button>
+                    <!-- <button type='button' class="round-button round-button_edit" -->
+                        <!-- @click="openEditHeader=true"                        
+                    >Редактировать</button> -->
                 </div>
                 <div class="header__button-home" v-if="currentAlbumObject.author.id!==loggedUserObject.id"
                     :class="{'header__button-home_scrolled' : isScrolledHeader}">
-                    <router-link class="round-button round-button_home"
+                    <router-link class="button button_icon_space button_size_changing button_theme_color_changing"
+                        to="/"
+                        @click.prevent>
+                        <span class="button__text">На главную</span>
+                        <span class="button__icon button__icon_home"></span>
+                    </router-link>
+                    <!-- <router-link class="round-button round-button_home"
                         to="/"
                         @click.prevent
-                    >На главную</router-link>
+                    >На главную                    
+                    </router-link> -->
                 </div>
+
 
 					<div class="header__user" :class="{header__user_scrolled : isScrolledHeader}">
 						<div class="header__avatar">
@@ -89,8 +102,10 @@
 
                                 
                                 <div class="form-edit-header__buttons">
-                                    <button class="site-button" type="submit">Сохранить</button>
-                                    <button class="site-button site-button_theme-just-text" type="button"
+                                    <!-- <button class="site-button" type="submit">Сохранить</button>
+                                    <button class="site-button site-button_theme-just-text" type="button"-->
+                                    <button class="button button_size_m" type="submit">Сохранить</button>
+                                    <button class="button button_size_m button_theme_minimalizm" type="button"
                                         @click="openEditHeader=false"
                                     >Отменить</button>
                                 </div>
@@ -113,9 +128,13 @@
 
                     <div class="my-photos__topgroup">
                         <div class="my-photos__button-plus">
-                            <button class="round-button round-button_plus"
+                            <button class="button button_icon_expand button_size_s button_theme_pale"
+                                @click="openAddPhoto=true">
+                                <span class="button__icon button__icon_plus"></span>
+                            </button>
+                            <!-- <button class="round-button round-button_plus"
                                 @click="openAddPhoto=true"
-                            ></button>
+                            ></button> -->
                         </div>
                     </div>
         
@@ -137,9 +156,12 @@
 
                                     <div class="edit-photo__topgroup">
                                         <h4 class="edit-photo__title">Редактировать фотографию</h4>
-                                        <button type="button" class="edit-photo__button edit-photo__button_close"
-                                            @click="openEditPhoto=false"
-                                        ></button>
+
+                                        <!-- <button type="button" class="edit-photo__button edit-photo__button_close" -->
+                                        <button type="button" class="button button_icon button_size_s button_theme_minimalizm"
+                                            @click="openEditPhoto=false" >
+                                            <span class="button__icon button__icon_close"></span>
+                                        </button>
                                     </div>
                                     
                                     <div class="edit-photo__form">
@@ -170,13 +192,20 @@
                                             </label>
                                     
                                             <div class="form-editPhoto__buttons">
-                                                <button class="site-button" type="submit">Сохранить</button>
-                                                <button class="site-button site-button_theme-just-text" type="button"
+                                                <!-- <button class="site-button" type="submit">Сохранить</button> -->
+                                                <!-- <button class="site-button site-button_theme-just-text" type="button" -->
+                                                <button class="button button_size_m form-editPhoto__buttonspace" type="submit">Сохранить</button>
+                                                <button class="button button_size_m button_theme_minimalizm" type="button"
                                                     @click="openEditPhoto=false"
                                                 >Отменить</button>
-                                                <button class="round-button round-button_delete" type="button"
+                                                <!-- <button class="round-button round-button_delete" type="button"
                                                     @click.prevent="deletePhotoHandle"
-                                                >Удалить</button>
+                                                >Удалить</button> -->
+                                                <button class="button button_icon button_size_m button_theme_carrot form-editPhoto__in" type="button"
+                                                    @click.prevent="deletePhotoHandle">
+                                                    <span class="button__text">Удалить</span>
+                                                    <span class="button__icon button__icon_delete"></span>                                        
+                                                </button>
                                             </div>
 
                                         </form>
@@ -195,9 +224,13 @@
 
                                     <div class="add-photo__topgroup">
                                         <h4 class="add-photo__title">Добавить фотографии</h4>
-                                        <button type="button" class="add-photo__button add-photo__button_close"
+                                        <!-- <button type="button" class="add-photo__button add-photo__button_close"
                                             @click="openAddPhoto=false"
-                                        ></button>
+                                        ></button> -->
+                                        <button type="button" class="button button_icon button_size_s button_theme_minimalizm"
+                                            @click="openAddPhoto=false">
+                                            <span class="button__icon button__icon_close"></span>
+                                        </button>
                                     </div>
                                     
                                     <div class="add-photo__form">
@@ -214,10 +247,11 @@
                                                     <ul class="added-photos">
                                                         <li class="added-photos__item" 
                                                             v-for="photo in renderedPhotos" :key="photo.id"
-                                                            :style="{ backgroundImage : `url(${photo.pic})` }"
-                                                        >                                                        
-                                                            <button class="round-button round-button_close">
-                                                            </button>
+                                                            :style="{ backgroundImage : `url(${photo.pic})` }">
+                                                                                                          
+                                                            <button class="round-button round-button_close"
+                                                                @click.prevent="removeRenderedPhotoHandler(photo)"
+                                                            ></button>
                                                         </li>
 
                                                     </ul>
@@ -242,8 +276,10 @@
                                             </div>
                                     
                                             <div class="form-addPhoto__buttons">
-                                                <button class="site-button" type="submit">Сохранить</button>
-                                                <button class="site-button site-button_theme-just-text" type="button"
+                                                <!-- <button class="site-button" type="submit">Сохранить</button>
+                                                <button class="site-button site-button_theme-just-text" type="button" -->
+                                                <button class="button button_size_m form-addPhoto__buttonspace" type="submit">Сохранить</button>
+                                                <button class="button button_size_m button_theme_minimalizm" type="button"
                                                     @click="openAddPhoto=false"
                                                 >Отменить</button>
                                             </div>
@@ -274,9 +310,14 @@
                         </flickity>
 
                         <div class="big-card-slider__close">
-                            <button class="round-button round-button_close-transparent" type="button"
+                            <!-- !!!!!!!!!!!!! что-то одно из этого надо оставить -->
+                            <!-- <button class="round-button round-button_close-transparent" type="button"
                                 @click="openBigMyPhoto=false"
-                            ></button>
+                            ></button> -->
+                            <button class="button button_icon button_size_s button_theme_pale" type="button"
+                                @click="openBigMyPhoto=false">
+                                <span class="button__icon button__icon_close"></span>
+                                </button>
                         </div>
 
                         <button type="button" class="big-card-slider__control big-card-slider__control_prev"
@@ -298,9 +339,10 @@
 			<div class="footer__container">	
 	
 				<div class="footer__button-up">
-					<button class="round-button round-button_up"
-                        @click="scrollToTop"
-                    ></button>
+                    <button class="button button_size_s button_icon button_theme_pale"
+                        @click="scrollToTop">
+                        <span class="button__icon button__icon_up"></span>
+                    </button>
 				</div>
 				<div class="footer__desc">
 					Перед вами сервис, который поможет вам организовать свои фотографии в альбомы и поделиться ими со всем миром!
@@ -452,6 +494,10 @@
             ...mapActions('cards', ['addCard', 'deleteCard', 'changeCard', 'refreshAlbumCards']),
             // ...mapActions('albums', ['addAlbum', 'deleteAlbum', 'changeAlbum', 'refreshThisAlbum']),
             ...mapActions('albums', ['refreshThisAlbum']),
+
+            removeRenderedPhotoHandler(photo) {
+                console.log('I want to remove this photo:', photo);
+            },
 
             async updateLoggedUser() {
                 this.loggedUserObject = {...this.loggeduser};
@@ -1199,6 +1245,13 @@
             background-color: #f2f2f2;
             padding: 10px;
         }
+        
+        &__in {
+            margin-left: auto;
+        }        
+        &__buttonspace {
+            margin-right: 10px;
+        }
     }
 
     .add-photo {
@@ -1223,7 +1276,7 @@
             font-size: 21px;
             line-height: 21px;
         }
-
+/* 
         &__button {
             width: 20px;
             height: 20px;
@@ -1234,7 +1287,7 @@
             &_close {
                 background-image: svg-load('close.svg', fill=rgba(#{$color-text}, 0.4));
             }
-        }
+        } */
     }
 
     .form-addPhoto {
@@ -1386,6 +1439,10 @@
         &__buttons {
             background-color: #f1f1f1;
             padding: 10px;
+        }
+
+        &__buttonspace {
+            margin-right: 10px;
         }
     }
 

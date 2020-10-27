@@ -11,24 +11,29 @@
 
             <div class="header__container" v-if="!openEditHeader">		
                 <div class="header__button-logout" v-if="currentAuthorObject.id==loggedUserObject.id">
-                    <button type='button' class="round-button round-button_logout"
-                        @click="logoutUser"
-                    >Выйти</button>
+                    <!-- <button type='button' class="round-button round-button_logout" -->
+                    <button type='button' class="button button_icon_space button_size_changing button_theme_color_changing"
+                        @click="logoutUser">
+                        <span class="button__text">Выйти</span>                    
+                        <span class="button__icon button__icon_logout"></span>                    
+                    </button>
                 </div>
                 <div class="header__button-edit" v-if="currentAuthorObject.id==loggedUserObject.id">
                     <!-- <button type='button' class="round-button round-button_edit" -->
-                    <button type='button' class="button button_icon button_size_changing button_theme_color_changing"
-                        @click="editUserHeaderHandler"
-                    >Редактировать
+                    <button type='button' class="button button_icon_space button_size_changing button_theme_color_changing"
+                        @click="editUserHeaderHandler">
+                        <span class="button__text">Редактировать</span>
                         <span class="button__icon button__icon_edit"></span>
                     </button>
                 </div>
                 <div class="header__button-home" v-if="currentAuthorObject.id!=loggedUserObject.id">                    
                     <!-- <router-link class="round-button round-button_home" -->
-                    <router-link class="button button_icon button_size_changing button_theme_color_changing"
+                    <router-link class="button button_icon_space button_size_changing button_theme_color_changing"
                         to="/"
-                        @click.prevent
-                    >На главную</router-link>
+                        @click.prevent>
+                        <span class="button__text">На главную</span>
+                        <span class="button__icon button__icon_home"></span>
+                    </router-link>
                 </div>
 
                 <div class="header__avatar">
@@ -92,8 +97,9 @@
                                     </div>
 
                                     <div class="form-edit-profile__button">
-                                        <button class="site-button site-button_theme-light" type="button">Загрузить фотографию</button>                                        
-                                        <div class="form-edit-profile__notice-size">(файл должен быть размером не более 512 КБ)</div>
+                                        <!-- <button class="site-button site-button_theme-light" type="button">Загрузить фотографию</button> -->
+                                        <button class="button button_icon button_size_m button_theme_light" type="button">Загрузить фотографию</button>
+                                         <div class="form-edit-profile__notice-size">(файл должен быть размером не более 512 КБ)</div>
                                     </div>
 
                                 </div>                        
@@ -105,7 +111,8 @@
                                     </div>
 
                                     <div class="form-edit-profile__button">
-                                        <button class="site-button site-button_theme-light" type="button">Загрузить фон</button>
+                                        <button class="button button_icon button_size_m button_theme_light" type="button">Загрузить фон</button>
+                                        <!-- <button class="site-button site-button_theme-light" type="button">Загрузить фон</button> -->
                                         <div class="form-edit-profile__notice-size">(файл должен быть размером не более 1024 КБ)</div>
                                     </div>
 
@@ -209,8 +216,10 @@
                                                     >
 
                                                     <div class="soc-edit__buttons">
-                                                        <button type="submit" class="site-button site-button_theme_light">Сохранить</button>
-                                                        <button type="button" class="site-button site-button_theme-just-text"
+                                                        <!-- <button type="submit" class="site-button site-button_theme_light">Сохранить</button> -->
+                                                        <button type="submit" class="button button_size_m">Сохранить</button>
+                                                        <!-- <button type="button" class="site-button site-button_theme-just-text" -->
+                                                        <button type="button" class="button button_size_m button_theme_minimalizm"
                                                             @click="socEditCancel"
                                                         >Отменить</button>
                                                     </div>
@@ -347,7 +356,7 @@
                             v-else>Альбомы</h2>
                         <div class="my-albums__button-plus"
                             v-if="currentAuthorObject.id==loggedUserObject.id">
-                            <button class="button button_icon button_size_s button_theme_pale"                            
+                            <button class="button button_icon_expand button_size_s button_theme_pale"                            
                                 @click="addNewAlbumHandler">
                                 <span class="button__icon button__icon_plus"></span>
                             </button>
@@ -392,9 +401,10 @@
             <div class="footer__container">	
 
                 <div class="footer__button-up">
-                    <button class="round-button round-button_up"
-                        @click="scrollToTop"
-                    ></button>
+                    <button class="button button_size_s button_icon_expand button_theme_pale"
+                        @click="scrollToTop">
+                        <span class="button__icon button__icon_up"></span>
+                    </button>
                 </div>
                 <div class="footer__desc">
                     Перед вами сервис, который поможет вам организовать свои фотографии в альбомы и поделиться ими со всем миром!
@@ -677,7 +687,7 @@
                     }
     
                     if (this.amountLoadedPhotos === 0) {
-                        if (this.amountLoadedPhotos !== 2 && this.windowWidth <= 768) this.amountLoadedPhotos = 2;
+                        if (this.amountLoadedPhotos !== 6 && this.windowWidth <= 768) this.amountLoadedPhotos = 6;
                         else if (this.amountLoadedPhotos !== 4 && this.windowWidth <= 1200) this.amountLoadedPhotos = 4;
                         else if (this.amountLoadedPhotos !== 6 && this.windowWidth > 1200) this.amountLoadedPhotos = 6;
                     }
@@ -1420,9 +1430,14 @@
 
         &__close {
             position: absolute;
-            right: -36px;
-            top: -36px;
-            z-index: 15;
+            right: -15px;
+            top: -50px;
+
+            @include tablets {
+                top: -36px;
+                right: -36px;
+                z-index: 15;
+            }
         }
 
         &__control {

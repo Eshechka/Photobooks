@@ -1,7 +1,6 @@
 <template>
         
     <div class="big-card">
-        <!-- <pre>{{comments}}</pre> -->
         <div class="big-card__card">
 
             <div class="big-card__card-img">
@@ -63,7 +62,8 @@
                                 v-model="newComment.commentText"
                             ></textarea>
                             <div class="big-card__my-comment-submit">
-                                <button class="site-button site-button_theme-light" type="submit">Добавить</button>
+                                <!-- <button class="site-button site-button_theme-light" type="submit">Добавить</button> -->
+                                <button class="button button_theme_light button_size_m" type="submit">Добавить</button>
                             </div>
 
                         </form>
@@ -84,14 +84,20 @@
                             </div>
                             <div class="users-comments__buttons-wrapper">
                                 <div class="users-comments__button-edit" v-if="comment.author.id==loggedUserObject.id">
-                                    <button type='button' class="round-button round-button_edit"
-                                        @click="editCommentHandler"
-                                    >Редактировать</button>
+                                    <!-- <button type='button' class="round-button round-button_edit" -->
+                                    <button type='button' class="button button_icon button_size_m button_theme_pale"
+                                        @click="editCommentHandler">
+                                        <span class="button__text">Редактировать</span>
+                                        <span class="button__icon button__icon_edit"></span>
+                                    </button>
                                 </div>
                                 <div class="users-comments__button-delete" v-if="comment.author.id==loggedUserObject.id">
-                                    <button type='button' class="round-button round-button_delete"
-                                        @click="deleteCommentHandler(comment.id)"
-                                    >Удалить</button>
+                                    <!-- <button type='button' class="round-button round-button_delete" -->
+                                    <button type='button' class="button button_icon button_size_m button_theme_carrot"
+                                        @click="deleteCommentHandler(comment.id)">
+                                        <span class="button__text">Удалить</span>
+                                        <span class="button__icon button__icon_delete"></span>                                        
+                                    </button>
                                 </div>
                             </div>
 
@@ -303,13 +309,14 @@
             background-color: rgba(black, 0.7);
 
             @include tablets {
-                height: 398px;
+                height: 450px;
+                /* height: 398px; */
             }
         }
 
         &__img {
-            /* object-fit: cover; */
-            object-fit: contain;
+            object-fit: cover;
+            /* object-fit: contain; */
             width: 100%;
             height: 100%;
         }
@@ -387,7 +394,7 @@
 
         &__desc {
             padding: 10px;
-            padding-bottom: 30px;
+            /* padding-bottom: 30px; */
             background-color: $color-white;
         }
 
@@ -403,7 +410,8 @@
             overflow: hidden;
 
             @include tablets {
-                height: 70px;
+                height: 53px;
+                /* height: 70px; */
             }
         }
 

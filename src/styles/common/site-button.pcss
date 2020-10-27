@@ -1,8 +1,10 @@
+$icons: (home, logout, edit, plus, up, close, delete);
+$icons-changing: (home, edit, logout);
+
 .button {
 	display: inline-flex;
 	align-items: center;
-	// 
-	// padding: 10px 20px;
+	text-decoration: none;
 	white-space: nowrap;
 	font-family: Panton-Bold;
 	background-color: $color-blue;
@@ -36,25 +38,19 @@
 		background-size: 20px;
 		background-position: 50%;
 
-		&:hover {
-			background-size: 22px;
-		}
-
-		&_plus {		
-			background-image: svg-load('add.svg', fill=rgba(#{$color-text}, 0.4));
-		}
-		&_edit {		
-			background-image: svg-load('edit.svg', fill=rgba(#{$color-text}, 0.6));
+		@each $icon in $icons {
+			&_#{$icon} {
+				background-image: svg-load('#{$icon}.svg', fill=rgba(#{$color-text}, 0.6), height='20px')
+			}
 		}
 	}
 
-// ----- views -----
-	&_icon {
-		padding-left: 30px;
-		position: relative;
+	&:hover .button__icon{
+		background-size: 20px;
 	}
 
-// ----- sizes -----
+
+	// ----- sizes -----
 	&_size_s {
 		border-radius: 50%;		
 		width: 40px;
@@ -63,12 +59,20 @@
 	&_size_m {
 		min-height: 38px;
 		padding: 10px 20px;
+		
+		& .button__icon {
+			left: 25px;
+		}
 	}
 	&_size_l {
 		min-width: 260px;
 		min-height: 38px;
 		padding: 10px 20px;
 		justify-content: center;
+
+		& .button__icon {
+			left: 20px;
+		}
 
 		@include tablets {
 			min-width: 240px;
@@ -80,13 +84,18 @@
 		height: 40px; 
 		font-size: 0px;
 
+		& .button__icon {
+			left: 50%;
+			transform: translate(-50%, -50%);
+		}
+
 		@include tablets {
+			border-radius: 50%;	
 
 			&:not(.disabled):hover, &:not(:disabled):hover,
 			&:active, &:focus {
 				font-size: 14px;
 				width: unset;
-				padding-left: 43px;
 				border-radius: 20px;
 				padding-right: 14px;
 
@@ -98,9 +107,45 @@
 		}
 	}
 
+// ----- icon's views -----
+	&_icon {
+		position: relative;
+
+		& .button__text {
+			padding-left: 30px;
+		}
+	}
+
+	&_icon_space {
+		position: relative;
+
+		& .button__text {
+			padding-left: 45px;
+		}
+		// & .button__icon {
+		// 	background-size: 22px;
+		// }
+	}
+
+	&_icon_expand {
+		position: relative;
+
+		& .button__text {
+			padding-left: 30px;
+		}
+		// &:hover .button__icon {
+		// 	background-size: 22px;
+		// }
+		& .button__icon {
+			background-size: 20px;
+		}
+		&:hover .button__icon {
+			background-size: 22px;
+		}
+	}
+
 // ----- themes -----
-	&_theme_light {
-		// min-width: unset;
+	&_theme_light.button {
 		background-color: $color-white;
 		color: $color-blue;
 		border: 2px solid $color-blue;
@@ -120,9 +165,9 @@
 		}
 	}
 
-	&_theme_pale {
-		background-color: transparent;
-		color: transparent;
+	&_theme_pale.button {
+		background-color: $color-white;
+		color: rgba($color-text, 0.8);
 		border: none;
 		box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.22);
 
@@ -131,13 +176,13 @@
 		}
 		&:not(.disabled):hover, &:not(:disabled):hover {
 			box-shadow: 0 1px 10px 5px rgba(0,0,0,.22);
-			background-color: transparent;
-			color: transparent;
+			background-color: $color-white;
+			color: rgba($color-text, 0.6);
 		}
 		&:active, &:focus {
 			box-shadow: 0 1px 10px 5px rgba(0,0,0,.22);
-			background-color: transparent;
-			color: transparent;
+			background-color: $color-white;
+			color: rgba($color-text, 0.6);
 		}
 	}
 
@@ -145,56 +190,62 @@
 		background-color: $color-white;
 		color: $color-white;
 		border: none;
+		border-radius: 50%;		
+
 
 		&.disabled, &:disabled {
 			background-color: rgba($color-text, 0.5);
 		}
 		&:hover {
 			& .button__icon {				
-				
-				&_edit {
-					background-image: svg-load('edit.svg', fill=rgba(#{$color-white}, 0.99));
+				@each $icon in $icons-changing {
+					&_#{$icon} {
+						background-image: svg-load('#{$icon}.svg', fill=rgba(#{$color-white}, 0.99))
+					}
 				}
 			}
 		}
 
 		& .button__icon {				
-				
-			&_edit {
-				background-position: 50%;
-				background-image: svg-load('edit.svg', fill=rgba(#{$color-text}, 0.6));
+			background-position: 50%;
+
+			@each $icon in $icons-changing {
+				&_#{$icon} {
+					background-image: svg-load('#{$icon}.svg', fill=rgba(#{$color-text}, 0.6))
+				}
 			}
 		}
 
 	}
 
-	// 	&_theme_carrot {
-	// 		// min-width: unset;
-	// 		background-color: $color-white;
-	// 		color: $color-blue;
-	// 		border: 2px solid $color-blue;
+	&_theme_carrot.button {
+		background-color: $color-carrot;
+		color: $color-white;
 
-	// 		&.disabled, &:disabled {
-	// 			color: rgba($color-blue, 0.3);
-	// 			border: 2px solid rgba($color-blue, 0.3);
-	// 		}
-	// 		&:not(.disabled):hover, &:not(:disabled):hover {
-	// 			background-color: $color-blue;
-	// 			color: $color-white;
-	// 		}
-	// 		&:active, &:focus {
-	// 			background-color: transparent;
-	// 			color: rgba($color-blue, 0.7);
-	// 			border: 2px solid rgba($color-blue, 0.7);
-	// 		}
-	// 	}
+		&.disabled, &:disabled {
+			background-color: rgba($color-text, 0.3);
+			border: 2px solid rgba($color-blue, 0.3);
+		}
+		&:not(.disabled):hover, &:not(:disabled):hover {
+			background-color: rgba($color-carrot, 0.8);
+		}
+		&:active, &:focus {
+			background-color: rgba($color-carrot, 0.8);
+		}
+		& .button__icon {
 
-	&_theme_minimalizm {
+			@each $icon in $icons {
+				&_#{$icon} {
+					background-image: svg-load('#{$icon}.svg', fill=rgba(#{$color-white}, 0.99), height='20px')
+				}
+			}
+		}
+	}
+
+	&_theme_minimalizm.button {
 		padding: 0;
 		color: $color-blue;
 		font-family: 'Proxima Nova Semibold';
-		// min-width: unset;
-		// min-height: unset;
 
 		&:active, &:focus {
 			background-color: transparent;
@@ -209,7 +260,6 @@
 			color: rgba($color-blue-hover, 1);
 		}
 	}
-
 }
 
 
@@ -333,8 +383,6 @@
 				padding-left: 43px;
 				border-radius: 20px;
 		}
-
-
 	}
 	&_home {		
 		background-image: svg-load('home.svg', fill=rgba(#{$color-text}, 0.6));
@@ -350,7 +398,7 @@
 			&:hover {
 				font-size: 14px;
 				background-color: rgb(40, 187, 240);
-				background-image: svg-load('off.svg', fill=rgba(#{$color-white}, 0.99));
+				// background-image: svg-load('off.svg', fill=rgba(#{$color-white}, 0.99));
 				background-position: 12px;
 				box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.22);
 				min-height: 40px;
@@ -365,7 +413,7 @@
 	&_logout {
 		font-size: 0px;
 		color: $color-white;
-		background-image: svg-load('off.svg', fill=rgba(#{$color-text}, 0.6));
+		// background-image: svg-load('off.svg', fill=rgba(#{$color-text}, 0.6));
 		transition: background-position 0.7s ease;
 
 		@include tablets {
@@ -373,7 +421,7 @@
 			&:hover {
 				font-size: 14px;
 				background-color: rgb(40, 187, 240);
-				background-image: svg-load('off.svg', fill=rgba(#{$color-white}, 0.99));
+				// background-image: svg-load('off.svg', fill=rgba(#{$color-white}, 0.99));
 				background-position: 12px;
 				box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.22);
 				min-height: 40px;
@@ -406,7 +454,7 @@
 		}
 	}
 	&_plus {		
-		background-image: svg-load('add.svg', fill=rgba(#{$color-text}, 0.4));
+		// background-image: svg-load('add.svg', fill=rgba(#{$color-text}, 0.4));
 	}
 	&_up {
 		background-color: rgba($color-text, 0.4);
@@ -420,11 +468,19 @@
 		}
 	}
 	&_close-transparent {
+		background-size: 30px;
+		width: 60px;
+		height: 60px;
 		background-color: transparent;
-		background-size: 20px;
 		background-position: center;
 		background-image: svg-load('close.svg', fill=rgba(#a0a09f, 0.99));
 		box-shadow: unset;
+
+		@include tablets {
+			background-size: 20px;
+			width: 40px;
+			height: 40px;
+		}
 	}
 	&_close {
 		position: absolute;
