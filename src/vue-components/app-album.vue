@@ -309,16 +309,17 @@
                             ></appBigCard>                            
                         </flickity>
 
-                        <div class="big-card-slider__close">
+                        <!-- <div class="big-card-slider__close"> -->
                             <!-- !!!!!!!!!!!!! что-то одно из этого надо оставить -->
-                            <!-- <button class="round-button round-button_close-transparent" type="button"
+                            <!-- <button class="round-button round-button_close-transparent" type="button" -->
+                            <button class="big-card-slider__control big-card-slider__control_close" type="button"
                                 @click="openBigMyPhoto=false"
-                            ></button> -->
-                            <button class="button button_icon button_size_s button_theme_pale" type="button"
+                            ></button>
+                            <!-- <button class="button button_icon button_size_s button_theme_pale" type="button"
                                 @click="openBigMyPhoto=false">
                                 <span class="button__icon button__icon_close"></span>
-                                </button>
-                        </div>
+                                </button> -->
+                        <!-- </div> -->
 
                         <button type="button" class="big-card-slider__control big-card-slider__control_prev"
                             @click="previous()"
@@ -339,7 +340,7 @@
 			<div class="footer__container">	
 	
 				<div class="footer__button-up">
-                    <button class="button button_size_s button_icon button_theme_pale"
+                    <button class="button button_size_s button_icon_expand button_theme_pale"
                         @click="scrollToTop">
                         <span class="button__icon button__icon_up"></span>
                     </button>
@@ -1046,34 +1047,66 @@
         position: relative;
 
 
-        &__close {
+        /* &__close {
             position: absolute;
             right: -36px;
             top: -36px;
             z-index: 15;
-        }
+        } */
 
         &__control {
             position: absolute;
             display: none;
+            z-index: 15;
+            background-repeat: no-repeat;
+            background-position: 50%;
+            background-size: 15px;
+            height: 30px;
+            width: 20px; 
+
+            &_close {
+                display: block;
+                width: 40px;
+                height: 40px;
+                background-image: svg-load('close.svg', fill=rgba(#f0f0ec, 0.99));
+                background-size: 30px;
+                top: 0px;
+                right: 0;
+
+                &:hover,&:active,&:focus {
+                    outline: none;
+                    background-size: 34px;
+                }
+            }
 
             @include tablets {
                 display: block;
-                top: 190px;
-                z-index: 15;
-                background-repeat: no-repeat;
-                background-position: 50%;
-                background-image: svg-load('arrow_left.svg', fill=rgba(#a0a09f, 0.99));
-                background-size: 15px;
-                height: 30px;
-                width: 20px;            
+                    &:hover,&:active,&:focus {
+                        background-size: 16px;
+                    }
 
                 &_prev {
                     left: -25px;
+                    top: 190px;
+                    background-image: svg-load('arrow_left.svg', fill=rgba(#a0a09f, 0.99));
                 }
                 &_next {
                     right: -25px;
+                    top: 190px;
+                    background-image: svg-load('arrow_left.svg', fill=rgba(#a0a09f, 0.99));
                     transform: rotate(180deg);
+                }
+                &_close {                    
+                    width: 40px;
+                    height: 40px;
+                    background-size: 20px;
+                    background-image: svg-load('close.svg', fill=rgba(#a0a09f, 0.99));
+                    right: -36px;
+                    top: -36px;
+
+                    &:hover,&:active,&:focus {
+                        background-size: 24px;
+                    }
                 }
             }
         }

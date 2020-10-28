@@ -1,4 +1,4 @@
-$icons: (home, logout, edit, plus, up, close, delete);
+$icons: (home, logout, edit, plus, up, close, delete, heart);
 $icons-changing: (home, edit, logout);
 
 .button {
@@ -7,6 +7,7 @@ $icons-changing: (home, edit, logout);
 	text-decoration: none;
 	white-space: nowrap;
 	font-family: Panton-Bold;
+	font-size: 16px;
 	background-color: $color-blue;
 	color: $color-white;
 	border-radius: 30px;
@@ -43,6 +44,13 @@ $icons-changing: (home, edit, logout);
 				background-image: svg-load('#{$icon}.svg', fill=rgba(#{$color-text}, 0.6), height='20px')
 			}
 		}
+
+		&_up {
+			width: 20px;
+		}
+		// &_heart {
+		// 	background-image: svg-load('heart.svg', viewBox='53 56 22 17', height='18px', fill=rgb(238, 70, 52), stroke-width=2px, stroke=rgba(#{$color-white}, 0.95));
+		// }
 	}
 
 	&:hover .button__icon{
@@ -115,7 +123,6 @@ $icons-changing: (home, edit, logout);
 			padding-left: 30px;
 		}
 	}
-
 	&_icon_space {
 		position: relative;
 
@@ -126,7 +133,6 @@ $icons-changing: (home, edit, logout);
 		// 	background-size: 22px;
 		// }
 	}
-
 	&_icon_expand {
 		position: relative;
 
@@ -166,7 +172,8 @@ $icons-changing: (home, edit, logout);
 	}
 
 	&_theme_pale.button {
-		background-color: $color-white;
+		// background-color: $color-white;
+		background-color: #f6f6f6;
 		color: rgba($color-text, 0.8);
 		border: none;
 		box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.22);
@@ -238,6 +245,9 @@ $icons-changing: (home, edit, logout);
 				&_#{$icon} {
 					background-image: svg-load('#{$icon}.svg', fill=rgba(#{$color-white}, 0.99), height='20px')
 				}
+			}
+			&_heart {
+				background-image: svg-load('heart.svg', viewBox='53 56 22 17', height='18px', fill=rgb(238, 70, 52), stroke-width=2px, stroke=rgba(#{$color-white}, 0.95));
 			}
 		}
 	}

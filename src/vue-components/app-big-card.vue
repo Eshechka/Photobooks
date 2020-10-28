@@ -16,10 +16,13 @@
                 <div class="big-card__name">{{cardObject.author.name}}</div>
 
                 <div class="big-card__likes">
-                    <button type="button" class="big-card__button-likes"
+                    <!-- <button type="button" class="big-card__button-likes" -->
+                    <button type="button" class="button button_icon button_size_m button_theme_carrot big-card__button-likes"
                         @click.prevent="plusMyLike"
-                        :class="{'big-card__button-likes_active' : isActiveLike}"
-                    >{{cardObject.likeCount}}</button>
+                        :class="{'big-card__button-likes_active' : isActiveLike}">
+                        <span class="button__text">{{cardObject.likeCount}}</span>
+                        <span class="button__icon button__icon_heart"></span>
+                    </button>
                 </div>
 
             </div>
@@ -83,22 +86,22 @@
                                 <div class="users-comments__text">{{comment.commentText}}</div>
                             </div>
                             <div class="users-comments__buttons-wrapper">
-                                <div class="users-comments__button-edit" v-if="comment.author.id==loggedUserObject.id">
+                                <!-- <div class="users-comments__button-edit"> -->
                                     <!-- <button type='button' class="round-button round-button_edit" -->
-                                    <button type='button' class="button button_icon button_size_m button_theme_pale"
+                                    <button type='button' class="button button_icon button_size_m button_theme_pale users-comments__buttonspace" v-if="comment.author.id==loggedUserObject.id"
                                         @click="editCommentHandler">
                                         <span class="button__text">Редактировать</span>
                                         <span class="button__icon button__icon_edit"></span>
                                     </button>
-                                </div>
-                                <div class="users-comments__button-delete" v-if="comment.author.id==loggedUserObject.id">
+                                <!-- </div> -->
+                                <!-- <div class="users-comments__button-delete" v-if="comment.author.id==loggedUserObject.id"> -->
                                     <!-- <button type='button' class="round-button round-button_delete" -->
-                                    <button type='button' class="button button_icon button_size_m button_theme_carrot"
+                                    <button type='button' class="button button_icon button_size_m button_theme_carrot" v-if="comment.author.id==loggedUserObject.id"
                                         @click="deleteCommentHandler(comment.id)">
                                         <span class="button__text">Удалить</span>
                                         <span class="button__icon button__icon_delete"></span>                                        
                                     </button>
-                                </div>
+                                <!-- </div> -->
                             </div>
 
                         </li>
@@ -371,19 +374,12 @@
         }
 
         &__button-likes {
-            font-family: 'Panton-Bold';
-            font-size: 16px;
-            height: 20px;
-            color: $color-white;
-            padding-left: 50px;
 
-            background-repeat: no-repeat;
-            background-size: 20px;
-            background-position: 18px 50%;
-            background-image: svg-load('heart.svg', viewBox='53 56 22 17', height='18px', fill=rgb(238, 70, 52), stroke-width=2px, stroke=rgba(#{$color-white}, 0.95));
+            &_active.button {
 
-            &_active {
-                background-image: svg-load('heart.svg', viewBox='53 56 22 17', height='18px', fill=rgba(#{$color-white}, 0.95), stroke-width=2px, stroke=rgb(238, 70, 52));
+                & .button__icon {
+                    background-image: svg-load('heart.svg', viewBox='53 56 22 17', height='18px', fill=rgba(#{$color-white}, 0.95), stroke-width=2px, stroke=rgb(238, 70, 52));
+                }
             }
 
             &:active, &:focus {
@@ -563,6 +559,11 @@
 
         &__buttons-wrapper {
             display: flex;
+            margin-top: 10px;
+        }
+
+        &__buttonspace {
+            margin-right: 10px;
         }
 
     }
