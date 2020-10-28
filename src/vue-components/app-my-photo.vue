@@ -1,5 +1,4 @@
 <template>    
-
 	<div class="my-photo">
 		<div class="my-photo__img-my-photo">
 
@@ -9,13 +8,16 @@
             ></div>
 		
 			<div class="my-photo__comments-likes-wrapper">					
-				<div class="my-photo__info-button my-photo__info-button_comments">{{myPhotoObject.commentCount}}</div>
+				<!-- <div class="my-photo__info-button my-photo__info-button_comments">{{myPhotoObject.commentCount}}</div> -->
+				<div class="my-photo__info-button my-photo__info-button_comments">{{myPhotoObject.comments.length}}</div>
+
 				<div class="my-photo__info-button my-photo__info-button_likes">{{myPhotoObject.likeCount}}</div>
+				<!--!!!!!!! это расскомментить, как будут готовы лайки <div class="my-photo__info-button my-photo__info-button_likes">{{myPhotoObject.likes.length}}</div> -->
 			</div>
 		</div>
 
 		<div class="my-photo__name-wrapper">
-			<button type="button" class="my-photo__button my-photo__button_edit"
+			<button type="button" class="my-photo__button my-photo__button_edit" v-if="myPhotoObject.author.id==loggedUserObject.id"
                 @click="$emit('click-edit-my-photo', myPhotoObject)"
             ></button>
 			<div class="my-photo__name"> {{myPhotoObject.title}} </div>			
@@ -34,6 +36,7 @@
     export default {
         props: {
           myPhotoObject: Object,
+          loggedUserObject: Object,
         },
 
         data() {

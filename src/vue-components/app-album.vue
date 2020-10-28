@@ -12,17 +12,7 @@
 			<div class="header__container"
                 ref='header-container'>
 
-                <div class="header__button-edit" v-if="currentAlbumObject.author.id==loggedUserObject.id">
-                    <button type='button' class="button button_icon_space button_size_changing button_theme_color_changing"
-                        @click="openEditHeader=true">
-                        <span class="button__text">Редактировать</span>
-                        <span class="button__icon button__icon_edit"></span>
-                    </button>
-                    <!-- <button type='button' class="round-button round-button_edit" -->
-                        <!-- @click="openEditHeader=true"                        
-                    >Редактировать</button> -->
-                </div>
-                <div class="header__button-home" v-if="currentAlbumObject.author.id!==loggedUserObject.id"
+                <div class="header__button-home" 
                     :class="{'header__button-home_scrolled' : isScrolledHeader}">
                     <router-link class="button button_icon_space button_size_changing button_theme_color_changing"
                         to="/"
@@ -35,6 +25,16 @@
                         @click.prevent
                     >На главную                    
                     </router-link> -->
+                </div>
+                <div class="header__button-edit" v-if="currentAlbumObject.author.id==loggedUserObject.id">
+                    <button type='button' class="button button_icon_space button_size_changing button_theme_color_changing"
+                        @click="openEditHeader=true">
+                        <span class="button__text">Редактировать</span>
+                        <span class="button__icon button__icon_edit"></span>
+                    </button>
+                    <!-- <button type='button' class="round-button round-button_edit" -->
+                        <!-- @click="openEditHeader=true"                        
+                    >Редактировать</button> -->
                 </div>
 
 
@@ -61,7 +61,8 @@
                 <div class="header__album-info-wrapper">					
                     <div class="header__info-button header__info-button_photos"> {{+thisAlbumPhotos.length}} </div>
                     <div class="header__info-button header__info-button_likes"> {{+thisAlbumPhotos.reduce((sum, myPhoto) => sum + myPhoto.likeCount, 0)}} </div>
-                    <div class="header__info-button header__info-button_comments"> {{+thisAlbumPhotos.reduce((sum, myPhoto) => sum + myPhoto.commentCount, 0)}} </div>
+                    <!-- !!!! раскомментить как будут готовы лайки <div class="header__info-button header__info-button_likes"> {{+thisAlbumPhotos.reduce((sum, myPhoto) => sum + myPhoto.likes.length, 0)}} </div> -->
+                    <div class="header__info-button header__info-button_comments"> {{+thisAlbumPhotos.reduce((sum, myPhoto) => sum + myPhoto.comments.length, 0)}} </div>
                 </div>
             </div>
             
@@ -143,6 +144,7 @@
                         <li v-for="myPhoto in thisAlbumPhotos" :key="myPhoto.id" class="my-photos__photos-item" >
                             <appMyPhoto 
                                 :myPhotoObject="myPhoto"
+                                :loggedUserObject="loggedUserObject"
                                 @click-edit-my-photo="editMyPhotoHandler"
                                 @click-my-photo="clickMyPhotoHandler"
                             ></appMyPhoto>
@@ -709,13 +711,11 @@
         &__button-home {
             position: absolute;
             top: 20px;
-            left: 0;
+            right: 0;
             z-index: 9;
 
             @include tablets {
-                top: 70px;
-                right: 0;
-                left: unset;
+                
             }
 
             &_scrolled {
@@ -730,8 +730,13 @@
         &__button-edit {
             position: absolute;
             top: 20px;
-            right: 0;
+            right: 50px;
             z-index: 9;
+
+            @include tablets {
+                right: 0;
+                top: 70px;
+            }
         }
 
 
