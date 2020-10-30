@@ -125,9 +125,7 @@
     import dataJSON_all from '../../db.json';
 
     import $axios from '../requests';
-    
-    const baseUrl = `https://xeniaweb.online/storage`;
-
+    import { baseStorageUrl } from '../requests.js';
     export default {
         props: {
             cardObject: Object,
@@ -136,8 +134,8 @@
 
         data() {
           return {
-            urlPhotos: baseUrl+'/photos',
-            urlAvatars: baseUrl+'/avatars',
+            urlPhotos: baseStorageUrl+'/photos',
+            urlAvatars: baseStorageUrl+'/avatars',
 
             likes: dataJSON_all.likes,
 

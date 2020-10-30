@@ -30,9 +30,8 @@
 
 
 <script >
-    import axios from '../requests.js';
-	const baseUrl = `https://xeniaweb.online/storage`;
-	
+	import axios from '../requests.js';
+	import { baseStorageUrl } from '../requests.js';	
     export default {
         props: {
 		  myAlbumObject: Object,
@@ -41,7 +40,7 @@
 
 		data() {
 			return {
-				urlPhotos: baseUrl+'/photos',
+				urlPhotos: baseStorageUrl+'/photos',
 			}
 		},
 		methods: {

@@ -41,9 +41,8 @@
 </template>
 
 
-<script >
-    const baseUrl = `https://xeniaweb.online/storage`;
-    
+<script >;
+    import { baseStorageUrl } from '../requests.js';    
     export default {
         props: {
           cardObject: Object
@@ -51,8 +50,8 @@
 
         data() {
           return {
-                urlAvatars: baseUrl+'/avatars',
-                urlPhotos: baseUrl+'/photos',
+                urlAvatars: baseStorageUrl+'/avatars',
+                urlPhotos: baseStorageUrl+'/photos',
 
             }
         },

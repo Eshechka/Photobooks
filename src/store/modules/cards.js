@@ -29,7 +29,11 @@ export default {
         async addCard(store, card) {
             try {
                 const { data } = await $axios.post('/v1/photos', card, {headers: {'Content-Type': 'multipart/form-data'}});
-                store.commit('ADD_ALBUM_CARD', data.card);
+                const response = await $axios.get(`/v1/photos/${data.card.id}`,
+                                                { params: {'include':'author,comments,likes'} },
+                                                {'Content-Type': 'application/json'}
+                    );
+                store.commit('ADD_ALBUM_CARD', response.data.card);
             }
             catch(error) { throw new Error ( error.response.data.error || error.response.data.message ); }
         },
@@ -50,9 +54,8 @@ export default {
         async refreshAlbumCards(store, albumId) {               
                 try {               
                 const { data } = await $axios.get(`/v1/photos`,
-                                    { params: {'include':`author`, 'include':`comments`, 'limit': 50, 'where':`albumId:eq:${albumId}`, 'sort':'createdAt:desc'} },
+                                    { params: {'include':'author,comments,likes', 'limit': 50, 'where':`albumId:eq:${albumId}`, 'sort':'createdAt:desc'} },
                                     {'Content-Type': 'application/json'}
-                                    // 'include':`likes`,
                     );
                               
                 store.commit('SET_ALBUM_CARDS', data.cards);
@@ -62,9 +65,8 @@ export default {
         async updateAllCards(store) {               
                 try {               
                 const { data } = await $axios.get(`/v1/photos`,
-                                    { params: {'include':`author`, 'include':`comments`, 'limit': 50, 'sort':'createdAt:desc'} },
+                                    { params: {'include':'author,comments,likes', 'limit': 50, 'sort':'createdAt:desc'} },
                                     {'Content-Type': 'application/json'}
-                                    // 'include':`likes`,
                     );
                               
                 store.commit('SET_CARDS', data.cards);

@@ -53,11 +53,11 @@
                     </div>
                     
                     <div class="form-changeAlbum__buttons">
-                        <button class="site-button" type="submit">Сохранить</button>
-                        <button class="site-button site-button_theme-just-text" type="button"
+                        <button class="button button_size_m" type="submit">Сохранить</button>    
+                        <button class="button button_size_m button_theme_minimalizm" type="button"
                             @click.prevent="$emit('click-close-change-my-album')"                            
                         >Отменить</button>
-                        <button class="round-button round-button_delete" type="button"
+                        <button class="button button_size_m button_theme_carrot" type="button"
                             @click.prevent="deleteAlbumHandler"
                         >Удалить</button>
                     </div>
@@ -71,8 +71,7 @@
 
 
 <script>
-    const baseUrl = `https://xeniaweb.online/storage`;
-    
+    import { baseStorageUrl } from '../requests.js';    
     const renderer = file => {
         const reader = new FileReader();
 
@@ -99,7 +98,7 @@
         data() {
             return {
                 
-                urlPhotos: baseUrl+'/photos',
+                urlPhotos: baseStorageUrl+'/photos',
 
                 title: 'Добавить альбом',
                 coverTitle: "Загрузить обложку",
@@ -147,15 +146,14 @@
         },
         submitChangeAlbumHandler() {
 
-            if (this.mode=='add' && this.renderedCover) {
+            if (this.mode=='add' && this.renderedCover) {// else console.log('no file');//!!!!!!! validation
                 const formData = new FormData();
                     formData.append('preview', this.loadedCover);
                     formData.append('title', this.myChangeCurrentObject.title);
                     formData.append('description', this.myChangeCurrentObject.description);
                     formData.append('authorId', this.authorId);
                     this.$emit('submit-change-my-album', formData, this.mode);
-            } 
-            // else console.log('no file');//!!!!!!! validation
+            }
             else if (this.mode=='edit') {
                 const reNewData = {};
                     // reNewData.preview=this.loadedCover;

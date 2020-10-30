@@ -12,13 +12,9 @@ export default {
 
             return userObjIsEmpty === false;
         },
-        // getLoggedUser: state => {
-        //     return state.user;
-        // }
     },
     mutations: {
         SET_USER(state, user) {
-            console.log('SET_USER: ', user);
             state.user = user;
         },
         CLEAR_USER(state) {

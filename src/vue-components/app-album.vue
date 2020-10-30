@@ -9,8 +9,7 @@
 
 		<header class="header" :style="{ backgroundImage: `url(${urlPhotos}/${currentAlbumObject.preview})` }">
 	
-			<div class="header__container"
-                ref='header-container'>
+			<div class="header__container" ref='header-container'>
 
                 <div class="header__button-home" 
                     :class="{'header__button-home_scrolled' : isScrolledHeader}">
@@ -20,41 +19,33 @@
                         <span class="button__text">На главную</span>
                         <span class="button__icon button__icon_home"></span>
                     </router-link>
-                    <!-- <router-link class="round-button round-button_home"
-                        to="/"
-                        @click.prevent
-                    >На главную                    
-                    </router-link> -->
                 </div>
                 <div class="header__button-edit" v-if="currentAlbumObject.author.id==loggedUserObject.id">
                     <button type='button' class="button button_icon_space button_size_changing button_theme_color_changing"
-                        @click="openEditHeader=true">
+                        @click="clickEditAlbumHeader">
                         <span class="button__text">Редактировать</span>
                         <span class="button__icon button__icon_edit"></span>
                     </button>
-                    <!-- <button type='button' class="round-button round-button_edit" -->
-                        <!-- @click="openEditHeader=true"                        
-                    >Редактировать</button> -->
                 </div>
 
 
-					<div class="header__user" :class="{header__user_scrolled : isScrolledHeader}">
-						<div class="header__avatar">
-							<div class="avatar">
-								<img class="avatar__img" :src='`${urlAvatars}/${currentAlbumObject.author.avatar}`' alt="avatar">
-							</div>
-						</div>
-						<h1 class="header__title" v-if="isScrolledHeader"> {{currentAlbumObject.title}} </h1>
-                        
-						<h1 class="header__title" v-else> {{currentAlbumObject.author.name}} </h1>
+                <div class="header__user" :class="{header__user_scrolled : isScrolledHeader}">
+                    <div class="header__avatar">
+                        <div class="avatar">
+                            <img class="avatar__img" :src='`${urlAvatars}/${currentAlbumObject.author.avatar}`' alt="avatar">
+                        </div>
+                    </div>
+                    <h1 class="header__title" v-if="isScrolledHeader"> {{currentAlbumObject.title}} </h1>
+                    
+                    <h1 class="header__title" v-else> {{currentAlbumObject.author.name}} </h1>
 
-					</div>
+                </div>
 
-					<div class="header__album-desc">
-						<h2 class="header__album-title"> {{currentAlbumObject.title}} </h2>
-                        
-						<div class="header__text"> {{currentAlbumObject.description}} </div>
-					</div>
+                <div class="header__album-desc">
+                    <h2 class="header__album-title"> {{currentAlbumObject.title}} </h2>
+                    
+                    <div class="header__text"> {{currentAlbumObject.description}} </div>
+                </div>
 			</div>
 
             <div class="header__album-info">
@@ -73,41 +64,53 @@
                     <div class="edit-header__card">
                     
                             <div class="edit-header__user">
+                                <div class="edit-header__user-img-wrapper">                                
                                     <img class="edit-header__user-img" :src="`${urlAvatars}/${currentAlbumObject.author.avatar}`" alt="avatar image">
+                                </div>
                                     <div class="edit-header__user-name">{{currentAlbumObject.author.name}}</div>
                             </div>
 
                         <div class="edit-header__form">                            
 
-                            <form class="form-edit-header">
+                            <form class="form-edit-header"
+                                @submit.prevent="submitChangeAlbumHeaderHandler"
+                            >
+                                <div class="form-edit-header__fields-wrapper">
 
-                                <label class="form-edit-header__label">
-                                    <input class="form-edit-header__input" type="text" placeholder="Антон Черепов">
-                                </label>
-
-
-                                <label class="form-edit-header__label">
-                                    <textarea class="form-edit-header__input form-edit-header__input_textarea" cols="20" rows="2" placeholder="Описание альбома"></textarea>
-                                </label>
-
-
-                                <div class="form-edit-header__load-cover">
-
-                                    <label for="load-bgcover-header" class="form-edit-header__label form-edit-header__label_file-load">
-                                        <input type="file" id="load-bgcover-header" class="form-edit-header__input-load">
-                                        <div class="form-edit-header__cover-img"></div>
-                                        <div class="form-edit-header__cover-img-text">Изменить фон</div>
+                                    <label class="form-edit-header__label">
+                                        <input class="form-edit-header__input" placeholder="Название альбома"
+                                            v-model="changedAlbum.title"
+                                        >
+                                    </label>
+                                    <label class="form-edit-header__label">
+                                        <textarea class="form-edit-header__input form-edit-header__input_textarea" cols="20" rows="2" placeholder="Описание альбома"
+                                            v-model="changedAlbum.description"
+                                        ></textarea>
                                     </label>
 
+                                    <div class="form-edit-header__load-album-preview">
+
+                                        <label for="load-bgcover-header" class="form-edit-header__label form-edit-header__label_file-load">
+                                            <input type="file" id="load-bgcover-header" class="form-edit-header__input-load"
+                                                @change="loadAlbumPreview">
+                                             <div class="form-edit-header__added-photo" v-if="isAlbumPreviewLoaded"
+                                                :style="{ backgroundImage : `url(${renderedAlbumPreview})` }">
+                                            </div>
+                                            <div class="form-edit-header__cover-img-wrapper" v-if="!isAlbumPreviewLoaded">
+                                                <img class="form-edit-header__cover-img" alt="preview image"                                                    
+                                                    :src="`${urlPhotos}/${currentAlbumObject.preview}`">
+                                            </div>
+                                            <div class="form-edit-header__cover-img-text">{{previewTitle}}</div>
+                                        </label>
+
+                                    </div>
                                 </div>
 
                                 
                                 <div class="form-edit-header__buttons">
-                                    <!-- <button class="site-button" type="submit">Сохранить</button>
-                                    <button class="site-button site-button_theme-just-text" type="button"-->
                                     <button class="button button_size_m" type="submit">Сохранить</button>
                                     <button class="button button_size_m button_theme_minimalizm" type="button"
-                                        @click="openEditHeader=false"
+                                        @click="cancelChangeAlbumHeaderHandler"
                                     >Отменить</button>
                                 </div>
 
@@ -133,9 +136,6 @@
                                 @click="openAddPhoto=true">
                                 <span class="button__icon button__icon_plus"></span>
                             </button>
-                            <!-- <button class="round-button round-button_plus"
-                                @click="openAddPhoto=true"
-                            ></button> -->
                         </div>
                     </div>
         
@@ -159,7 +159,6 @@
                                     <div class="edit-photo__topgroup">
                                         <h4 class="edit-photo__title">Редактировать фотографию</h4>
 
-                                        <!-- <button type="button" class="edit-photo__button edit-photo__button_close" -->
                                         <button type="button" class="button button_icon button_size_s button_theme_minimalizm"
                                             @click="openEditPhoto=false" >
                                             <span class="button__icon button__icon_close"></span>
@@ -194,15 +193,10 @@
                                             </label>
                                     
                                             <div class="form-editPhoto__buttons">
-                                                <!-- <button class="site-button" type="submit">Сохранить</button> -->
-                                                <!-- <button class="site-button site-button_theme-just-text" type="button" -->
                                                 <button class="button button_size_m form-editPhoto__buttonspace" type="submit">Сохранить</button>
                                                 <button class="button button_size_m button_theme_minimalizm" type="button"
                                                     @click="openEditPhoto=false"
                                                 >Отменить</button>
-                                                <!-- <button class="round-button round-button_delete" type="button"
-                                                    @click.prevent="deletePhotoHandle"
-                                                >Удалить</button> -->
                                                 <button class="button button_icon button_size_m button_theme_carrot form-editPhoto__in" type="button"
                                                     @click.prevent="deletePhotoHandle">
                                                     <span class="button__text">Удалить</span>
@@ -226,9 +220,6 @@
 
                                     <div class="add-photo__topgroup">
                                         <h4 class="add-photo__title">Добавить фотографии</h4>
-                                        <!-- <button type="button" class="add-photo__button add-photo__button_close"
-                                            @click="openAddPhoto=false"
-                                        ></button> -->
                                         <button type="button" class="button button_icon button_size_s button_theme_minimalizm"
                                             @click="openAddPhoto=false">
                                             <span class="button__icon button__icon_close"></span>
@@ -278,8 +269,6 @@
                                             </div>
                                     
                                             <div class="form-addPhoto__buttons">
-                                                <!-- <button class="site-button" type="submit">Сохранить</button>
-                                                <button class="site-button site-button_theme-just-text" type="button" -->
                                                 <button class="button button_size_m form-addPhoto__buttonspace" type="submit">Сохранить</button>
                                                 <button class="button button_size_m button_theme_minimalizm" type="button"
                                                     @click="openAddPhoto=false"
@@ -374,7 +363,7 @@
     import { mapState, mapActions } from 'vuex';
 
     import axios from '../requests.js';
-    const baseUrl = `https://xeniaweb.online/storage`;
+    import { baseStorageUrl } from '../requests.js';
 
     const renderer = file => {
         const reader = new FileReader();
@@ -401,8 +390,9 @@
 
         data() {
             return {
-                urlPhotos: baseUrl+'/photos',
-                urlAvatars: baseUrl+'/avatars',
+                urlPhotos: baseStorageUrl+'/photos',
+                urlAvatars: baseStorageUrl+'/avatars',
+                
                 users: dataJSON_users,
 
                 openEditPhoto: false,
@@ -411,12 +401,16 @@
                 openBigMyPhoto: false,
 
                 isScrolledHeader: false,
+                isAlbumPreviewLoaded: false,
                 isPhotosLoaded: false,
 
                 idCurrentClickedPhoto: 0,
 
                 loadedPhotos: [],
                 renderedPhotos: [],
+
+                loadedAlbumPreview: {},
+                renderedAlbumPreview: '',
 
                 bigCardSliderTop: 0,
 
@@ -429,12 +423,14 @@
                     contain: true
                 },
 
-                // loggedUserObject: {
-                //     id: Number,
-                //     author: {
-                //         avatar: '',
-                //     },
-                // }, 
+                previewTitle: 'Изменить превью альбома',
+                changedAlbum: {
+                    id: Number,
+                    description: '',
+                    title: '',
+                    preview: '',
+                },
+
                 loggedUserObject: {
                     id: Number,
                     // cover: '',
@@ -471,6 +467,11 @@
                 return this.allCards.sort( (a, b) => b.id - a.id );
             },
 
+            // currentAlbumObject() {
+            //     // this.currentAlbumObject.preview = this.currentAlbumObject.preview ? this.currentAlbumObject.preview : 'img/no_album_cover.jpg';
+            //     return {...this.currentAlbum};
+            // },
+
             headerContainer() {
                 return this.$refs['header-container'];
             },
@@ -489,14 +490,16 @@
         watch: {
             allCards() {
                 if (this.$refs.flickity) this.$nextTick(this.$refs.flickity.rerender);
+            },
+            currentAlbum(value) {
+                this.currentAlbumObject = {...value};
             }
 
         },
 
         methods: {
             ...mapActions('cards', ['addCard', 'deleteCard', 'changeCard', 'refreshAlbumCards']),
-            // ...mapActions('albums', ['addAlbum', 'deleteAlbum', 'changeAlbum', 'refreshThisAlbum']),
-            ...mapActions('albums', ['refreshThisAlbum']),
+            ...mapActions('albums', ['changeAlbumWithFiles', 'refreshThisAlbum']),
 
             removeRenderedPhotoHandler(photo) {
                 console.log('I want to remove this photo:', photo);
@@ -534,6 +537,47 @@
                 this.changedPhoto = {...myPhotoObject};
                 console.log('this.changedPhoto.photo', this.changedPhoto.photo);
                 console.log('this.changedPhoto', this.changedPhoto);
+            },
+
+            loadAlbumPreview(e) {
+                this.loadedAlbumPreview = e.target.files[0];
+                renderer(this.loadedAlbumPreview).then(pic => {                 
+                    this.renderedAlbumPreview = pic;
+                    this.isAlbumPreviewLoaded = true;
+                    this.previewTitle = "Выбрать превью альбома";
+                });
+            },
+
+
+            async submitChangeAlbumHeaderHandler() {
+                const formData = new FormData();
+                    if (this.loadedAlbumPreview.name) formData.append('preview', this.loadedAlbumPreview);
+                    formData.append('title', this.changedAlbum.title);
+                    formData.append('description', this.changedAlbum.description);
+
+                    let changedAlbumId = this.changedAlbum.id;
+
+                await this.changeAlbumWithFiles( {changedAlbum: formData, changedAlbumId: changedAlbumId} );
+                await this.refreshThisAlbum(this.$route.params.albumid);
+
+                this.openEditHeader=false;
+            },
+
+            cancelChangeAlbumHeaderHandler() {
+                this.isAlbumPreviewLoaded=false;
+                this.previewTitle = "Изменить превью альбома";
+                this.changedAlbum= {
+                    id: Number,
+                    description: '',
+                    title: '',
+                    preview: '',
+                };
+                this.openEditHeader=false;
+            },
+
+            clickEditAlbumHeader() {
+                this.changedAlbum = {...this.currentAlbumObject}; 
+                this.openEditHeader=true;
             },
 
             clickMyPhotoHandler(myPhotoObject) {
@@ -587,8 +631,8 @@
                         formData.append('photo', photo);
                         formData.append('title', 'это обязательное поле?');
                         formData.append('description', 'это обязательное поле? это обязательное поле? это обязательное поле?');
-                        formData.append('commentCount', 0);
-                        formData.append('likeCount', 0);
+                        formData.append('commentCount', 0);//!!!!! потом поменяй поля, оставь только те, которые останутся в итоге в фотке
+                        formData.append('likeCount', 0);//!!!!! потом поменяй поля, оставь только те, которые останутся в итоге в фотке
                         formData.append('isLikedByMe', 0);
                         formData.append('authorId', this.currentAlbumObject.author.id);
                         formData.append('albumId', this.currentAlbumObject.id);
@@ -638,16 +682,10 @@
         async created () {
             await this.updateLoggedUser();
             await this.refreshAlbumCards(this.$route.params.albumid);
-            // try {
-            //     this.currentAlbumObject.author.name = '';
-            //     this.currentAlbumObject.author.avatar = 'no_album_cover.jpg';
-                await this.refreshThisAlbum(this.$route.params.albumid);
-            // }
-            // finally {
-                this.currentAlbumObject = {...this.currentAlbum};
-                this.currentAlbumObject.preview = this.currentAlbumObject.preview ? this.currentAlbumObject.preview : 'img/no_album_cover.jpg';
-            // }
-
+            await this.refreshThisAlbum(this.$route.params.albumid);
+            this.currentAlbumObject = {...this.currentAlbum};
+            this.currentAlbumObject.preview = this.currentAlbumObject.preview ? this.currentAlbumObject.preview : 'img/no_album_cover.jpg';
+            this.changedAlbum = {...this.currentAlbumObject};
         },
 
         mounted() {
@@ -871,7 +909,26 @@
             font-family: 'Panton Bold';
             font-size: 16px;
             color: $color-white;
-            margin-left: 18px;
+            margin-left: 10px;
+        }
+        
+        &__user-img-wrapper {
+            margin-right: 10px;
+            height: 50px;
+            width: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+
+            @include tablets {
+                display: flex;
+                height: 60px;
+                width: 60px;
+            }
+        }        
+        &__user-img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
         }
     }
 
@@ -881,15 +938,51 @@
         flex-direction: column;
         align-items: center;
 
-        &__load-cover {
-            width: 90px;
+        &__fields-wrapper {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            width: 90%;
+            align-items: center;
+
+            @include tablets {
+                flex-wrap: wrap;
+                height: 120px;
+                width: 80%;
+            }            
+        }
+
+        &__load-album-preview {
+            width: 110px;
             min-height: 50px;
             margin-bottom: 20px;
             margin-top: 10px;
         }
 
+        &__added-photo {
+            background-size: cover;
+            background-repeat: no-repeat;
+            border-radius: 50%;
+            overflow: hidden;
+            height: 60px;
+            width: 60px;
+            margin: auto;
+        }
+        
+        &__cover-img-wrapper {
+            border-radius: 50%;
+            overflow: hidden;
+            height: 60px;
+            width: 60px;
+            margin: auto;
+        }
+
         &__cover-img {
-            height: 32px;
+            max-width: unset;
+            max-height: unset;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             background-repeat: no-repeat;
             background-size: 32px;
             background-position: top center;
@@ -901,6 +994,7 @@
             font-size: 12px;
             color: rgba(#{$color-white}, 0.8);
             text-align: center;
+            margin-top: 10px;
         }
 
         &__img {
@@ -913,7 +1007,11 @@
             font-family: 'Proxima Nova Semibold';
             font-size: 14px;
             display: block;
-            width: 90%;
+            width: 100%;
+
+            @include tablets {
+                width: 80%;
+            }
             
             &_file-load {
                 width: 100%;
@@ -936,17 +1034,16 @@
             margin-top: 5px;
 
             &_textarea {
+                height: 100px;
                 resize: none;
+
+                @include tablets {
+                    height: unset;                    
+                }
             }
         }
 
-        /* &__socials {
-            margin-top: 20px;
-            margin-bottom: 10px;
-            width: 88%;
-        } */
-
-         &__buttons {
+        &__buttons {
             padding: 10px;
             height: 60px;
             background: $color-white;

@@ -172,7 +172,6 @@
                                         </div>
                                         <div class="form-edit-header__cover-img-text">Изменить фон</div>
                                     </label>
-
                                     
                                 </div>
 
@@ -425,8 +424,7 @@
     import appMyAlbum from '../vue-components/app-my-album.vue'
     import appChangeAlbum from '../vue-components/app-change-album.vue'
 
-    import dataJSON_socials from '../json/socials.json'
-    const baseUrl = `https://xeniaweb.online/storage`;
+    import { baseStorageUrl } from '../requests.js';    import dataJSON_socials from '../json/socials.json'
 
     import { mapState, mapActions, mapGetters } from 'vuex';
 
@@ -446,8 +444,8 @@
                 openEditHeader: false,
                 openChangeMyAlbum: false,
 
-                urlPhotos: baseUrl+'/photos',
-                urlAvatars: baseUrl+'/avatars',
+                urlPhotos: baseStorageUrl+'/photos',
+                urlAvatars: baseStorageUrl+'/avatars',
                 urlInlineSvgSprite: require('../img/spriteIcons.svg').default,
 
                 isActiveSocial: false,            

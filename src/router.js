@@ -1,16 +1,12 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-// import requests from './requests';
 
 import { store } from './store/index';
-// import axios from 'axios';
+
 import guard from './requests'
 
 Vue.use(VueRouter);
 
-// const guard = axios.create({
-//     baseURL: 'https://xeniaweb.online/api',    
-// });
 const userId = localStorage.getItem('userId');
 
 const routes = [

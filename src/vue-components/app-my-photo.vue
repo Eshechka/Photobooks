@@ -2,7 +2,7 @@
 	<div class="my-photo">
 		<div class="my-photo__img-my-photo">
 
-			<img class="my-photo__img" :src="`${url}/${myPhotoObject.photo}`" alt="photo image">
+			<img class="my-photo__img" :src="`${urlPhotos}/${myPhotoObject.photo}`" alt="photo image">
             <div class="my-photo__img-overlay"
                  @click="$emit('click-my-photo', myPhotoObject)"
             ></div>
@@ -30,9 +30,7 @@
 
 
 <script >
-    import requests from '../requests';
-    const basePhotosUrl = requests.defaults.basePhotosUrl;
-    
+    import { baseStorageUrl } from '../requests.js';    
     export default {
         props: {
           myPhotoObject: Object,
@@ -41,7 +39,8 @@
 
         data() {
           return {
-            url: basePhotosUrl,
+                urlPhotos: baseStorageUrl+'/photos',
+
           }
         },
 
