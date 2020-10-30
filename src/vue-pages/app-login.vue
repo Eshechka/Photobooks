@@ -13,11 +13,9 @@
 
                 <div class="login__form">
 
-                    <form
-                        v-if="stateRegistration"
-                        class="registration"
-						@submit.prevent="registerHandle"
-						>
+                    <form class="registration"
+                        v-if="stateRegistration"                        
+						@submit.prevent="registerHandle">
 
                         <label class="registration__label registration__label_name">
                             
@@ -71,10 +69,9 @@
                     </form>
 
 
-                    <form
+                    <form class="enter"
 						@submit.prevent="loginHandle"
-                        v-if="stateEnter"
-                        class="enter">
+                        v-if="stateEnter">
 
                         <label class="enter__label enter__label_email">					
                             
@@ -125,9 +122,9 @@
                     </form>
                     
 
-                    <form 
-                        v-if="stateForgotPassword"
-                        class="forgot">
+                    <form class="forgot"
+						@submit.prevent="forgotHandle"
+                        v-if="stateForgotPassword">
 
                         <div class="forgot__wrapper">
 
@@ -248,6 +245,10 @@
 			});
 		},
 
+		forgotHandle() {
+			//
+		},
+
     },
 
         
@@ -271,7 +272,7 @@
 	min-width: 320px;
 	font-family: 'Proxima Nova-Light';
 	color: $color-white;	
-	background-color: $color-text;
+	background-color: #86A2B7;
 
     background-image: url('../img/bg.png');
 	background-repeat: no-repeat;

@@ -593,20 +593,12 @@
             },
 
             async saveChangePhotoHandler() {                  
-                try {
                     let newPhotoData = {};
                     newPhotoData.id = this.changedPhoto.id;
                     newPhotoData.description = this.changedPhoto.description;
                     newPhotoData.title = this.changedPhoto.title;
                     await this.changeCard(newPhotoData);
-                }
-                catch(error) { 
-                    console.log('error');
-                    throw new Error ( error.response.data.error || error.response.data.message ); 
-                }
-                finally {
                     this.openEditPhoto = false;
-                }
             },
 
             async deletePhotoHandle() {                  

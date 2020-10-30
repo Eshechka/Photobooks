@@ -47,7 +47,11 @@ export default {
         async changeCard(store, changedCard) {
             try {
                 const { data } = await this.$axios.patch(`/v1/photos/${changedCard.id}`, changedCard);
-                store.commit('CHANGE_ALBUM_CARD', data.card);
+                const response = await $axios.get(`/v1/photos/${data.card.id}`,
+                                                { params: {'include':'author,comments,likes'} },
+                                                {'Content-Type': 'application/json'}
+                    );
+                store.commit('CHANGE_ALBUM_CARD', response.data.card);
             }
             catch(error) { throw new Error ( error.response.data.error || error.response.data.message ); }
         },
