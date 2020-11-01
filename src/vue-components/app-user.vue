@@ -1347,10 +1347,9 @@
 
     .new {
         min-width: 320px;
-        padding: 30px 0;
-        
+        padding: 30px 0;        
         /* position: relative; */
-        min-height: 900px;
+        min-height: $min-height-section-for-slider;
 
         &__container {
             margin: 0 auto;
@@ -1457,12 +1456,14 @@
 
                 &_prev {
                     left: -25px;
-                    top: 190px;
+                    top: calc(520px / 2);
+                    /* top: 190px; */
                     background-image: svg-load('arrow_left.svg', fill=rgba(#a0a09f, 0.99));
                 }
                 &_next {
                     right: -25px;
-                    top: 190px;
+                    /* top: 190px; */
+                    top: calc(520px / 2);
                     background-image: svg-load('arrow_left.svg', fill=rgba(#a0a09f, 0.99));
                     transform: rotate(180deg);
                 }

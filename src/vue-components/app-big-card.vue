@@ -310,7 +310,7 @@
             background-color: rgba(black, 0.7);
 
             @include tablets {
-                height: 450px;
+                height: 520px;
                 /* height: 398px; */
             }
         }

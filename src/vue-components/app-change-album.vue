@@ -53,11 +53,11 @@
                     </div>
                     
                     <div class="form-changeAlbum__buttons">
-                        <button class="button button_size_m" type="submit">Сохранить</button>    
+                        <button class="button button_size_m form-changeAlbum__buttonspace" type="submit">Сохранить</button>    
                         <button class="button button_size_m button_theme_minimalizm" type="button"
                             @click.prevent="$emit('click-close-change-my-album')"                            
                         >Отменить</button>
-                        <button class="button button_size_m button_theme_carrot" type="button"
+                        <button class="button button_size_m button_theme_carrot form-changeAlbum__in" type="button"
                             @click.prevent="deleteAlbumHandler"
                         >Удалить</button>
                     </div>
@@ -169,15 +169,6 @@
         deleteAlbumHandler() {
             this.$emit('delete-album', this.editedAlbumObject.id);
         },
-        // async deleteAlbumHandler() {
-            // try {
-                // await this.deleteAlbum(this.editedAlbumObject.id);
-            // }
-            // finally {
-            //     this.$emit('update-albums');
-            // }
-        // },
-
 
       },
 
@@ -370,6 +361,14 @@
             @include tablets {
                 font-size: 14px;
             }
+        }
+        
+        &__in {
+            margin-left: auto;
+        }
+
+        &__buttonspace {
+            margin-right: 10px;
         }
     }
  

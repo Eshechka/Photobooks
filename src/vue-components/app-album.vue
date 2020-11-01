@@ -535,8 +535,6 @@
             editMyPhotoHandler(myPhotoObject) {
                 this.openEditPhoto=true;
                 this.changedPhoto = {...myPhotoObject};
-                console.log('this.changedPhoto.photo', this.changedPhoto.photo);
-                console.log('this.changedPhoto', this.changedPhoto);
             },
 
             loadAlbumPreview(e) {
@@ -581,7 +579,7 @@
             },
 
             clickMyPhotoHandler(myPhotoObject) {
-                this.bigCardSliderTop = window.pageYOffset + 100;
+                this.bigCardSliderTop = window.pageYOffset + 50;
                 let photoIndex = 0;
                 
                 this.thisAlbumPhotos.find(photo => {
@@ -735,6 +733,12 @@
                 color: $color-text;
                 overflow: hidden;
                 z-index: 15;
+
+                @include desktopHd {
+                    padding: 5px 10%;
+                    /* max-width: 1480px; */
+
+                }
             }
         }
 
@@ -744,15 +748,15 @@
             right: 0;
             z-index: 9;
 
-            @include tablets {
-                
-            }
-
             &_scrolled {
                 position: fixed;
                 top: 15px;
                 right: 5%;
                 z-index: 16;
+
+                @include desktopHd {
+                    right: 10%;
+                }
             }
             
         }
@@ -1070,7 +1074,7 @@
         padding: 30px 0;
         background: $color-white;
         /* position: relative; */
-        min-height: 900px;
+        min-height: $min-height-section-for-slider;
         
         &__container {
             margin: 0 auto;
@@ -1181,12 +1185,14 @@
 
                 &_prev {
                     left: -25px;
-                    top: 190px;
+                    /* top: 190px; */
+                    top: calc(520px / 2);
                     background-image: svg-load('arrow_left.svg', fill=rgba(#a0a09f, 0.99));
                 }
                 &_next {
                     right: -25px;
-                    top: 190px;
+                    /* top: 190px; */
+                    top: calc(520px / 2);
                     background-image: svg-load('arrow_left.svg', fill=rgba(#a0a09f, 0.99));
                     transform: rotate(180deg);
                 }

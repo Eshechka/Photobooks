@@ -44,7 +44,9 @@
 
   @include tablets {
     width: 80%;
-    margin: 0 10%;
+    // margin: 0 10%;
+    max-width: 1480px;
+    margin: 0 max(10%, calc((100% - 1480px) / 2));
   }    
 }
 
