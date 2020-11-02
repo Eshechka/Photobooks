@@ -15,10 +15,11 @@
   "dependencies": {
     "axios": "^0.20.0",
     "normalize.css": "^8.0.1",
+    "v-hotkey": "^0.8.0",
+    "vue": "^2.6.12",
     "vue-flickity": "^1.2.1",
     "vue-router": "^3.3.4",
     "vuelidate": "^0.7.5",
-    "vue": "^2.6.12",
     "vuex": "^3.5.1"
   },
   "devDependencies": {

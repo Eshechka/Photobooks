@@ -221,7 +221,7 @@
                                     <div class="add-photo__topgroup">
                                         <h4 class="add-photo__title">Добавить фотографии</h4>
                                         <button type="button" class="button button_icon button_size_s button_theme_minimalizm"
-                                            @click="openAddPhoto=false">
+                                            @click="closeAddedPhotosHandler">
                                             <span class="button__icon button__icon_close"></span>
                                         </button>
                                     </div>
@@ -242,9 +242,10 @@
                                                             v-for="photo in renderedPhotos" :key="photo.id"
                                                             :style="{ backgroundImage : `url(${photo.pic})` }">
                                                                                                           
-                                                            <button class="round-button round-button_close"
-                                                                @click.prevent="removeRenderedPhotoHandler(photo)"
-                                                            ></button>
+                                                            <button class="button button_icon button_size_s button_theme_carrot added-photos__in"
+                                                                @click.prevent="removeRenderedPhotoHandler(photo)">
+                                                                <span class="button__icon button__icon_close"></span>
+                                                            </button>
                                                         </li>
 
                                                     </ul>
@@ -271,7 +272,7 @@
                                             <div class="form-addPhoto__buttons">
                                                 <button class="button button_size_m form-addPhoto__buttonspace" type="submit">Сохранить</button>
                                                 <button class="button button_size_m button_theme_minimalizm" type="button"
-                                                    @click="openAddPhoto=false"
+                                                    @click="closeAddedPhotosHandler"
                                                 >Отменить</button>
                                             </div>
 
@@ -449,11 +450,6 @@
                 return this.allCards.sort( (a, b) => b.id - a.id );
             },
 
-            // currentAlbumObject() {
-            //     // this.currentAlbumObject.preview = this.currentAlbumObject.preview ? this.currentAlbumObject.preview : 'img/no_album_cover.jpg';
-            //     return {...this.currentAlbum};
-            // },
-
             headerContainer() {
                 return this.$refs['header-container'];
             },
@@ -484,7 +480,20 @@
             ...mapActions('albums', ['changeAlbumWithFiles', 'refreshThisAlbum']),
 
             removeRenderedPhotoHandler(photo) {
-                console.log('I want to remove this photo:', photo);//!!!!!!!!!!!!!
+                let ndxRemoved = this.renderedPhotos.indexOf(photo, 0);
+                let removed = this.renderedPhotos.splice(ndxRemoved, 1);
+
+                    if (this.renderedPhotos.length == 0) {
+                        console.log(`renderedPhotos.length == 0`);
+                        this.isPhotosLoaded = !this.isPhotosLoaded;
+                    }
+            },
+
+            closeAddedPhotosHandler() {
+                this.renderedPhotos = [];
+                this.loadedPhotos = [];
+                this.isPhotosLoaded = false;
+                this.openAddPhoto = false;
             },
 
             async updateLoggedUser() {
@@ -1042,6 +1051,7 @@
             height: 50px;
             width: 50px;
             border: 3px solid white;
+            object-fit: cover;
 
             @include tablets {
                 height: 60px;
@@ -1568,6 +1578,15 @@
 
         @include tablets {
             padding: 20px;
+        }
+
+        &__in {
+            position: absolute;
+            left: 100%;
+            bottom: 100%;
+            transform: translate(-50%, 50%);
+            width: 32px;
+            height: 32px;
         }
 
         &__item {

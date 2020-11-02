@@ -337,6 +337,12 @@
             width: 50px;
             height: 50px;
         }
+        
+        &__avatar-img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
 
         &__likes {
             background-color: rgb(238, 70, 52);
