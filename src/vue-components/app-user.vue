@@ -11,7 +11,6 @@
 
             <div class="header__container" v-if="!openEditHeader">		
                 <div class="header__button-logout" v-if="currentAuthorObject.id==loggedUserObject.id">
-                    <!-- <button type='button' class="round-button round-button_logout" -->
                     <button type='button' class="button button_icon_space button_size_changing button_theme_color_changing"
                         @click="logoutUser">
                         <span class="button__text">Выйти</span>                    
@@ -19,15 +18,13 @@
                     </button>
                 </div>
                 <div class="header__button-edit" v-if="currentAuthorObject.id==loggedUserObject.id">
-                    <!-- <button type='button' class="round-button round-button_edit" -->
                     <button type='button' class="button button_icon_space button_size_changing button_theme_color_changing"
                         @click="editUserHeaderHandler">
                         <span class="button__text">Редактировать</span>
                         <span class="button__icon button__icon_edit"></span>
                     </button>
                 </div>
-                <div class="header__button-home" v-if="currentAuthorObject.id!=loggedUserObject.id">                    
-                    <!-- <router-link class="round-button round-button_home" -->
+                <div class="header__button-home" v-if="currentAuthorObject.id!=loggedUserObject.id">
                     <router-link class="button button_icon_space button_size_changing button_theme_color_changing"
                         to="/"
                         @click.prevent>
@@ -49,8 +46,7 @@
                     <div class="header__socials">
                         <ul class="socials__list">
                             <li class="socials__item"
-                                v-for="social in currentAuthorObject.userSocials" :key="social.id"
-                            >
+                                v-for="social in currentAuthorObject.userSocials" :key="social.id">
                                 <a class="socials__link" target="blank"
                                     :class="`socials__link_${social.id}`"
                                     :href="social.link"                                
@@ -81,9 +77,9 @@
                                     <input class="form-edit-profile__input" type="text" placeholder="Антон">
                                 </label>
 
-                                <label class="form-edit-profile__label form-edit-profile__label_no_top_padding">Фамилия
+                                <!-- <label class="form-edit-profile__label form-edit-profile__label_no_top_padding">Фамилия
                                     <input class="form-edit-profile__input" type="text" placeholder="Черепов">
-                                </label>
+                                </label> -->
 
                                 <label class="form-edit-profile__label">О себе
                                     <textarea class="form-edit-profile__input form-edit-profile__input_textarea" cols="20" rows="5" placeholder="Описание альбома"></textarea>
@@ -97,7 +93,6 @@
                                     </div>
 
                                     <div class="form-edit-profile__button">
-                                        <!-- <button class="site-button site-button_theme-light" type="button">Загрузить фотографию</button> -->
                                         <button class="button button_icon button_size_m button_theme_light" type="button">Загрузить фотографию</button>
                                          <div class="form-edit-profile__notice-size">(файл должен быть размером не более 512 КБ)</div>
                                     </div>
@@ -112,7 +107,6 @@
 
                                     <div class="form-edit-profile__button">
                                         <button class="button button_icon button_size_m button_theme_light" type="button">Загрузить фон</button>
-                                        <!-- <button class="site-button site-button_theme-light" type="button">Загрузить фон</button> -->
                                         <div class="form-edit-profile__notice-size">(файл должен быть размером не более 1024 КБ)</div>
                                     </div>
 
@@ -160,81 +154,96 @@
                         <div class="edit-header__form">
                             
                             <form class="form-edit-header"
-                                @submit.prevent="submitUserHeaderHandler"
-                            >
+                                @submit.prevent="submitEditUserHeaderHandler">
 
-                                <div class="form-edit-header__load-image">
+                                <div class="form-edit-header__load-avatar">
 
                                     <label for="load-avatar-header" class="form-edit-header__label form-edit-header__label_file-load">
-                                        <input type="file" id="load-avatar-header" class="form-edit-header__input-load">
-                                        <div class="form-edit-header__img-wrapper">
-                                            <img class="form-edit-header__img" :src="`${urlAvatars}/${currentAuthorObject.avatar}`" alt="avatar image">
+                                        <input type="file" id="load-avatar-header" class="form-edit-header__input-load"
+                                            @change="loadUserAvatar">
+
+                                        <div class="form-edit-header__added-photo" v-if="isUserAvatarLoaded"
+                                            :style="{ backgroundImage : `url(${renderedUserAvatar})` }">
                                         </div>
-                                        <div class="form-edit-header__cover-img-text">Изменить фон</div>
+
+                                        <div class="form-edit-header__img-wrapper" v-if="!isUserAvatarLoaded">
+                                            <img class="form-edit-header__img" :src="`${urlAvatars}/${currentAuthorObject.avatar}`" alt="avatar image">
+                                            <div class="form-edit-header__img-overlay"></div>                                        
+                                            <div class="form-edit-header__avatar-img-text">Изменить фото</div>
+                                        </div>
                                     </label>
                                     
                                 </div>
 
-                                <label class="form-edit-header__label">
-                                    <input class="form-edit-header__input" type="text" placeholder="Введите имя"
-                                        v-model="changedUser.name"
-                                    >
-                                </label>
+                                <div class="form-edit-header__other-info">
 
-                                <label class="form-edit-header__label">
-                                    <textarea class="form-edit-header__input form-edit-header__input_textarea" cols="20" rows="2" placeholder="Краткая информация о пользователе"
-                                        v-model="changedUser.description"
-                                    ></textarea>
-                                </label>
+                                    <label class="form-edit-header__label">
+                                        <input class="form-edit-header__input" type="text" placeholder="Введите имя"
+                                            v-model="changedUser.name">
+                                    </label>
 
-                                <div class="form-edit-header__socials">
-                                    <div class="socials">
+                                    <label class="form-edit-header__label">
+                                        <textarea class="form-edit-header__input form-edit-header__input_textarea" cols="20" rows="2" placeholder="Краткая информация о пользователе"
+                                            v-model="changedUser.description"></textarea>
+                                    </label>
 
-                                        <ul class="socials__list">
-                                            <li v-for="social in currentAuthorObject.userSocials" :key="social.id" class="socials__item"> 
-                                                <a
-                                                    @mouseenter="socialMouseHandler(social.id, $event)" 
-                                                    @mouseleave="socialMouseHandler(social.id, $event)" 
-                                                    @click.prevent="socialClickHandler(social.id)" 
-                                                    :class="[`socials__link socials__link_${social.id}`,
-                                                            {'socials__link_active': social.isActive}]"
-                                                >{{social.text}}</a>
-                                            </li>
-                                        </ul>
+                                    <div class="form-edit-header__socials">
+                                        <div class="socials">
 
-                                        <div class="soc-edit"
-                                            ref="soc-edit"
-                                            :class="{'soc-edit_showed' : isActiveSocial}" 
-                                            @mouseleave="socEditMouseLeaveHandler"                                             
-                                        >
-                                            <div class="soc-edit__card">
+                                            <ul class="socials__list">
+                                                <li v-for="social in currentAuthorObject.userSocials" :key="social.id" class="socials__item"> 
+                                                    <a
+                                                        @mouseenter="socialMouseHandler(social.id, $event)" 
+                                                        @mouseleave="socialMouseHandler(social.id, $event)" 
+                                                        @click.prevent="socialClickHandler(social.id)" 
+                                                        :class="[`socials__link socials__link_${social.id}`,
+                                                                {'socials__link_active': social.isActive}]"
+                                                    >{{social.text}}</a>
+                                                </li>
+                                            </ul>
 
-                                                <form class="soc-edit__form">
-                                                    <input  type="text" class="soc-edit__input"
-                                                        v-model="activeSocialLink"
-                                                    >
+                                            <div class="soc-edit"
+                                                ref="soc-edit"
+                                                :class="{'soc-edit_showed' : isActiveSocial}" 
+                                                @mouseleave="socEditMouseLeaveHandler"                                             
+                                            >
+                                                <div class="soc-edit__card">
 
-                                                    <div class="soc-edit__buttons">
-                                                        <!-- <button type="submit" class="site-button site-button_theme_light">Сохранить</button> -->
-                                                        <button type="submit" class="button button_size_m">Сохранить</button>
-                                                        <!-- <button type="button" class="site-button site-button_theme-just-text" -->
-                                                        <button type="button" class="button button_size_m button_theme_minimalizm"
-                                                            @click="socEditCancel"
-                                                        >Отменить</button>
-                                                    </div>
+                                                    <form class="soc-edit__form">
+                                                        <input  type="text" class="soc-edit__input"
+                                                            v-model="activeSocialLink"
+                                                        >
 
-                                                </form>
+                                                        <div class="soc-edit__buttons">
+                                                            <!-- <button type="submit" class="site-button site-button_theme_light">Сохранить</button> -->
+                                                            <button type="submit" class="button button_size_m">Сохранить</button>
+                                                            <!-- <button type="button" class="site-button site-button_theme-just-text" -->
+                                                            <button type="button" class="button button_size_m button_theme_minimalizm"
+                                                                @click="socEditCancel"
+                                                            >Отменить</button>
+                                                        </div>
 
-                                            </div>
-                                        </div>  
+                                                    </form>
 
+                                                </div>
+                                            </div>  
+
+                                        </div>
                                     </div>
+
                                 </div>
 
                                 <div class="form-edit-header__load-cover">
 
                                     <label for="load-bgcover-header" class="form-edit-header__label form-edit-header__label_file-load">
-                                        <input type="file" id="load-bgcover-header" class="form-edit-header__input-load">
+                                        
+                                        <input type="file" id="load-bgcover-header" class="form-edit-header__input-load"
+                                            @change="loadUserCover">
+
+                                        <div class="form-edit-header__added-cover" v-if="isUserCoverLoaded"
+                                            :style="{ backgroundImage : `url(${renderedUserCover})` }">
+                                        </div>
+
                                         <div class="form-edit-header__cover-img"></div>
                                         <div class="form-edit-header__cover-img-text">Изменить фон</div>
                                     </label>
@@ -243,8 +252,8 @@
 
                                 
                                 <div class="form-edit-header__buttons">
-                                    <button class="site-button" type="submit">Сохранить</button>
-                                    <button class="site-button site-button_theme-just-text" type="button"
+                                    <button class="button button_size_m form-edit-header__buttonspace" type="submit">Сохранить</button>
+                                    <button class="button button_size_m button_theme_minimalizm" type="button"
                                         @click="openEditHeader=false"
                                     >Отменить</button>
                                 </div>
@@ -423,6 +432,8 @@
 
     import { baseStorageUrl } from '../requests.js';    import dataJSON_socials from '../json/socials.json'
 
+    import renderer from '../renderer.js';
+
     import { mapState, mapActions, mapGetters } from 'vuex';
 
     import Flickity from 'vue-flickity';
@@ -455,9 +466,11 @@
                 idCurrentPhoto: 0,
 
                 cards: [],
+
                 currentAuthorObject: {
                     albums: [],
                 },
+
                 myAlbums: [],
 
                 socials: dataJSON_socials,
@@ -468,15 +481,19 @@
 
                 loggedUserObject: {
                     id: Number,
-                    // cover: '',
                     userSocials: [],
-                },  
+                },
+
+                loadedUserCover: '',
+                renderedUserCover: '',
+                isUserCoverLoaded: false,
+                loadedUserAvatar: '',
+                renderedUserAvatar: '',
+                isUserAvatarLoaded: false,
 
                 editedAlbum: {
                     id: Number,
                     description: '',
-                    // author:Number,
-                    // authorId:Number,
                     preview: '',
                     title: ''
                 },
@@ -504,13 +521,9 @@
             ...mapState('cards', {
                 allCards: state => state.cards
             }),
-            // ...mapState('albums', {
-            //     thisUserAlbums: state => state.userAlbums
-            // }),
             ...mapState('user', {
                 loggeduser: state => state.user
-            }),
-            
+            }),            
             ...mapState('authors', {
                 thisAuthor: state => state.author
             }),
@@ -529,7 +542,7 @@
             ...mapActions('cards', ['updateAllCards']),
             ...mapActions('authors', ['refreshAuthor']),
             ...mapActions('albums', ['addAlbum', 'deleteAlbum', 'changeAlbum']),
-            ...mapActions('user', ['logout']),
+            ...mapActions('user', ['logout', 'changeUserWithFiles']),
 
             addNewAlbumHandler() {
                 this.openChangeMyAlbum=true; 
@@ -569,9 +582,53 @@
                 this.changedUser = {...this.currentAuthorObject};
             },
 
-            submitUserHeaderHandler() {
-                //!!!!!!!!!!!!! запрос на редактирование инфо про юзера в шапке
+            // *********
+            loadUserAvatar(e) {
+                this.loadedUserAvatar = e.target.files[0];
+                renderer(this.loadedUserAvatar).then(pic => {                 
+                    this.renderedUserAvatar = pic;
+                    this.isUserAvatarLoaded = true;
+                });
             },
+            loadUserCover(e) {
+                this.loadedUserCover = e.target.files[0];
+                renderer(this.loadedUserCover).then(pic => {                 
+                    this.renderedUserCover = pic;
+                    this.isUserCoverLoaded = true;
+                });
+            },
+
+            async submitEditUserHeaderHandler() {
+                const formData = new FormData();
+                    if (this.loadedUserAvatar.name) formData.append('avatar', this.loadedUserAvatar);
+                    if (this.loadedUserCover.name) formData.append('cover', this.loadedUserCover);
+                    formData.append('name', this.changedUser.name);
+                    formData.append('description', this.changedUser.description);
+
+                    let changedUserId = this.changedUser.id;
+
+                await this.changeUserWithFiles( {changedUser: formData, changedUserId: changedUserId} );
+                await this.updateAlbums();
+
+                this.openEditHeader=false;
+            },
+
+
+            // cancelChangeAlbumHeaderHandler() {
+            //     this.isAlbumPreviewLoaded=false;
+            //     this.previewTitle = "Изменить превью альбома";
+            //     this.changedAlbum= {
+            //         id: Number,
+            //         description: '',
+            //         title: '',
+            //         preview: '',
+            //     };
+            //     this.openEditHeader=false;
+            // },
+
+            // *********
+
+
 
             socEditMouseLeaveHandler() {
                 if (this.windowWidth > 480) {
@@ -729,7 +786,7 @@
 
             async updateAlbums() {
                 await this.refreshAuthor(this.idCurrentAuthor);
-                this.currentAuthorObject = this.thisAuthor;
+                this.currentAuthorObject = {...this.thisAuthor};
                 this.myAlbums = this.thisAuthor.albums;
             },
 
@@ -749,7 +806,7 @@
                 this.openBigCardSlider=this.openEditProfile=this.openChangeMyAlbum=false;
             },
             loggedUser() {
-                console.log('loggedUser changed: ',this.loggedUser);
+                console.log('loggedUser changed: ',this.loggedUser);//!!!!!!!!!!!!!!!!!!
             },
         },
 
@@ -865,6 +922,7 @@
             border: 3px solid $color-white;
             height: 50px;
             width: 50px;
+            object-fit: cover;
 
             @include tablets {
                 width: 102px;
@@ -955,11 +1013,69 @@
         
     .form-edit-header {
         display: flex;
+        flex-wrap: wrap;
         flex-direction: column;
         align-items: center;
 
-         &__load-image {
+        @include tablets {
+            flex-direction: row;
+        }
+
+        &__other-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;            
+
+            @include tablets {
+                width: 60%;
+                padding: 30px 10px 10px 30px;
+            }
+        }
+
+        &__added-cover {
+            background-size: cover;
+            background-repeat: no-repeat;
+            border-radius: 50%;
+            overflow: hidden;
+            height: 50px;
+            width: 50px;
+            margin: auto;
+        }
+        
+        &__added-photo {
+            background-size: cover;
+            background-repeat: no-repeat;
+            overflow: hidden;
+            height: 50px;
+            width: 50px;
+            margin: auto;
+
+            @include tablets {
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: -1;
+            }
+
+        }
+
+        &__load-avatar {
             padding-top: 20px;
+            padding-bottom: 10px;
+            height: 50px;
+            width: 50px;
+
+            @include tablets {
+                margin-left: 5%;
+                height: 70px;
+                width: 70px;
+            }  
+            @include desktopHd {
+                margin-left: max(calc((100% - 1480px) /2), 10%);
+            }            
         }
 
         &__img-wrapper {
@@ -968,6 +1084,39 @@
             margin: auto;
             border-radius: 50%;
             overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+
+            @include tablets {
+                width: 70px;
+                height: 70px;
+            }  
+        }
+
+        &__img-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            opacity: 0.9;
+            background-color: $color-text;
+            width: 100%;
+            height: 100%;
+            border: 2px solid $color-white;
+            border-radius: 50%;
+
+            &::after {
+                content: '';
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                background-image: svg-load('cam.svg', fill=rgba(#{$color-white}, 0.99));
+                background-repeat: no-repeat;
+                background-size: 18px;
+                background-position: center 25%;
+            }
         }
 
         &__load-cover {
@@ -975,6 +1124,14 @@
             min-height: 50px;
             margin-bottom: 20px;
             margin-top: 10px;
+
+            @include tablets {
+                margin-right: 5%;
+                margin-left: auto;
+            }
+            @include desktopHd {
+                margin-right: max(calc((100% - 1480px) /2), 10%);
+            }  
         }
 
         &__cover-img {
@@ -983,6 +1140,21 @@
             background-size: 32px;
             background-position: top center;
             background-image: svg-load('cam.svg', fill=rgba(#{$color-white}, 0.8));
+            width: 32px;
+        }
+
+        &__avatar-img-text {
+            position: absolute;
+            z-index: 10;
+            top: 50%;
+            font-family: 'Proxima Nova Semibold';
+            font-size: 8px;
+            color: rgba(#{$color-white}, 0.99);
+            text-align: center;
+            
+            @include tablets {
+                font-size: 10px;
+            }
         }
 
         &__cover-img-text {
@@ -1007,6 +1179,17 @@
             &_file-load {
                 width: 100%;
                 position: relative;
+                height: 80px;
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                border-radius: 10px;
+                overflow: hidden;
+            }
+
+            @include tablets {
+                width: 100%;
             }
         }
 
@@ -1042,6 +1225,16 @@
             background: $color-white;
             width: 100%;
             text-align: right;
+            width: 100%;
+            padding-right: 5%;
+
+            @include desktopHd {    
+                padding-right: max(calc((100% - 1480px) /2), 10%);
+            }
+        }
+        
+        &__buttonspace {
+            margin-right: 10px;
         }
     }
 

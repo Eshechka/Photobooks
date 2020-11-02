@@ -351,8 +351,6 @@
 
 
 <script>
-    import dataJSON_users from '../json/users.json';
-
     import appMyPhoto from '../vue-components/app-my-photo.vue';
     import appBigCard from '../vue-components/app-big-card.vue';    
     
@@ -362,30 +360,19 @@
 
     import { mapState, mapActions } from 'vuex';
 
+    import renderer from '../renderer.js';
+
     import axios from '../requests.js';
+
     import { baseStorageUrl } from '../requests.js';
 
-    const renderer = file => {
-        const reader = new FileReader();
-
-        return new Promise((resolve, reject) => {
-            try {
-                reader.readAsDataURL(file);
-                reader.onloadend = () => {
-                    resolve(reader.result);
-                };
-            } catch (error) {
-                throw new Error("Ошибка при чтении файла");
-            }
-        });
-    }
 
     export default {
 
         components: {
             appBigCard,
-            Flickity, 
             appMyPhoto,
+            Flickity, 
         },
 
         data() {
@@ -393,24 +380,29 @@
                 urlPhotos: baseStorageUrl+'/photos',
                 urlAvatars: baseStorageUrl+'/avatars',
                 
-                users: dataJSON_users,
-
                 openEditPhoto: false,
                 openAddPhoto: false,
                 openEditHeader: false,
                 openBigMyPhoto: false,
 
                 isScrolledHeader: false,
-                isAlbumPreviewLoaded: false,
-                isPhotosLoaded: false,
 
                 idCurrentClickedPhoto: 0,
 
+                isPhotosLoaded: false,
                 loadedPhotos: [],
                 renderedPhotos: [],
 
+                isAlbumPreviewLoaded: false,
                 loadedAlbumPreview: {},
                 renderedAlbumPreview: '',
+                previewTitle: 'Изменить превью альбома',
+                changedAlbum: {
+                    id: Number,
+                    description: '',
+                    title: '',
+                    preview: '',
+                },
 
                 bigCardSliderTop: 0,
 
@@ -423,18 +415,8 @@
                     contain: true
                 },
 
-                previewTitle: 'Изменить превью альбома',
-                changedAlbum: {
-                    id: Number,
-                    description: '',
-                    title: '',
-                    preview: '',
-                },
-
                 loggedUserObject: {
                     id: Number,
-                    // cover: '',
-                    // userSocials: [],
                 },  
 
                 currentAlbumObject: {
@@ -502,7 +484,7 @@
             ...mapActions('albums', ['changeAlbumWithFiles', 'refreshThisAlbum']),
 
             removeRenderedPhotoHandler(photo) {
-                console.log('I want to remove this photo:', photo);
+                console.log('I want to remove this photo:', photo);//!!!!!!!!!!!!!
             },
 
             async updateLoggedUser() {

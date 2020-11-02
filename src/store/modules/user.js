@@ -38,5 +38,15 @@ export default {
             localStorage.clear();
             commit('CLEAR_USER');
         },
+        async changeUserWithFiles(store, {changedUser, changedUserId}) {
+            try {
+                const { data } = await this.$axios.post(`/v1/authors/${changedUserId}`, changedUser, {headers: {'Content-Type': 'multipart/form-data'}});
+                console.log('changedUser DATA:',data);
+                store.commit('SET_USER', data.user);
+            }
+            catch(error) { 
+                throw new Error ( error.response.data.error || error.response.data.message ); 
+            }
+        },
     },
 };
