@@ -32,7 +32,7 @@
                 <div class="header__user" :class="{header__user_scrolled : isScrolledHeader}">
                     <div class="header__avatar">
                         <div class="avatar">
-                            <img class="avatar__img" :src='`${urlAvatars}/${currentAlbumObject.author.avatar}`' alt="avatar">
+                            <img class="avatar__img" :src='currentAlbumObject.author.avatar ? `${urlAvatars}/${currentAlbumObject.author.avatar}` : require("../img/no_avatar.png").default' alt="avatar">
                         </div>
                     </div>
                     <h1 class="header__title" v-if="isScrolledHeader"> {{currentAlbumObject.title}} </h1>
@@ -665,8 +665,9 @@
             await this.refreshAlbumCards(this.$route.params.albumid);
             await this.refreshThisAlbum(this.$route.params.albumid);
             this.currentAlbumObject = {...this.currentAlbum};
-            this.currentAlbumObject.preview = this.currentAlbumObject.preview ? this.currentAlbumObject.preview : 'img/no_album_cover.jpg';
+            this.currentAlbumObject.preview = this.currentAlbumObject.preview ? this.currentAlbumObject.preview : '../img/no_album_cover.jpg';
             this.changedAlbum = {...this.currentAlbumObject};
+
         },
 
         mounted() {

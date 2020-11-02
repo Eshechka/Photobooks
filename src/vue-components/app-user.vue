@@ -7,7 +7,9 @@
             @click="openEditHeader = false"
         ></div>
 
-		<header class="header" :style="{ backgroundImage: `url(${urlPhotos}/${currentAuthorObject.cover})` }">
+		<header class="header" :style="{ backgroundImage: `url(${currentAuthorObject.cover})` }">
+		<!-- <header class="header" :style="{ backgroundImage: `url(${urlPhotos}/${currentAuthorObject.cover})` }"> -->
+        <!-- :src='currentAuthorObject.cover ? `${urlPhotos}/${currentAuthorObject.cover}` : require("../img/no_album_cover.jpg").default' -->
 
             <div class="header__container" v-if="!openEditHeader">		
                 <div class="header__button-logout" v-if="currentAuthorObject.id==loggedUserObject.id">
@@ -34,7 +36,7 @@
                 </div>
 
                 <div class="header__avatar">
-                    <img class="header__avatar-img" :src='`${urlAvatars}/${currentAuthorObject.avatar}`' alt="avatar">
+                    <img class="header__avatar-img" :src='currentAuthorObject.avatar ? `${urlAvatars}/${currentAuthorObject.avatar}` : require("../img/no_avatar.png").default' alt="avatar">
                 </div>
                 <div class="header__info">
                     <h1 class="header__title">{{currentAuthorObject.name}}</h1>
@@ -102,7 +104,7 @@
                                 <div class="form-edit-profile__load-image">
 
                                     <div class="form-edit-profile__img-wrapper">
-                                        <img class="form-edit-profile__img" :src="`${urlPhotos}/${currentAuthorObject.cover}`" alt="background cover image">
+                                        <img class="form-edit-profile__img" :src='currentAuthorObject.cover ? `${urlPhotos}/${currentAuthorObject.cover}` : require("../img/no_album_cover.jpg").default' alt="background cover image">
                                     </div>
 
                                     <div class="form-edit-profile__button">
@@ -787,6 +789,7 @@
             async updateAlbums() {
                 await this.refreshAuthor(this.idCurrentAuthor);
                 this.currentAuthorObject = {...this.thisAuthor};
+                this.currentAuthorObject.cover = this.currentAuthorObject.cover ? `${urlPhotos}/${currentAuthorObject.cover}` : "../img/no_album_cover.jpg";
                 this.myAlbums = this.thisAuthor.albums;
             },
 
@@ -1042,7 +1045,7 @@
             width: 50px;
             margin: auto;
         }
-        
+
         &__added-photo {
             background-size: cover;
             background-repeat: no-repeat;
