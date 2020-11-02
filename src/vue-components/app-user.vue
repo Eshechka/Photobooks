@@ -91,7 +91,7 @@
                                 <div class="form-edit-profile__load-image">
 
                                     <div class="form-edit-profile__img-wrapper">
-                                        <img class="form-edit-profile__img" :src="urlAvatar" alt="avatar image">
+                                        <img class="form-edit-profile__img" :src="`${urlAvatars}/${currentAuthorObject.avatar}`" alt="avatar image">
                                     </div>
 
                                     <div class="form-edit-profile__button">
@@ -104,7 +104,8 @@
                                 <div class="form-edit-profile__load-image">
 
                                     <div class="form-edit-profile__img-wrapper">
-                                        <img class="form-edit-profile__img" :src='currentAuthorObject.cover ? `${urlPhotos}/${currentAuthorObject.cover}` : require("../img/no_album_cover.jpg").default' alt="background cover image">
+                                        <img class="form-edit-profile__img" :src='currentAuthorObject.cover' alt="background cover image">
+                                        <!-- <img class="form-edit-profile__img" :src='currentAuthorObject.cover ? `${urlPhotos}/${currentAuthorObject.cover}` : require("../img/no_album_cover.jpg").default' alt="background cover image"> -->
                                     </div>
 
                                     <div class="form-edit-profile__button">
@@ -217,9 +218,7 @@
                                                         >
 
                                                         <div class="soc-edit__buttons">
-                                                            <!-- <button type="submit" class="site-button site-button_theme_light">Сохранить</button> -->
                                                             <button type="submit" class="button button_size_m">Сохранить</button>
-                                                            <!-- <button type="button" class="site-button site-button_theme-just-text" -->
                                                             <button type="button" class="button button_size_m button_theme_minimalizm"
                                                                 @click="socEditCancel"
                                                             >Отменить</button>
@@ -238,12 +237,15 @@
                                 <div class="form-edit-header__load-cover">
 
                                     <label for="load-bgcover-header" class="form-edit-header__label form-edit-header__label_file-load">
-                                        
                                         <input type="file" id="load-bgcover-header" class="form-edit-header__input-load"
                                             @change="loadUserCover">
 
                                         <div class="form-edit-header__added-cover" v-if="isUserCoverLoaded"
                                             :style="{ backgroundImage : `url(${renderedUserCover})` }">
+                                        </div>
+
+                                        <div class="form-edit-header__now-cover" v-if="!isUserCoverLoaded"
+                                            :style="{ backgroundImage : `url(${changedUser.cover})` }">
                                         </div>
 
                                         <div class="form-edit-header__cover-img"></div>
@@ -256,7 +258,7 @@
                                 <div class="form-edit-header__buttons">
                                     <button class="button button_size_m form-edit-header__buttonspace" type="submit">Сохранить</button>
                                     <button class="button button_size_m button_theme_minimalizm" type="button"
-                                        @click="openEditHeader=false"
+                                        @click="cancelEditHeaderHandler"
                                     >Отменить</button>
                                 </div>
 
@@ -403,7 +405,8 @@
             </section>
         </main>
 
-		<footer class="footer" :style="{ backgroundImage: `url(${urlPhotos}/${currentAuthorObject.cover})`}" >
+		<footer class="footer" :style="{ backgroundImage: `url(${currentAuthorObject.cover})`}" >
+		<!-- <footer class="footer" :style="{ backgroundImage: `url(${urlPhotos}/${currentAuthorObject.cover})`}" > -->
 
             <div class="footer__container">	
 
@@ -555,6 +558,14 @@
                 this.openChangeMyAlbum=true; 
                 this.albumChangeMode='edit';
                 this.editedAlbum={...clickedAlbum};
+            },
+
+            cancelEditHeaderHandler() {
+                this.renderedUserCover = '';
+                this.isUserCoverLoaded = false;
+                this.renderedUserAvatar = '';
+                this.isUserAvatarLoaded = false;
+                this.openEditHeader=false;
             },
 
             async submitChangeMyAlbum(data, mode) {
@@ -789,7 +800,8 @@
             async updateAlbums() {
                 await this.refreshAuthor(this.idCurrentAuthor);
                 this.currentAuthorObject = {...this.thisAuthor};
-                this.currentAuthorObject.cover = this.currentAuthorObject.cover ? `${urlPhotos}/${currentAuthorObject.cover}` : "../img/no_album_cover.jpg";
+                this.currentAuthorObject.cover = this.currentAuthorObject.cover ? `${this.urlPhotos}/${this.currentAuthorObject.cover}` : "../img/no_album_cover.jpg";
+                console.log('this.currentAuthorObject.cover: ',this.currentAuthorObject.cover);
                 this.myAlbums = this.thisAuthor.albums;
             },
 
@@ -1036,14 +1048,18 @@
             }
         }
 
-        &__added-cover {
+        &__added-cover, 
+        &__now-cover {
             background-size: cover;
             background-repeat: no-repeat;
             border-radius: 50%;
             overflow: hidden;
-            height: 50px;
-            width: 50px;
             margin: auto;
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            z-index: -1;
+            border-radius: 15px;
         }
 
         &__added-photo {
@@ -1053,6 +1069,7 @@
             height: 50px;
             width: 50px;
             margin: auto;
+            cursor: pointer;
 
             @include tablets {
                 width: 100%;
@@ -1060,14 +1077,15 @@
                 position: absolute;
                 top: 0;
                 left: 0;
-                z-index: -1;
+                border-radius: 50%;
+                /* z-index: -1; */
             }
 
         }
 
         &__load-avatar {
-            padding-top: 20px;
-            padding-bottom: 10px;
+            margin-top: 20px;
+            margin-bottom: 10px;
             height: 50px;
             width: 50px;
 
@@ -1103,11 +1121,11 @@
             top: 0;
             left: 0;
             z-index: 10;
-            opacity: 0.9;
+            opacity: 0.5;
             background-color: $color-text;
             width: 100%;
             height: 100%;
-            border: 2px solid $color-white;
+            border: 3px solid $color-white;
             border-radius: 50%;
 
             &::after {
@@ -1124,7 +1142,7 @@
 
         &__load-cover {
             width: 90px;
-            min-height: 50px;
+            height: 90px;
             margin-bottom: 20px;
             margin-top: 10px;
 
@@ -1182,7 +1200,7 @@
             &_file-load {
                 width: 100%;
                 position: relative;
-                height: 80px;
+                height: 100%;
                 display: inline-flex;
                 justify-content: center;
                 align-items: center;
