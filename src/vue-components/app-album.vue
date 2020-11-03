@@ -131,7 +131,7 @@
                 <div class="my-photos__container">
 
                     <div class="my-photos__topgroup">
-                        <div class="my-photos__button-plus">
+                        <div class="my-photos__button-plus" v-if="currentAlbumObject.author.id==loggedUserObject.id">
                             <button class="button button_icon_expand button_size_s button_theme_pale"
                                 @click="openAddPhoto=true">
                                 <span class="button__icon button__icon_plus"></span>

@@ -133,8 +133,8 @@
                                 </div>
                                 
                                 <div class="form-edit-profile__buttons">
-                                    <button class="site-button" type="submit">Сохранить</button>
-                                    <button class="site-button site-button_theme-just-text" type="button"
+                                    <button class="button button_size_m" type="submit">Сохранить</button>
+                                    <button class="button button_size_m button_theme_minimalizm" type="button"
                                         @click="openEditProfile=false"
                                     >Отменить</button>
                                 </div>

@@ -38,7 +38,7 @@ export default {
         },
         async changeComment(store, changedComment) {
             try {
-                const { data } = await this.$axios.put(`/v1/comments/${changedComment.id}`, changedComment);
+                const { data } = await this.$axios.patch(`/v1/comments/${changedComment.id}`, changedComment);
                 store.commit('CHANGE_COMMENT', data.comment);
             }
             catch(error) { throw new Error ( error.response.data.error || error.response.data.message ); }

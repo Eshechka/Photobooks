@@ -61,11 +61,10 @@
                             @submit.prevent="sumbitNewCommentHandler"
                         >
 
-                            <textarea class="big-card__my-comment-input" name="" id="" cols="10" rows="1" placeholder="Добавить комментарий"
+                            <textarea class="big-card__my-comment-input" cols="10" rows="1" placeholder="Добавить комментарий"
                                 v-model="newComment.commentText"
                             ></textarea>
                             <div class="big-card__my-comment-submit">
-                                <!-- <button class="site-button site-button_theme-light" type="submit">Добавить</button> -->
                                 <button class="button button_theme_light button_size_m" type="submit">Добавить</button>
                             </div>
 
@@ -84,24 +83,24 @@
                             <div class="users-comments__info-wrapper">
                                 <div class="users-comments__author">{{comment.author.name}}</div>
                                 <div class="users-comments__text">{{comment.commentText}}</div>
+                                <textarea class="users-comments__edited-text" v-if="comment.id==changedComment.id"
+                                    v-model="changedComment.commentText"
+                                ></textarea>
                             </div>
                             <div class="users-comments__buttons-wrapper">
-                                <!-- <div class="users-comments__button-edit"> -->
-                                    <!-- <button type='button' class="round-button round-button_edit" -->
-                                    <button type='button' class="button button_icon button_size_m button_theme_pale users-comments__buttonspace" v-if="comment.author.id==loggedUserObject.id"
-                                        @click="editCommentHandler">
+                                    <button type='button' class="button button_icon button_size_m button_theme_pale users-comments__buttonspace" v-if="comment.author.id==loggedUserObject.id && comment.id!==changedComment.id"
+                                        @click="editCommentHandler(comment)">
                                         <span class="button__text">Редактировать</span>
                                         <span class="button__icon button__icon_edit"></span>
                                     </button>
-                                <!-- </div> -->
-                                <!-- <div class="users-comments__button-delete" v-if="comment.author.id==loggedUserObject.id"> -->
-                                    <!-- <button type='button' class="round-button round-button_delete" -->
-                                    <button type='button' class="button button_icon button_size_m button_theme_carrot" v-if="comment.author.id==loggedUserObject.id"
+                                    <button type='button' class="button button_icon button_size_m button_theme_carrot" v-if="comment.author.id==loggedUserObject.id && comment.id!==changedComment.id"
                                         @click="deleteCommentHandler(comment.id)">
                                         <span class="button__text">Удалить</span>
                                         <span class="button__icon button__icon_delete"></span>                                        
                                     </button>
-                                <!-- </div> -->
+                                    <button type='button' class="button button_size_m" v-if="comment.author.id==loggedUserObject.id && comment.id==changedComment.id"
+                                        @click="saveCommentHandler">
+                                        Сохранить</button>
                             </div>
 
                         </li>
@@ -152,6 +151,14 @@
                 authorId: Number,
                 photoId: Number,
             },
+            
+            changedComment: {
+                id: Number,
+                commentText: '',
+                // authorId: Number,
+                // photoId: Number,
+            },
+
           }
 
         },
@@ -182,9 +189,23 @@
                 this.comments = this.commentsCurrentPhoto;
             },
 
-            async editCommentHandler() {
-                // await this.changeComment(this.comment.id);
+            editCommentHandler(comment) {
+                this.changedComment.id = comment.id;
+                this.changedComment.commentText = comment.commentText;
             },
+
+            async saveCommentHandler() {
+                console.log('0) this.changedComment',this.changedComment);
+                await this.changeComment(this.changedComment);
+                await this.updatePhotoComments(this.cardObject.id);            
+                this.comments = this.commentsCurrentPhoto;
+
+                this.changedComment= {
+                    id: Number,
+                    commentText: '',
+                };
+            },
+
             async deleteCommentHandler(commentId) {
                 await this.deleteComment(commentId);
                 await this.updatePhotoComments(this.cardObject.id);
@@ -316,8 +337,8 @@
         }
 
         &__img {
-            object-fit: cover;
-            /* object-fit: contain; */
+            /* object-fit: cover; */
+            object-fit: contain;
             width: 100%;
             height: 100%;
         }
@@ -558,10 +579,21 @@
             margin-bottom: 5px;
         }
 
+        &__info-wrapper {
+            position: relative;
+        }
         &__text {
             font-family: 'ProximaNova-Light';
             font-size: 16px;
             line-height: 24px;
+        }
+
+        &__edited-text {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            top: 18px;
+            width: 100%;
         }
 
         &__buttons-wrapper {
