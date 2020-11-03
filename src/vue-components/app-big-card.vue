@@ -88,12 +88,12 @@
                                 ></textarea>
                             </div>
                             <div class="users-comments__buttons-wrapper">
-                                    <button type='button' class="button button_icon button_size_m button_theme_pale users-comments__buttonspace" v-if="comment.author.id==loggedUserObject.id && comment.id!==changedComment.id"
+                                    <button type='button' class="button button_icon button_size_s_m button_theme_pale users-comments__buttonspace" v-if="comment.author.id==loggedUserObject.id && comment.id!==changedComment.id"
                                         @click="editCommentHandler(comment)">
                                         <span class="button__text">Редактировать</span>
                                         <span class="button__icon button__icon_edit"></span>
                                     </button>
-                                    <button type='button' class="button button_icon button_size_m button_theme_carrot" v-if="comment.author.id==loggedUserObject.id && comment.id!==changedComment.id"
+                                    <button type='button' class="button button_icon button_size_s_m button_theme_carrot" v-if="comment.author.id==loggedUserObject.id && comment.id!==changedComment.id"
                                         @click="deleteCommentHandler(comment.id)">
                                         <span class="button__text">Удалить</span>
                                         <span class="button__icon button__icon_delete"></span>                                        
@@ -324,7 +324,8 @@
 
         &__card-img {
             width: 100%;
-            height: 200px;
+            height: 350px;
+            /* height: 200px; */
             position: relative;
             border-radius: 3px 3px 0 0;
             overflow: hidden;

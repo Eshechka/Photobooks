@@ -62,6 +62,23 @@ $icons-changing: (home, edit, logout);
 		width: 40px;
 		height: 40px;  
 	}
+	&_size_s_m {
+		width: 40px;
+		height: 40px; 
+		padding: 0;
+		font-size: 0;
+
+		@include tablets {
+			min-height: 38px;
+			width: unset;
+			padding: 10px 20px;
+			font-size: 16px;
+			
+			& .button__icon {
+				left: 25px;
+			}
+		}
+	}
 	&_size_m {
 		min-height: 38px;
 		padding: 10px 20px;
