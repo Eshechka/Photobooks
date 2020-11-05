@@ -8,9 +8,7 @@
             ></div>
 		
 			<div class="my-photo__comments-likes-wrapper">					
-				<!-- <div class="my-photo__info-button my-photo__info-button_comments">{{myPhotoObject.commentCount}}</div> -->
 				<div class="my-photo__info-button my-photo__info-button_comments">{{myPhotoObject.comments.length}}</div>
-
 				<div class="my-photo__info-button my-photo__info-button_likes">{{myPhotoObject.likeCount}}</div>
 				<!--!!!!!!! это расскомментить, как будут готовы лайки <div class="my-photo__info-button my-photo__info-button_likes">{{myPhotoObject.likes.length}}</div> -->
 			</div>

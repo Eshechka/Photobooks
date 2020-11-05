@@ -12,20 +12,18 @@ $icons-changing: (home, edit, logout);
 	color: $color-white;
 	border-radius: 30px;
 
-	&:active, &:focus {
-		outline: none;
-		background-color: rgba($color-blue, 0.7);
-		color: $color-white;
-	}
-	&:not(.disabled):hover, &:not(:disabled):hover {			
+	&:not(:disabled):hover,			
+	&:not(:disabled):active,			
+	&:not(:disabled):focus {			
 		background-color: rgba($color-blue-hover, 1);
+		color: $color-white;
+		outline: none;
 	}	
 	&:disabled, &.disabled {
 		outline: none;
 		background-color: rgba($color-white, 0.7);
 		color: $color-text;
 		cursor: unset;
-
 	}
 
 	&__icon {
@@ -50,13 +48,27 @@ $icons-changing: (home, edit, logout);
 		}
 	}
 
-	&:not(.disabled):hover .button__icon, 
 	&:not(:disabled):hover .button__icon {
 		background-size: 20px;
 	}
 
 
 	// ----- sizes -----
+	&_size_xs {
+		border-radius: 50%;		
+		width: 34px;
+		height: 34px;
+		
+		& .button__icon {
+			// width: 20px;
+			// height: 20px;
+			background-size: 16px;
+		}  
+		&:not(:disabled):hover .button__icon {
+			background-size: 17px;
+		}
+
+	}
 	&_size_s {
 		border-radius: 50%;		
 		width: 40px;
@@ -115,8 +127,9 @@ $icons-changing: (home, edit, logout);
 		@include tablets {
 			border-radius: 50%;	
 
-			&:not(.disabled):hover, &:not(:disabled):hover,
-			&:active, &:focus {
+			&:not(:disabled):hover,
+			&:not(:disabled):active,
+			&:not(:disabled):focus {
 				font-size: 14px;
 				width: unset;
 				border-radius: 20px;
@@ -158,10 +171,9 @@ $icons-changing: (home, edit, logout);
 		& .button__icon {
 			background-size: 20px;
 		}
-		&:not(.disabled):hover .button__icon,
 		&:not(:disabled):hover .button__icon,
-		&:active .button__icon,
-		&:focus .button__icon {
+		&:not(:disabled):active .button__icon,
+		&:not(:disabled):focus .button__icon {
 			background-size: 22px;
 		}
 	}
@@ -180,7 +192,7 @@ $icons-changing: (home, edit, logout);
 			color: rgba($color-blue, 0.3);
 			border: 2px solid rgba($color-blue, 0.3);
 		}
-		&:not(.disabled):hover, &:not(:disabled):hover {
+		&:not(:disabled):hover {
 			background-color: $color-blue;
 			color: $color-white;
 		}
@@ -192,7 +204,6 @@ $icons-changing: (home, edit, logout);
 	}
 
 	&_theme_pale.button {
-		// background-color: $color-white;
 		background-color: #f6f6f6;
 		color: rgba($color-text, 0.8);
 		border: none;
@@ -201,15 +212,28 @@ $icons-changing: (home, edit, logout);
 		&.disabled, &:disabled {
 			background-color: rgba($color-text, 0.5);
 		}
-		&:not(.disabled):hover, &:not(:disabled):hover {
+		&:not(:disabled):hover, 
+		&:not(:disabled):active, 
+		&:not(:disabled):focus {
 			box-shadow: 0 1px 10px 5px rgba(0,0,0,.22);
 			background-color: $color-white;
 			color: rgba($color-text, 0.6);
 		}
-		&:active, &:focus {
-			box-shadow: 0 1px 10px 5px rgba(0,0,0,.22);
+	}
+
+	&_theme_calm.button {
+		background-color: #f6f6f6;
+		color: rgba($color-text, 0.9);
+		border: none;
+
+		&.disabled, &:disabled {
+			background-color: rgba($color-text, 0.5);
+		}
+		&:not(:disabled):hover, 
+		&:not(:disabled):active, 
+		&:not(:disabled):focus {
 			background-color: $color-white;
-			color: rgba($color-text, 0.6);
+			color: rgba($color-text, 0.7);
 		}
 	}
 
@@ -221,9 +245,9 @@ $icons-changing: (home, edit, logout);
 		&.disabled, &:disabled {
 			background-color: rgba($color-text, 0.5);
 		}
-		&:not(.disabled):hover, 
 		&:not(:disabled):hover,
-		&:active, &:focus {
+		&:not(:disabled):active,
+		&:not(:disabled):focus {
 			background-color: $color-blue;
 
 			& .button__icon {				
@@ -255,10 +279,9 @@ $icons-changing: (home, edit, logout);
 			background-color: rgba($color-text, 0.3);
 			border: 2px solid rgba($color-blue, 0.3);
 		}
-		&:not(.disabled):hover, &:not(:disabled):hover {
-			background-color: rgba($color-carrot, 0.8);
-		}
-		&:active, &:focus {
+		&:not(:disabled):hover,
+		&:not(:disabled):active,
+		&:not(:disabled):focus {
 			background-color: rgba($color-carrot, 0.8);
 		}
 		& .button__icon {
@@ -278,16 +301,15 @@ $icons-changing: (home, edit, logout);
 		padding: 0;
 		color: $color-blue;
 		font-family: 'Proxima Nova Semibold';
+		background-color: transparent;
 
-		&:active, &:focus {
-			background-color: transparent;
-			color: rgba($color-blue, 0.7);
-		}
 		&:disabled, &.disabled {
 			background-color: transparent;
 			color: rgba($color-text, 0.9);
 		}
-		&:not(.disabled):hover, &:not(:disabled):hover {			
+		&:not(:disabled):hover,			
+		&:not(:disabled):active,			
+		&:not(:disabled):focus {			
 			background-color: transparent;
 			color: rgba($color-blue-hover, 1);
 		}

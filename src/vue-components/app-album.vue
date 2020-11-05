@@ -1,7 +1,11 @@
 <template>
     <div class="wrapper">
-        <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigMyPhoto || openEditPhoto || openAddPhoto"
-            @click="openBigMyPhoto = openEditPhoto = openAddPhoto = false"
+        <pre>{{changedPhoto}}</pre>
+        <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigMyPhoto || openAddPhoto"
+            @click="openBigMyPhoto = openAddPhoto = false"
+        ></div>
+        <div class="wrapper__overlay wrapper__overlay_black-z" v-if="openEditPhoto"
+            @click="openEditPhoto = false"
         ></div>
         <div class="wrapper__overlay wrapper__overlay_white" v-if="openEditHeader"
             @click="openEditHeader = false"
@@ -73,8 +77,8 @@
                         <div class="edit-header__form">                            
 
                             <form class="form-edit-header"
-                                @submit.prevent="submitChangeAlbumHeaderHandler"
-                            >
+                                @submit.prevent="submitChangeAlbumHeaderHandler">
+
                                 <div class="form-edit-header__fields-wrapper">
 
                                     <label class="form-edit-header__label">
@@ -168,8 +172,7 @@
                                     <div class="edit-photo__form">
 
                                         <form class="form-editPhoto"
-                                            @submit.prevent="saveChangePhotoHandler"
-                                        >
+                                            @submit.prevent="saveChangePhotoHandler">
 
                                             <label class="form-editPhoto__label">Название
                                                 <input class="form-editPhoto__input" type="text" placeholder="Название фотографии"
@@ -242,9 +245,13 @@
                                                             v-for="photo in renderedPhotos" :key="photo.id"
                                                             :style="{ backgroundImage : `url(${photo.pic})` }">
                                                                                                           
-                                                            <button class="button button_icon button_size_s button_theme_carrot added-photos__in"
+                                                            <button class="button button_icon button_size_s button_theme_carrot added-photos__close-button"
                                                                 @click.prevent="removeRenderedPhotoHandler(photo)">
                                                                 <span class="button__icon button__icon_close"></span>
+                                                            </button>                                                                                                          
+                                                            <button class="button button_icon button_size_xs button_theme_calm added-photos__edit-button"
+                                                                @click.prevent="editRenderedPhotoHandler(photo)">
+                                                                <span class="button__icon button__icon_edit"></span>
                                                             </button>
                                                         </li>
 
@@ -484,9 +491,16 @@
                 let removed = this.renderedPhotos.splice(ndxRemoved, 1);
 
                     if (this.renderedPhotos.length == 0) {
-                        console.log(`renderedPhotos.length == 0`);
+                        // console.log(`renderedPhotos.length == 0`);
                         this.isPhotosLoaded = !this.isPhotosLoaded;
                     }
+            },
+
+            editRenderedPhotoHandler(photo) {
+                console.log(photo);
+                this.openEditPhoto=true;
+                photo.title = this.changedPhoto.title;
+                photo.description = this.changedPhoto.description;
             },
 
             closeAddedPhotosHandler() {
@@ -515,6 +529,8 @@
                         
                         this.renderedPhotos[id].pic = pic;
                         this.renderedPhotos[id].id = id;
+                        photo.title='';
+                        photo.description='';
                         id++;
                     
                         if (id === photosAmount) this.isPhotosLoaded = !this.isPhotosLoaded;
@@ -591,15 +607,8 @@
             },
 
             async deletePhotoHandle() {                  
-                try {
-                    await this.deleteCard(this.changedPhoto.id);
-                    }
-                catch(error) { 
-                    throw new Error ( error.response.data.error || error.response.data.message ); 
-                }
-                finally {
-                    this.openEditPhoto = false;
-                }
+                await this.deleteCard(this.changedPhoto.id);
+                this.openEditPhoto = false;
             },
 
             addPhotoHandler() {
@@ -610,7 +619,8 @@
                         const formData = new FormData();
 
                         formData.append('photo', photo);
-                        formData.append('title', 'это обязательное поле?');
+                        formData.append('title', photo.title);
+                        // formData.append('description', photo.description);
                         formData.append('description', 'это обязательное поле? это обязательное поле? это обязательное поле?');
                         formData.append('commentCount', 0);//!!!!! потом поменяй поля, оставь только те, которые останутся в итоге в фотке
                         formData.append('likeCount', 0);//!!!!! потом поменяй поля, оставь только те, которые останутся в итоге в фотке
@@ -1119,8 +1129,17 @@
             }            
         }
 
-        &__edit-photo, &__add-photo {
+        &__add-photo {
             @include fixed-popup-container;
+        }
+
+        &__edit-photo {
+            @include fixed-popup-container;
+            z-index: 12;
+            @include tablets {
+                width: 70%;
+                margin: 0 max(15%,calc((100% - 1480px)/2));
+            }
         }
 
         &__big-card-slider {
@@ -1374,7 +1393,7 @@
         
         &__in {
             margin-left: auto;
-        }        
+        }
         &__buttonspace {
             margin-right: 10px;
         }
@@ -1581,13 +1600,18 @@
             padding: 20px;
         }
 
-        &__in {
+        &__close-button {
             position: absolute;
             left: 100%;
             bottom: 100%;
             transform: translate(-50%, 50%);
             width: 32px;
             height: 32px;
+        }
+        &__edit-button {
+            position: absolute;
+            left: 0%;
+            bottom: 0%;
         }
 
         &__item {

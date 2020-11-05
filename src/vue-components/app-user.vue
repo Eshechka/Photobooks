@@ -398,15 +398,13 @@
                         :editedAlbumObject="editedAlbum"
                         :authorId="currentAuthorObject.id"
                         :mode="albumChangeMode"
+                        :toDisabledSubmit="toDisabledSubmit"
                     ></appChangeAlbum>
-                        <!-- @update-albums="updateAlbums" -->
-
                 </div>
             </section>
         </main>
 
 		<footer class="footer" :style="{ backgroundImage: `url(${currentAuthorObject.cover})`}" >
-		<!-- <footer class="footer" :style="{ backgroundImage: `url(${urlPhotos}/${currentAuthorObject.cover})`}" > -->
 
             <div class="footer__container">	
 
@@ -467,6 +465,7 @@
                 activeSocialLink: '',
 
                 albumChangeMode: '',
+                toDisabledSubmit: false,
 
                 idCurrentPhoto: 0,
 
@@ -569,14 +568,33 @@
             },
 
             async submitChangeMyAlbum(data, mode) {
+                
                 if (mode === "add") {
-                    await this.addAlbum(data);
-                }
+                    try {
+                        await this.addAlbum(data);
+                        this.updateAlbums();                        
+                    }
+                    catch(error) {
+                        alert(error);                        
+                    }
+                    finally {
+                        this.toDisabledSubmit=false;
+                        this.openChangeMyAlbum=false;
+                    }
+                }                
                 else if (mode === "edit") {
-                    await this.changeAlbum(data);
+                    try {
+                        await this.changeAlbum(data);
+                        this.updateAlbums();                        
+                    }
+                    catch(error) {
+                        alert(error);                        
+                    }
+                    finally {
+                        this.toDisabledSubmit=false;
+                        this.openChangeMyAlbum=false;
+                    }
                 }
-                    this.updateAlbums();
-                    this.openChangeMyAlbum=false;
             },
 
             async deleteAlbumHandler(albumId) {

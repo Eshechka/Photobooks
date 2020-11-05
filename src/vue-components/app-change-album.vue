@@ -53,7 +53,9 @@
                     </div>
                     
                     <div class="form-changeAlbum__buttons">
-                        <button class="button button_size_m form-changeAlbum__buttonspace" type="submit">Сохранить</button>    
+                        <button class="button button_size_m form-changeAlbum__buttonspace" type="submit"
+                            :disabled="isDisabledSubmit"
+                        >Сохранить</button>    
                         <button class="button button_size_m button_theme_minimalizm" type="button"
                             @click.prevent="$emit('click-close-change-my-album')"                            
                         >Отменить</button>
@@ -93,6 +95,7 @@
           editedAlbumObject: Object,
           authorId: Number,
           mode: String,
+          toDisabledSubmit: Boolean,
 		},
 
         data() {
@@ -114,6 +117,8 @@
                     preview: '',
                     title: '',
                 },
+
+                isDisabledSubmit: this.toDisabledSubmit,
             }
         },
 
@@ -123,7 +128,7 @@
                 this.loadedCover = e.target.files[0];
                 renderer(this.loadedCover).then(pic => {                 
                     this.renderedCover.pic = pic;
-                    this.isCoverLoaded = !this.isCoverLoaded;
+                    this.isCoverLoaded = true;
                     this.coverTitle = "Изменить обложку";
                 });
         },
@@ -138,7 +143,6 @@
             this.myChangeCurrentObject = {
                     id: this.editedAlbumObject.id,
                     description: '',
-                    // author: this.editedAlbumObject.author,
                     authorId: this.authorId,
                     preview: '',
                     title: ''
@@ -152,6 +156,7 @@
                     formData.append('title', this.myChangeCurrentObject.title);
                     formData.append('description', this.myChangeCurrentObject.description);
                     formData.append('authorId', this.authorId);
+                    this.isDisabledSubmit = true;
                     this.$emit('submit-change-my-album', formData, this.mode);
             }
             else if (this.mode=='edit') {

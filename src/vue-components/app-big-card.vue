@@ -16,7 +16,6 @@
                 <div class="big-card__name">{{cardObject.author.name}}</div>
 
                 <div class="big-card__likes">
-                    <!-- <button type="button" class="big-card__button-likes" -->
                     <button type="button" class="button button_icon button_size_m button_theme_carrot big-card__button-likes"
                         @click.prevent="plusMyLike"
                         :class="{'big-card__button-likes_active' : isActiveLike}">

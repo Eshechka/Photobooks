@@ -87,15 +87,22 @@
 
         &__img-card {
             width: 100%;
-            height: 200px;
+            height: 350px;
             position: relative;
+
+            @include tablets {
+                height: 250px;
+            }
         }
 
         &__img {
-            object-fit: contain;
-            /* object-fit: cover; */
+            object-fit: cover;
             width: 100%;
             height: 100%;
+
+            @include tablets {
+                object-fit: contain;
+            }
         }
 
         &__img-overlay {
