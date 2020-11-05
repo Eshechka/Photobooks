@@ -177,22 +177,31 @@
                                                 <input class="form-editPhoto__input" type="text" placeholder="Название фотографии"
                                                 v-model="changedPhoto.title">
                                             </label>
+                                            <div class="form-editPhoto__error form-editPhoto__error_title" 
+                                                v-if="$v.changedPhoto.title.$invalid">
+                                                <span>
+                                                    Обязательно для заполнения
+                                                </span>
+                                            </div>
 
                                             <label class="form-editPhoto__label">Описание
                                                 <textarea class="form-editPhoto__input form-editPhoto__input_textarea" cols="10" rows="2" placeholder="Описание фотографии"
                                                     v-model="changedPhoto.description"
                                                 ></textarea>
-
-                                                
-                                                    <!-- v-if="checkForm && $v.albumObject.desc.$invalid" -->
-                                                <div class="form-editPhoto__error form-editPhoto__error_desc-text"
-                                                    v-if="$v.albumObject.desc.$invalid"
-                                                >
-                                                    <span
-                                                        v-if="!$v.albumObject.desc.maxLength"
-                                                    >Максимум символов в описании: {{ $v.albumObject.desc.$params.maxLength.max }}</span>
-                                                </div>
                                             </label>
+                                            <div class="form-editPhoto__error form-editPhoto__error_description" 
+                                                v-if="$v.changedPhoto.description.$invalid">
+                                                <span v-if="!$v.changedPhoto.description.minLength">
+                                                    Минимум символов в описании: {{ $v.changedPhoto.description.$params.minLength.max }}
+                                                </span>
+                                                <span v-else-if="!$v.changedPhoto.description.maxLength">
+                                                    Максимум символов в описании: {{ $v.changedPhoto.description.$params.maxLength.max }}
+                                                </span>
+                                                <span v-else>
+                                                    Обязательно для заполнения
+                                                </span>
+                                            </div>
+
                                     
                                             <div class="form-editPhoto__buttons">
                                                 <button class="button button_size_m form-editPhoto__buttonspace" type="submit">Сохранить</button>
@@ -252,9 +261,9 @@
                                                             <button class="button button_icon button_size_xs button_theme_calm added-photos__edit-button"
                                                                 @click.prevent="editRenderedPhotoHandler(photo)">
                                                                 <span class="button__icon button__icon_edit"></span>
-                                                            </button>
+                                                            </button>                                                                                                          
+                                                            <span class="added-photos__valid-sign" v-if="isPhotoValidForSave(photo)"></span>
                                                         </li>
-
                                                     </ul>
                                                 </div>
 
@@ -364,7 +373,7 @@
     
     import Flickity from 'vue-flickity';
 
-    import { maxLength } from 'vuelidate/lib/validators';
+    import { required, minLength, maxLength } from 'vuelidate/lib/validators';
 
     import { mapState, mapActions } from 'vuex';
 
@@ -473,11 +482,17 @@
 
         validations: {
 
-            albumObject: {
-                desc: {
+            changedPhoto: {
+                title: {
+                    required
+                },
+                description: {
+                    minLength: minLength(60),
                     maxLength: maxLength(600),
+                    required
                 },
             },
+
         },
             
         watch: {
@@ -506,10 +521,25 @@
                     }
             },
 
-            editRenderedPhotoHandler(photo) {                
+            editRenderedPhotoHandler(photo) {
+                console.log(photo);                
                 this.openEditPhoto = true;
                 this.isNewPhotosEditing = true;
                 this.editingNewPhoto.id = photo.id;
+
+                this.changedPhoto = {...this.loadedPhotos.find(item => item.id == photo.id)};
+            },
+
+            isPhotoValidForSave(photo) {
+                let loadedPhoto = this.loadedPhotos.find(item => item.id == photo.id);
+                let photoTitle = loadedPhoto ? loadedPhoto.title : false;
+                let photoDescription = loadedPhoto ? loadedPhoto.description : false;
+                let validDescription = photoDescription ? (photoDescription.length >= 60 && photoDescription.length <= 600) : false;
+                if (photoTitle && photoDescription && validDescription) {
+                    return true;
+                }
+                
+                return false;
             },
 
             closeAddedPhotosHandler() {
@@ -517,7 +547,7 @@
                 this.loadedPhotos = [];
                 this.isPhotosLoaded = false;
                 this.openAddPhoto = false;
-                this.isNewPhotosEditing=false;
+                this.isNewPhotosEditing = false;
             },
 
             async updateLoggedUser() {
@@ -660,7 +690,9 @@
                         this.isPhotosLoaded = false;
                         this.renderedPhotos = [];
                         this.openAddPhoto=false;
-                    })
+                    });
+
+                    this.isNewPhotosEditing = false;
                 }
                 else
                     console.log('no files');//!!!!!!! validation
@@ -1368,7 +1400,7 @@
             @include tablets {
                 display: flex;
                 align-items: center;
-                padding: 15px 20px 10px 50px;
+                padding: 15px 20px 0px 50px;
             }
         }
 
@@ -1422,6 +1454,20 @@
         }
         &__buttonspace {
             margin-right: 10px;
+        }
+
+        &__error {
+            padding: 0 25px 5px 50px;
+            min-height: 28px;
+            position: relative;
+
+            span {
+                color: red;
+                font-size: 12px;
+                position: absolute;
+                right: 30px;
+                top: 5px;
+            }
         }
     }
 
@@ -1621,6 +1667,7 @@
         display: flex;     
         flex-wrap: wrap;
         padding: 10px;
+        padding-top: 20px;
 
         @include tablets {
             padding: 20px;
@@ -1659,7 +1706,18 @@
                 margin-right: 20px;
                 margin-bottom: 20px;                
             }
+        }
 
+        &__valid-sign {
+            position: absolute;
+            bottom: 0%;
+            right: 0%;
+            width: 32px;
+            height: 32px;
+            background-repeat: no-repeat;
+            background-size: 30px;
+            background-position: 50%;
+            background-image: svg-load('save.svg', fill=rgba(green, 0.8), height='30px');
         }
     }
 
