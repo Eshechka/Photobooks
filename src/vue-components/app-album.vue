@@ -1,6 +1,5 @@
 <template>
     <div class="wrapper">
-        <pre>{{changedPhoto}}</pre>
         <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigMyPhoto || openAddPhoto"
             @click="openBigMyPhoto = openAddPhoto = false"
         ></div>
@@ -231,7 +230,8 @@
                                     
                                     <div class="add-photo__form">
                                         <form class="form-addPhoto"
-                                         @submit.prevent='addPhotoHandler'>
+
+                                        @submit.prevent='addPhotoHandler'>
 
                                             <div class="form-addPhoto__album-name-label">Название
                                                 <span class="form-addPhoto__album-name" type="text"> {{currentAlbumObject.title}} </span>
@@ -401,6 +401,8 @@
                 loadedPhotos: [],
                 renderedPhotos: [],
 
+                isNewPhotosEditing: false,
+
                 isAlbumPreviewLoaded: false,
                 loadedAlbumPreview: {},
                 renderedAlbumPreview: '',
@@ -433,6 +435,12 @@
                 },
 
                 changedPhoto: {                    
+                    title: '',
+                    description: ''
+                },
+
+                editingNewPhoto: {
+                    id: Number,
                     title: '',
                     description: ''
                 },
@@ -487,20 +495,21 @@
             ...mapActions('albums', ['changeAlbumWithFiles', 'refreshThisAlbum']),
 
             removeRenderedPhotoHandler(photo) {
-                let ndxRemoved = this.renderedPhotos.indexOf(photo, 0);
-                let removed = this.renderedPhotos.splice(ndxRemoved, 1);
+                let ndxRemovedRendered = this.renderedPhotos.indexOf(photo, 0);
+                let removedRendered = this.renderedPhotos.splice(ndxRemovedRendered, 1);
+
+                let ndxRemovedLoaded = this.renderedPhotos.indexOf(this.loadedPhotos.find(item => item.id == photo.id), 0);
+                let removedLoaded = this.loadedPhotos.splice(ndxRemovedLoaded, 1);
 
                     if (this.renderedPhotos.length == 0) {
-                        // console.log(`renderedPhotos.length == 0`);
                         this.isPhotosLoaded = !this.isPhotosLoaded;
                     }
             },
 
-            editRenderedPhotoHandler(photo) {
-                console.log(photo);
-                this.openEditPhoto=true;
-                photo.title = this.changedPhoto.title;
-                photo.description = this.changedPhoto.description;
+            editRenderedPhotoHandler(photo) {                
+                this.openEditPhoto = true;
+                this.isNewPhotosEditing = true;
+                this.editingNewPhoto.id = photo.id;
             },
 
             closeAddedPhotosHandler() {
@@ -508,6 +517,7 @@
                 this.loadedPhotos = [];
                 this.isPhotosLoaded = false;
                 this.openAddPhoto = false;
+                this.isNewPhotosEditing=false;
             },
 
             async updateLoggedUser() {
@@ -528,8 +538,8 @@
                     renderer(photo).then(pic => {
                         
                         this.renderedPhotos[id].pic = pic;
-                        this.renderedPhotos[id].id = id;
                         photo.title='';
+                        photo.id=id;
                         photo.description='';
                         id++;
                     
@@ -552,7 +562,6 @@
                     this.previewTitle = "Выбрать превью альбома";
                 });
             },
-
 
             async submitChangeAlbumHeaderHandler() {
                 const formData = new FormData();
@@ -597,18 +606,37 @@
                 this.openBigMyPhoto = true;
             },
 
-            async saveChangePhotoHandler() {                  
-                    let newPhotoData = {};
+            async saveChangePhotoHandler() {
+                let newPhotoData = {};                
+                newPhotoData.description = this.changedPhoto.description;
+                newPhotoData.title = this.changedPhoto.title;
+
+                if (this.isNewPhotosEditing) {
+                    this.loadedPhotos.map(photo => {
+                        if (photo.id == this.editingNewPhoto.id) {
+                            Object.assign(photo, newPhotoData);
+                        }                       
+                    });
+                }
+                else {
                     newPhotoData.id = this.changedPhoto.id;
-                    newPhotoData.description = this.changedPhoto.description;
-                    newPhotoData.title = this.changedPhoto.title;
                     await this.changeCard(newPhotoData);
+                    this.changedPhoto = {                    
+                        title: '',
+                        description: ''
+                    };
+                }
                     this.openEditPhoto = false;
             },
 
-            async deletePhotoHandle() {                  
-                await this.deleteCard(this.changedPhoto.id);
-                this.openEditPhoto = false;
+            async deletePhotoHandle() {
+                if (this.isNewPhotosEditing) {
+                    this.removeRenderedPhotoHandler(this.renderedPhotos.find(photo => photo.id == this.editingNewPhoto.id));
+                }
+                else {
+                    await this.deleteCard(this.changedPhoto.id);
+                }
+                    this.openEditPhoto = false;
             },
 
             addPhotoHandler() {
@@ -620,8 +648,7 @@
 
                         formData.append('photo', photo);
                         formData.append('title', photo.title);
-                        // formData.append('description', photo.description);
-                        formData.append('description', 'это обязательное поле? это обязательное поле? это обязательное поле?');
+                        formData.append('description', photo.description);
                         formData.append('commentCount', 0);//!!!!! потом поменяй поля, оставь только те, которые останутся в итоге в фотке
                         formData.append('likeCount', 0);//!!!!! потом поменяй поля, оставь только те, которые останутся в итоге в фотке
                         formData.append('isLikedByMe', 0);
@@ -677,7 +704,6 @@
             this.currentAlbumObject = {...this.currentAlbum};
             this.currentAlbumObject.preview = this.currentAlbumObject.preview ? this.currentAlbumObject.preview : '../img/no_album_cover.jpg';
             this.changedAlbum = {...this.currentAlbumObject};
-
         },
 
         mounted() {
