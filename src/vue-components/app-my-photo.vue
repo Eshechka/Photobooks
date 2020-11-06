@@ -15,7 +15,7 @@
 		</div>
 
 		<div class="my-photo__name-wrapper">
-			<button type="button" class="my-photo__button my-photo__button_edit" v-if="myPhotoObject.author.id==loggedUserObject.id"
+			<button title="Редактировать фотографию" type="button" class="my-photo__button my-photo__button_edit" v-if="myPhotoObject.author.id==loggedUserObject.id"
                 @click="$emit('click-edit-my-photo', myPhotoObject)"
             ></button>
 			<div class="my-photo__name"> {{myPhotoObject.title}} </div>			

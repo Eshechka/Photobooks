@@ -14,15 +14,11 @@ $icons-changing: (home, edit, logout);
 
 	&:not(:disabled):hover,			
 	&:not(:disabled):active,			
-	&:not(:disabled):focus {			
-		background-color: rgba($color-blue-hover, 1);
-		color: $color-white;
+	&:not(:disabled):focus {
 		outline: none;
 	}	
 	&:disabled, &.disabled {
 		outline: none;
-		background-color: rgba($color-white, 0.7);
-		color: $color-text;
 		cursor: unset;
 	}
 
@@ -181,6 +177,16 @@ $icons-changing: (home, edit, logout);
 // ----- themes -----
 	&.button {
 		background-color: $color-blue;
+		&:not(:disabled):hover,			
+		&:not(:disabled):active,			
+		&:not(:disabled):focus {			
+			background-color: rgba($color-blue-hover, 1);
+			color: $color-white;
+		}
+		&:disabled, &.disabled {
+			background-color: rgba($color-text, 0.2);
+			color: $color-text;
+		}
 	}
 
 	&_theme_light.button {

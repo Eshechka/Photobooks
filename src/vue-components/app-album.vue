@@ -135,7 +135,7 @@
 
                     <div class="my-photos__topgroup">
                         <div class="my-photos__button-plus" v-if="currentAlbumObject.author.id==loggedUserObject.id">
-                            <button class="button button_icon_expand button_size_s button_theme_pale"
+                            <button title="Добавить фотографии в этот альбом" class="button button_icon_expand button_size_s button_theme_pale"
                                 @click="openAddPhoto=true">
                                 <span class="button__icon button__icon_plus"></span>
                             </button>
@@ -177,9 +177,8 @@
                                                 <input class="form-editPhoto__input" type="text" placeholder="Название фотографии"
                                                 v-model="changedPhoto.title">
                                             </label>
-                                            <div class="form-editPhoto__error form-editPhoto__error_title" 
-                                                v-if="$v.changedPhoto.title.$invalid">
-                                                <span>
+                                            <div class="form-editPhoto__error form-editPhoto__error_title">
+                                                <span v-show="$v.changedPhoto.title.$invalid">
                                                     Обязательно для заполнения
                                                 </span>
                                             </div>
@@ -189,22 +188,24 @@
                                                     v-model="changedPhoto.description"
                                                 ></textarea>
                                             </label>
-                                            <div class="form-editPhoto__error form-editPhoto__error_description" 
-                                                v-if="$v.changedPhoto.description.$invalid">
-                                                <span v-if="!$v.changedPhoto.description.minLength">
-                                                    Минимум символов в описании: {{ $v.changedPhoto.description.$params.minLength.max }}
+                                            <div class="form-editPhoto__error form-editPhoto__error_description">
+                                                <span v-if="!$v.changedPhoto.description.minLength" v-show="$v.changedPhoto.description.$invalid">
+                                                    Минимум символов в описании: {{ $v.changedPhoto.description.$params.minLength.min }}
                                                 </span>
-                                                <span v-else-if="!$v.changedPhoto.description.maxLength">
+                                                <span v-else-if="!$v.changedPhoto.description.maxLength" v-show="$v.changedPhoto.description.$invalid">
                                                     Максимум символов в описании: {{ $v.changedPhoto.description.$params.maxLength.max }}
                                                 </span>
-                                                <span v-else>
+                                                <span v-else v-show="$v.changedPhoto.description.$invalid">
                                                     Обязательно для заполнения
                                                 </span>
                                             </div>
 
                                     
                                             <div class="form-editPhoto__buttons">
-                                                <button class="button button_size_m form-editPhoto__buttonspace" type="submit">Сохранить</button>
+                                                <button class="button button_size_m form-editPhoto__buttonspace" type="submit"
+                                                    :disabled="$v.changedPhoto.$invalid"
+                                                    :title="$v.changedPhoto.$invalid ? 'Для отправки необходимо исправить название и описание' : '' "
+                                                >Сохранить</button>
                                                 <button class="button button_size_m button_theme_minimalizm" type="button"
                                                     @click="openEditPhoto=false"
                                                 >Отменить</button>
@@ -254,16 +255,16 @@
                                                             v-for="photo in renderedPhotos" :key="photo.id"
                                                             :style="{ backgroundImage : `url(${photo.pic})` }">
                                                                                                           
-                                                            <button class="button button_icon button_size_s button_theme_carrot added-photos__close-button"
+                                                            <button title="Удалить фото из списка загрузки" class="button button_icon button_size_s button_theme_carrot added-photos__close-button"
                                                                 @click.prevent="removeRenderedPhotoHandler(photo)">
                                                                 <span class="button__icon button__icon_close"></span>
                                                             </button>                                                                                                          
-                                                            <button class="button button_icon button_size_xs button_theme_calm added-photos__edit-button"
+                                                            <button title="Редактировать название и описание фотографии" class="button button_icon button_size_xs button_theme_calm added-photos__edit-button"
                                                                 @click.prevent="editRenderedPhotoHandler(photo)">
                                                                 <span class="button__icon button__icon_edit"></span>
                                                             </button>                                                                                                          
-                                                            <span class="added-photos__valid-sign" v-if="isPhotoValidForSave(photo)"></span>
-                                                            <span class="added-photos__invalid-sign" v-if="!isPhotoValidForSave(photo)"></span>
+                                                            <span title="Описание фото успешно сохранено" class="added-photos__valid-sign" v-if="isPhotoValidForSave(photo)"></span>
+                                                            <span title="Необходимо добавить название и описание фото" class="added-photos__invalid-sign" v-if="!isPhotoValidForSave(photo)"></span>
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -281,13 +282,21 @@
                                                         <span class="form-addPhoto__load-photo-drag-text">Перетащите фото сюда или </span>
                                                         выберите файл
                                                     </div>
-
                                                 </label>
 
                                             </div>
+
+                                            <div class="form-addPhoto__error form-addPhoto__error_validphotos">
+                                                <span v-show="!isAllPhotosValid">
+                                                    Необходимо действие: Добавьте название и описание для загружаемых фотографий.
+                                                </span>
+                                            </div>
                                     
                                             <div class="form-addPhoto__buttons">
-                                                <button class="button button_size_m form-addPhoto__buttonspace" type="submit">Сохранить</button>
+                                                <button class="button button_size_m form-addPhoto__buttonspace" type="submit"
+                                                    :disabled="!isAllPhotosValid || !renderedPhotos.length"
+                                                    :title="titleDisabledBtnAddPhoto"
+                                                >Сохранить</button>
                                                 <button class="button button_size_m button_theme_minimalizm" type="button"
                                                     @click="closeAddedPhotosHandler"
                                                 >Отменить</button>
@@ -413,6 +422,8 @@
 
                 isNewPhotosEditing: false,
 
+                isAllPhotosValid: true,
+
                 isAlbumPreviewLoaded: false,
                 loadedAlbumPreview: {},
                 renderedAlbumPreview: '',
@@ -456,6 +467,8 @@
                 },
 
                 addedPhotos: [],
+
+                titleDisabledBtnAddPhoto: 'Необходимо добавить фотографии',
                 
             }
         },
@@ -517,7 +530,6 @@
             loadPhotosFiles(e) {
                 let id=0;
                 let photosAmount = e.target.files.length;
-                console.log('1) this.renderedPhotos = ',this.renderedPhotos);
 
                 for (let i=0; i<photosAmount; i++) {
                     this.loadedPhotos.push(e.target.files[i]);
@@ -525,7 +537,6 @@
                 }
 
                 this.loadedPhotos.forEach(photo => {
-        console.log('2) this.renderedPhotos = ',this.renderedPhotos);
 
                     renderer(photo).then(pic => {
                         
@@ -538,13 +549,12 @@
                         if (id === photosAmount) this.isPhotosLoaded = !this.isPhotosLoaded;
                     })                    
                 });
-
+                this.isAllPhotosValid = false;
+                this.titleDisabledBtnAddPhoto = 'Для отправки необходимо добавить названия и описания для всех фотографий';
             },
 
             // ***** Редактирование фото по клику иконки edit ******
             editRenderedPhotoHandler(photo) {
-                console.log('photo R',photo); 
-                console.log('photo L',this.loadedPhotos.find(item => item.id == photo.id)); 
                 this.openEditPhoto = true;
                 this.isNewPhotosEditing = true;
                 this.editingNewPhoto.id = photo.id;
@@ -556,22 +566,15 @@
             removeRenderedPhotoHandler(photo) {
                 let ndxRemovedRendered = this.renderedPhotos.indexOf(photo, 0);
                 let removedRendered = this.renderedPhotos.splice(ndxRemovedRendered, 1);
-        console.log('ndxRemovedRendered = ',ndxRemovedRendered);
-            this.renderedPhotos.map(item => 
-                console.log('renderedPhotos = ',item.id)
-            );
-
-        console.log('loadedPhotos = ', this.loadedPhotos);
                 let ndxRemovedLoaded = this.loadedPhotos.indexOf(this.loadedPhotos.find(item => item.id == photo.id), 0);
                 let removedLoaded = this.loadedPhotos.splice(ndxRemovedLoaded, 1);
-        console.log('ndxRemovedLoaded = ',ndxRemovedLoaded);
-            this.loadedPhotos.map(item => 
-                console.log('loadedPhotos = ',item.id)
-            );
 
+                this.isAllPhotosValid = this.loadedPhotos.reduce((total, current) => total && this.isPhotoValidForSave(current), true);
 
                     if (this.renderedPhotos.length == 0) {
                         this.isPhotosLoaded = !this.isPhotosLoaded;
+                        this.isAllPhotosValid = true;
+                        this.titleDisabledBtnAddPhoto = '';
                     }
             },
 
@@ -596,35 +599,44 @@
                 this.isPhotosLoaded = false;
                 this.openAddPhoto = false;
                 this.isNewPhotosEditing = false;
+                this.isAllPhotosValid = true;
+                this.titleDisabledBtnAddPhoto = '';
             },
 
             // ***** Сохранение всех фото по клику "сохранить" ******
             addPhotoHandler() {
 
                 if (this.renderedPhotos.length) {
-                    this.loadedPhotos.forEach(async photo => {
 
-                        const formData = new FormData();
+                    if (this.isAllPhotosValid) {
+                        this.loadedPhotos.forEach(async photo => {
 
-                        formData.append('photo', photo);
-                        formData.append('title', photo.title);
-                        formData.append('description', photo.description);
-                        formData.append('commentCount', 0);//!!!!! потом поменяй поля, оставь только те, которые останутся в итоге в фотке
-                        formData.append('likeCount', 0);//!!!!! потом поменяй поля, оставь только те, которые останутся в итоге в фотке
-                        formData.append('isLikedByMe', 0);
-                        formData.append('authorId', this.currentAlbumObject.author.id);
-                        formData.append('albumId', this.currentAlbumObject.id);
+                            const formData = new FormData();
 
-                        await this.addCard(formData);
+                            formData.append('photo', photo);
+                            formData.append('title', photo.title);
+                            formData.append('description', photo.description);
+                            formData.append('commentCount', 0);//!!!!! потом поменяй поля, оставь только те, которые останутся в итоге в фотке
+                            formData.append('likeCount', 0);//!!!!! потом поменяй поля, оставь только те, которые останутся в итоге в фотке
+                            formData.append('isLikedByMe', 0);
+                            formData.append('authorId', this.currentAlbumObject.author.id);
+                            formData.append('albumId', this.currentAlbumObject.id);
 
-                        this.isPhotosLoaded = false;
-                        this.renderedPhotos = [];
-                        this.openAddPhoto=false;
-                    });
+                            await this.addCard(formData);
+
+                            this.isPhotosLoaded = false;
+                        });
 
                     this.isNewPhotosEditing = false;
                     this.renderedPhotos = [];
                     this.loadedPhotos = [];
+                    this.openAddPhoto=false;
+                    
+                    }
+                    else {
+                        console.log('some files not valide');//!!!!!!! validation
+                    }
+                    
                 }
                 else
                     console.log('no files');//!!!!!!! validation
@@ -692,6 +704,7 @@
                 this.openBigMyPhoto = true;
             },
 
+            // ***** Сохранение фото после изменений (2 вида: редактирование по клику на существующей фото и при добавлении новых фото заполнение полей) ******
             async saveChangePhotoHandler() {
                 let newPhotoData = {};                
                 newPhotoData.description = this.changedPhoto.description;
@@ -703,6 +716,7 @@
                             Object.assign(photo, newPhotoData);
                         }                       
                     });
+                    this.isAllPhotosValid = this.loadedPhotos.reduce((total, current) => total && this.isPhotoValidForSave(current), true);
                 }
                 else {
                     newPhotoData.id = this.changedPhoto.id;
@@ -712,8 +726,9 @@
                         description: ''
                     };
                 }
-                    this.openEditPhoto = false;
+                this.openEditPhoto = false;
             },
+
 
             async deletePhotoHandle() {
                 if (this.isNewPhotosEditing) {
@@ -969,7 +984,6 @@
             background-image: linear-gradient(rgba($color-text, 0.95), rgba($color-text, 0.8)), url('/img/bg-main-header.png');
         }
     }
-
         
     .edit-header {
         width: 100%;        
@@ -1018,7 +1032,6 @@
             height: 100%;
         }
     }
-
         
     .form-edit-header {
         display: flex;
@@ -1139,7 +1152,6 @@
         }
     }    
 
-
     .avatar {
         width: 100%;
         text-align: center;
@@ -1159,7 +1171,6 @@
             }
         }
     }
-
 
     .my-photos {
         min-width: 320px;
@@ -1238,7 +1249,6 @@
 
     }
 
-
     .big-card-slider {
         @include popup;
         overflow: unset;
@@ -1312,7 +1322,6 @@
             }
         }
     }
-
     
     .add-album {
 
@@ -1351,7 +1360,6 @@
         }
 
     }
-
     
     .form-addAlbum {
         display: flex;
@@ -1379,7 +1387,6 @@
             padding: 10px;
         }
     }
-
 
     .edit-photo {
         @include popup;
@@ -1416,7 +1423,6 @@
             }
         }
     }
-
 
     .form-editPhoto {
         display: flex;
@@ -1488,13 +1494,9 @@
         }
 
         &__error {
+            @include error;
             padding: 0 25px 5px 50px;
-            min-height: 28px;
-            position: relative;
-
             span {
-                color: red;
-                font-size: 12px;
                 position: absolute;
                 right: 30px;
                 top: 5px;
@@ -1691,6 +1693,11 @@
 
         &__buttonspace {
             margin-right: 10px;
+        }
+
+        &__error {
+            @include error;
+            padding: 0 10px 10px 15px;
         }
     }
 
