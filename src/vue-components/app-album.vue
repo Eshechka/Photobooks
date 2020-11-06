@@ -263,6 +263,7 @@
                                                                 <span class="button__icon button__icon_edit"></span>
                                                             </button>                                                                                                          
                                                             <span class="added-photos__valid-sign" v-if="isPhotoValidForSave(photo)"></span>
+                                                            <span class="added-photos__invalid-sign" v-if="!isPhotoValidForSave(photo)"></span>
                                                         </li>
                                                     </ul>
                                                 </div>
@@ -509,54 +510,14 @@
             ...mapActions('cards', ['addCard', 'deleteCard', 'changeCard', 'refreshAlbumCards']),
             ...mapActions('albums', ['changeAlbumWithFiles', 'refreshThisAlbum']),
 
-            removeRenderedPhotoHandler(photo) {
-                let ndxRemovedRendered = this.renderedPhotos.indexOf(photo, 0);
-                let removedRendered = this.renderedPhotos.splice(ndxRemovedRendered, 1);
 
-                let ndxRemovedLoaded = this.renderedPhotos.indexOf(this.loadedPhotos.find(item => item.id == photo.id), 0);
-                let removedLoaded = this.loadedPhotos.splice(ndxRemovedLoaded, 1);
+            // ********* Блок "Добавить фотографии" **********
 
-                    if (this.renderedPhotos.length == 0) {
-                        this.isPhotosLoaded = !this.isPhotosLoaded;
-                    }
-            },
-
-            editRenderedPhotoHandler(photo) {
-                console.log(photo);                
-                this.openEditPhoto = true;
-                this.isNewPhotosEditing = true;
-                this.editingNewPhoto.id = photo.id;
-
-                this.changedPhoto = {...this.loadedPhotos.find(item => item.id == photo.id)};
-            },
-
-            isPhotoValidForSave(photo) {
-                let loadedPhoto = this.loadedPhotos.find(item => item.id == photo.id);
-                let photoTitle = loadedPhoto ? loadedPhoto.title : false;
-                let photoDescription = loadedPhoto ? loadedPhoto.description : false;
-                let validDescription = photoDescription ? (photoDescription.length >= 60 && photoDescription.length <= 600) : false;
-                if (photoTitle && photoDescription && validDescription) {
-                    return true;
-                }
-                
-                return false;
-            },
-
-            closeAddedPhotosHandler() {
-                this.renderedPhotos = [];
-                this.loadedPhotos = [];
-                this.isPhotosLoaded = false;
-                this.openAddPhoto = false;
-                this.isNewPhotosEditing = false;
-            },
-
-            async updateLoggedUser() {
-                this.loggedUserObject = {...this.loggeduser};
-            },
-
+            // ***** Загрузка фото по change input ******
             loadPhotosFiles(e) {
                 let id=0;
                 let photosAmount = e.target.files.length;
+                console.log('1) this.renderedPhotos = ',this.renderedPhotos);
 
                 for (let i=0; i<photosAmount; i++) {
                     this.loadedPhotos.push(e.target.files[i]);
@@ -564,6 +525,7 @@
                 }
 
                 this.loadedPhotos.forEach(photo => {
+        console.log('2) this.renderedPhotos = ',this.renderedPhotos);
 
                     renderer(photo).then(pic => {
                         
@@ -578,6 +540,100 @@
                 });
 
             },
+
+            // ***** Редактирование фото по клику иконки edit ******
+            editRenderedPhotoHandler(photo) {
+                console.log('photo R',photo); 
+                console.log('photo L',this.loadedPhotos.find(item => item.id == photo.id)); 
+                this.openEditPhoto = true;
+                this.isNewPhotosEditing = true;
+                this.editingNewPhoto.id = photo.id;
+
+                this.changedPhoto = {...this.loadedPhotos.find(item => item.id == photo.id)};
+            },
+            
+            // ***** Удаление фото по клику иконки close ******
+            removeRenderedPhotoHandler(photo) {
+                let ndxRemovedRendered = this.renderedPhotos.indexOf(photo, 0);
+                let removedRendered = this.renderedPhotos.splice(ndxRemovedRendered, 1);
+        console.log('ndxRemovedRendered = ',ndxRemovedRendered);
+            this.renderedPhotos.map(item => 
+                console.log('renderedPhotos = ',item.id)
+            );
+
+        console.log('loadedPhotos = ', this.loadedPhotos);
+                let ndxRemovedLoaded = this.loadedPhotos.indexOf(this.loadedPhotos.find(item => item.id == photo.id), 0);
+                let removedLoaded = this.loadedPhotos.splice(ndxRemovedLoaded, 1);
+        console.log('ndxRemovedLoaded = ',ndxRemovedLoaded);
+            this.loadedPhotos.map(item => 
+                console.log('loadedPhotos = ',item.id)
+            );
+
+
+                    if (this.renderedPhotos.length == 0) {
+                        this.isPhotosLoaded = !this.isPhotosLoaded;
+                    }
+            },
+
+            // ***** Проверка валидности (наличия всех полей) фото для сохранения ******
+            isPhotoValidForSave(photo) {
+                let loadedPhoto = this.loadedPhotos.find(item => item.id == photo.id);
+                let photoTitle = loadedPhoto ? loadedPhoto.title : false;
+                let photoDescription = loadedPhoto ? loadedPhoto.description : false;
+                let validDescription = photoDescription ? (photoDescription.length >= 60 && photoDescription.length <= 600) : false;
+                
+                if (photoTitle && photoDescription && validDescription) {
+                    return true;
+                }
+                
+                return false;
+            },
+
+            // ***** Закрыть форму добавления фото по клику иконки close или кнопки "отменить" ******
+            closeAddedPhotosHandler() {
+                this.renderedPhotos = [];
+                this.loadedPhotos = [];
+                this.isPhotosLoaded = false;
+                this.openAddPhoto = false;
+                this.isNewPhotosEditing = false;
+            },
+
+            // ***** Сохранение всех фото по клику "сохранить" ******
+            addPhotoHandler() {
+
+                if (this.renderedPhotos.length) {
+                    this.loadedPhotos.forEach(async photo => {
+
+                        const formData = new FormData();
+
+                        formData.append('photo', photo);
+                        formData.append('title', photo.title);
+                        formData.append('description', photo.description);
+                        formData.append('commentCount', 0);//!!!!! потом поменяй поля, оставь только те, которые останутся в итоге в фотке
+                        formData.append('likeCount', 0);//!!!!! потом поменяй поля, оставь только те, которые останутся в итоге в фотке
+                        formData.append('isLikedByMe', 0);
+                        formData.append('authorId', this.currentAlbumObject.author.id);
+                        formData.append('albumId', this.currentAlbumObject.id);
+
+                        await this.addCard(formData);
+
+                        this.isPhotosLoaded = false;
+                        this.renderedPhotos = [];
+                        this.openAddPhoto=false;
+                    });
+
+                    this.isNewPhotosEditing = false;
+                    this.renderedPhotos = [];
+                    this.loadedPhotos = [];
+                }
+                else
+                    console.log('no files');//!!!!!!! validation
+            },
+
+
+
+
+
 
             editMyPhotoHandler(myPhotoObject) {
                 this.openEditPhoto=true;
@@ -669,33 +725,8 @@
                     this.openEditPhoto = false;
             },
 
-            addPhotoHandler() {
-
-                if (this.renderedPhotos.length) {
-                    this.loadedPhotos.forEach(async photo => {
-
-                        const formData = new FormData();
-
-                        formData.append('photo', photo);
-                        formData.append('title', photo.title);
-                        formData.append('description', photo.description);
-                        formData.append('commentCount', 0);//!!!!! потом поменяй поля, оставь только те, которые останутся в итоге в фотке
-                        formData.append('likeCount', 0);//!!!!! потом поменяй поля, оставь только те, которые останутся в итоге в фотке
-                        formData.append('isLikedByMe', 0);
-                        formData.append('authorId', this.currentAlbumObject.author.id);
-                        formData.append('albumId', this.currentAlbumObject.id);
-
-                        await this.addCard(formData);
-
-                        this.isPhotosLoaded = false;
-                        this.renderedPhotos = [];
-                        this.openAddPhoto=false;
-                    });
-
-                    this.isNewPhotosEditing = false;
-                }
-                else
-                    console.log('no files');//!!!!!!! validation
+            async updateLoggedUser() {
+                this.loggedUserObject = {...this.loggeduser};
             },
 
             scrollToTop() {
@@ -1710,14 +1741,31 @@
 
         &__valid-sign {
             position: absolute;
-            bottom: 0%;
-            right: 0%;
-            width: 32px;
-            height: 32px;
+            top: 50%;
+            right: 50%;
+            transform: translate(50%, -50%);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: rgba(white, 0.4);
             background-repeat: no-repeat;
-            background-size: 30px;
+            background-size: 40px;
             background-position: 50%;
-            background-image: svg-load('save.svg', fill=rgba(green, 0.8), height='30px');
+            background-image: svg-load('check.svg', stroke=rgba(green, 0.9), fill=transparent, height='40px');
+        }
+        &__invalid-sign {
+            position: absolute;
+            top: 50%;
+            right: 50%;
+            transform: translate(50%, -50%);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: rgba(white, 0.4);
+            background-repeat: no-repeat;
+            background-size: 50px;
+            background-position: 50%;
+            background-image: svg-load('exclamation.svg', fill=rgba(yellow, 0.8), height='50px');
         }
     }
 
