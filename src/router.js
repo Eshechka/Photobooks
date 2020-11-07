@@ -43,8 +43,6 @@ const router = new VueRouter({
 router.beforeEach(async (to, from, next) => {
     const isPublicRoute = to.matched.some(route => route.meta.public);
     const isUserLogged = store.getters['user/userIsLogged'];
-    // console.log('isUserLogged',isUserLogged);
-    // console.log('isPublicRoute',isPublicRoute);
 
     if (!isPublicRoute && !isUserLogged) {
         const token = localStorage.getItem('token');
@@ -62,7 +60,8 @@ router.beforeEach(async (to, from, next) => {
         }
     }
     else {
-        next();
+        if (isPublicRoute && isUserLogged) router.replace('/');
+        else next();
     }
 
   })

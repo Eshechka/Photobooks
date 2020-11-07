@@ -8,8 +8,6 @@
         ></div>
 
 		<header class="header" :style="{ backgroundImage: `url(${currentAuthorObject.cover})` }">
-		<!-- <header class="header" :style="{ backgroundImage: `url(${urlPhotos}/${currentAuthorObject.cover})` }"> -->
-        <!-- :src='currentAuthorObject.cover ? `${urlPhotos}/${currentAuthorObject.cover}` : require("../img/no_album_cover.jpg").default' -->
 
             <div class="header__container" v-if="!openEditHeader">		
                 <div class="header__button-logout" v-if="currentAuthorObject.id==loggedUserObject.id">
@@ -539,6 +537,10 @@
             idCurrentAuthor() {
                 return this.$route.params.id;
                 },
+            
+            isMoile() {
+                return window.innerWidth < 768;
+            }
         },
 
 
@@ -741,7 +743,7 @@
             cardClickHandler(cardId) {
                 
                 this.openBigCardSlider = true;
-                this.bigCardSliderTop = window.pageYOffset + 40;
+                if (!this.isMoile) this.bigCardSliderTop = window.pageYOffset + 40;
 
                 let photoIndex = 0;
 

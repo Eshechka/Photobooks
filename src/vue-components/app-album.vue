@@ -491,6 +491,10 @@
             headerContainer() {
                 return this.$refs['header-container'];
             },
+
+            isMoile() {
+                return window.innerWidth < 768;
+            }
             
         },
 
@@ -693,7 +697,7 @@
             },
 
             clickMyPhotoHandler(myPhotoObject) {
-                this.bigCardSliderTop = window.pageYOffset + 50;
+                if (!this.isMoile) this.bigCardSliderTop = window.pageYOffset + 50;
                 let photoIndex = 0;
                 
                 this.thisAlbumPhotos.find(photo => {
@@ -1244,7 +1248,14 @@
 
         &__big-card-slider {
             @include popup-container;
-            top: 100px;
+            top: 0;
+            width: 100%;
+            margin: 0;
+
+            @include tablets {
+                @include popup-container;
+                top: 100px;
+            }
         }
 
     }

@@ -319,12 +319,18 @@
             display: flex;
             flex-direction: column;
             background-color: transparent;
+            height: 100vh;
+
+            @include tablets {
+                height: unset;
+            }
         }
 
         &__card-img {
             width: 100%;
-            height: 350px;
-            /* height: 200px; */
+            /* height: 350px; */
+            height: 50%;
+
             position: relative;
             border-radius: 3px 3px 0 0;
             overflow: hidden;
@@ -332,15 +338,16 @@
 
             @include tablets {
                 height: 520px;
-                /* height: 398px; */
             }
         }
 
         &__img {
-            /* object-fit: cover; */
-            object-fit: contain;
+            object-fit: cover;
             width: 100%;
             height: 100%;
+            @include tablets {
+                object-fit: contain;                
+            }
         }
 
         &__author-info {
@@ -349,6 +356,8 @@
             align-items: center;
             padding: 10px;
             background-color: $color-white;
+            height: 70px;
+            overflow: hidden;
         }
 
         &__avatar {
@@ -415,8 +424,9 @@
 
         &__desc {
             padding: 10px;
-            /* padding-bottom: 30px; */
             background-color: $color-white;
+            height: 160px;
+            overflow: hidden;
         }
 
         &__title {
@@ -443,6 +453,11 @@
             padding: 20px 0;
             background-color: rgb(246, 246, 246);
             border-radius: 0 0 3px 3px;
+            height: calc(100% - 50% - 160px - 70px);
+
+            @include tablets {
+                height: unset;
+            }
         }
 
         &__comments-topgroup {
