@@ -131,7 +131,7 @@
         <main class="maincontent">
 
             <section class="my-photos">
-                <div class="my-photos__container">
+                <div class="my-photos__container" v-if="!openBigMyPhoto">
 
                     <div class="my-photos__topgroup">
                         <div class="my-photos__button-plus" v-if="currentAlbumObject.author.id==loggedUserObject.id">
@@ -327,6 +327,8 @@
                                 :loggedUserObject="loggedUserObject"
                                 @close-bid-card="openBigMyPhoto=false"
                             ></appBigCard>                            
+                                <!-- @next="next()"
+                                @previous="previous()" -->
                         </flickity>
 
                         <!-- <div class="big-card-slider__close"> -->
@@ -528,11 +530,6 @@
         methods: {
             ...mapActions('cards', ['addCard', 'deleteCard', 'changeCard', 'refreshAlbumCards']),
             ...mapActions('albums', ['changeAlbumWithFiles', 'refreshThisAlbum']),
-
-            temp() {
-                console.log('ESC PRESS!!!!!');
-                this.openBigMyPhoto=false;
-            },
 
 
             // ********* Блок "Добавить фотографии" **********

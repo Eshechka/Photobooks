@@ -1,6 +1,6 @@
 <template>
         
-    <div class="big-card">
+    <div class="big-card" >
         <div class="big-card__card">
 
             <div class="big-card__card-img">
@@ -177,9 +177,20 @@
             ...mapActions('comments', ['addComment', 'deleteComment', 'changeComment', 'updatePhotoComments']),
 
             keyDownHandle(e) {
-                if (e.key == "Escape") { 
-                    this.$emit('close-bid-card');
+                switch(e.code ) {
+                    case 'Escape':
+                        this.$emit('close-bid-card');
+                        break;
+
+                    // case 'ArrowRight':
+                    //     this.$emit('next');
+                    //     break;
+                        
+                    // case 'ArrowLeft':
+                    //     this.$emit('previous');
+                    //     break;
                 }
+                    // console.log('e =',e);
             },
 
             async sumbitNewCommentHandler() {
@@ -335,7 +346,7 @@
         &__card-img {
             width: 100%;
             /* height: 350px; */
-            height: 50%;
+            height: max(50vh, 50%);
 
             position: relative;
             border-radius: 3px 3px 0 0;
@@ -397,7 +408,6 @@
             line-height: 18px;
             width: 25%;
         }
-
             
         &__button-tick {
             font-family: 'Panton-Bold';
@@ -427,7 +437,6 @@
             }
         }
 
-
         &__desc {
             padding: 10px;
             background-color: $color-white;
@@ -448,7 +457,6 @@
 
             @include tablets {
                 height: 53px;
-                /* height: 70px; */
             }
         }
 
@@ -459,7 +467,7 @@
             padding: 20px 0;
             background-color: rgb(246, 246, 246);
             border-radius: 0 0 3px 3px;
-            height: calc(100% - 50% - 160px - 70px);
+            height: calc(100% - max(50vh, 50%) - 160px - 70px);
 
             @include tablets {
                 height: unset;

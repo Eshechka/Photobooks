@@ -289,13 +289,12 @@
             <section class="new"
                 v-if="currentAuthorObject.id==loggedUserObject.id">
 
-                <div class="new__container">
+                <div class="new__container" v-if="!openBigCardSlider">
 
                     <h2 class="new__title">Новое в мире</h2>
 
                     <p class="new__empty-text"
-                        v-if="!loadedCards.length"
-                    >Увы, пока ничего не загружено. Загрузите что-нибудь и станьте первым.</p>
+                        v-if="!loadedCards.length">Увы, пока ничего не загружено. Загрузите что-нибудь и станьте первым.</p>
 
                     <ul class="new__card-list">
                         <li v-for="card in loadedCards" :key="card.id" class="new__card-item">
@@ -330,8 +329,7 @@
                                         :cardObject="bigCard"
                                         :userId="bigCard.authorId"
                                         :loggedUserObject="loggedUserObject"
-                                        @close-bid-card="openBigCardSlider=false"
-                                        >                                                               
+                                        @close-bid-card="openBigCardSlider=false">                                                               
                                     </appBigCard>
 
                             </flickity>
@@ -353,7 +351,7 @@
             </section>
 
 
-            <section class="my-albums">
+            <section class="my-albums" v-if="!openBigCardSlider">
 
                 <div class="my-albums__container">
 
@@ -1646,6 +1644,13 @@
 
         &__big-card-slider {
             @include popup-container;
+            top: 0;
+            width: 100%;
+            margin: 0;
+
+            @include tablets {
+                @include popup-container;
+            }
         }
 
     }
