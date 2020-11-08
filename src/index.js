@@ -17,6 +17,7 @@ import appIndex from './vue-pages/app-index.vue';
 import vuelidate from 'vuelidate';
 Vue.use(vuelidate)
 
+
 new Vue({
     el: "#wrapper-index",
     store,

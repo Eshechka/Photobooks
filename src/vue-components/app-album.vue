@@ -316,7 +316,8 @@
                 
 
                 <div class="my-photos__big-card-slider" v-if="openBigMyPhoto"
-                    :style="{top : bigCardSliderTop+'px'}">
+                    :style="{top : bigCardSliderTop+'px'}"
+                    >
 
                     <div class="big-card-slider">
 
@@ -324,6 +325,7 @@
                             <appBigCard v-for="bigCard in thisAlbumPhotos" :key="bigCard.id"
                                 :cardObject="bigCard"
                                 :loggedUserObject="loggedUserObject"
+                                @close-bid-card="openBigMyPhoto=false"
                             ></appBigCard>                            
                         </flickity>
 
@@ -526,6 +528,11 @@
         methods: {
             ...mapActions('cards', ['addCard', 'deleteCard', 'changeCard', 'refreshAlbumCards']),
             ...mapActions('albums', ['changeAlbumWithFiles', 'refreshThisAlbum']),
+
+            temp() {
+                console.log('ESC PRESS!!!!!');
+                this.openBigMyPhoto=false;
+            },
 
 
             // ********* Блок "Добавить фотографии" **********

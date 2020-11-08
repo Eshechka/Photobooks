@@ -330,6 +330,7 @@
                                         :cardObject="bigCard"
                                         :userId="bigCard.authorId"
                                         :loggedUserObject="loggedUserObject"
+                                        @close-bid-card="openBigCardSlider=false"
                                         >                                                               
                                     </appBigCard>
 

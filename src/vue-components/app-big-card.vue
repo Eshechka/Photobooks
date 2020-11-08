@@ -154,8 +154,6 @@
             changedComment: {
                 id: Number,
                 commentText: '',
-                // authorId: Number,
-                // photoId: Number,
             },
 
           }
@@ -178,6 +176,12 @@
         methods: {
             ...mapActions('comments', ['addComment', 'deleteComment', 'changeComment', 'updatePhotoComments']),
 
+            keyDownHandle(e) {
+                if (e.key == "Escape") { 
+                    this.$emit('close-bid-card');
+                }
+            },
+
             async sumbitNewCommentHandler() {
                 this.newComment.photoId = this.cardObject.id;
                 this.newComment.authorId = +this.loggedUserObject.id;
@@ -194,7 +198,7 @@
             },
 
             async saveCommentHandler() {
-                console.log('0) this.changedComment',this.changedComment);
+                // console.log('0) this.changedComment',this.changedComment);
                 await this.changeComment(this.changedComment);
                 await this.updatePhotoComments(this.cardObject.id);            
                 this.comments = this.commentsCurrentPhoto;
@@ -246,6 +250,7 @@
 
 
             },
+            
             myCommentVisibleHandle() {
                 this.isVisibleMyComment=!this.isVisibleMyComment;
                 if (this.isVisibleMyComment)
@@ -292,6 +297,7 @@
         async created() {
             await this.updatePhotoComments(this.cardObject.id);            
             this.comments = this.commentsCurrentPhoto;
+            document.addEventListener('keydown', this.keyDownHandle);
         },
         mounted() {
             this.activeLike= this.likes.find(like => (like.userId == this.loggedUserObject.id && like.photoId == this.cardObject.id));
