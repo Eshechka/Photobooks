@@ -10,7 +10,7 @@
             @click="openEditHeader = false"
         ></div>
 
-		<header class="header" :style="{ backgroundImage: `url(${urlPhotos}/${currentAlbumObject.preview})` }">
+		<header class="header" ref='header' :style="{ backgroundImage: `url(${urlPhotos}/${currentAlbumObject.preview})` }">
 	
 			<div class="header__container" ref='header-container'>
 
@@ -32,7 +32,7 @@
                 </div>
 
 
-                <div class="header__user" :class="{header__user_scrolled : isScrolledHeader}">
+                <div class="header__user" :class="{header__user_scrolled : isScrolledHeader}" v-if="!openBigMyPhoto">
                     <div class="header__avatar">
                         <div class="avatar">
                             <img class="avatar__img" :src='currentAlbumObject.author.avatar ? `${urlAvatars}/${currentAlbumObject.author.avatar}` : require("../img/no_avatar.png").default' alt="avatar">
@@ -130,7 +130,7 @@
 	
         <main class="maincontent">
 
-            <section class="my-photos">
+            <section class="my-photos" :style="{ height: heightSectionForSlider }">
                 <div class="my-photos__container" v-if="!openBigMyPhoto">
 
                     <div class="my-photos__topgroup">
@@ -316,16 +316,15 @@
                 
 
                 <div class="my-photos__big-card-slider" v-if="openBigMyPhoto"
-                    :style="{top : bigCardSliderTop+'px'}"
-                    >
+                    :style="{top : bigCardSliderTop+'px'}">
 
-                    <div class="big-card-slider">
+                    <div class="big-card-slider" >
 
                         <flickity ref="flickity" :options="flickityOptions" class="big-card-slider__container">
                             <appBigCard v-for="bigCard in thisAlbumPhotos" :key="bigCard.id"
                                 :cardObject="bigCard"
                                 :loggedUserObject="loggedUserObject"
-                                @close-bid-card="openBigMyPhoto=false"
+                                @close-bid-card="closeBigCardHandler"
                             ></appBigCard>                            
                                 <!-- @next="next()"
                                 @previous="previous()" -->
@@ -357,7 +356,7 @@
             
         </main>
 	
-		<footer class="footer" :style="{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.3)), url(${urlPhotos}/${currentAlbumObject.preview})`}" >
+		<footer ref='footer' class="footer" :style="{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.3)), url(${urlPhotos}/${currentAlbumObject.preview})`}" >
 	
 			<div class="footer__container">	
 	
@@ -473,7 +472,11 @@
                 addedPhotos: [],
 
                 titleDisabledBtnAddPhoto: 'Необходимо добавить фотографии',
+
+                heightHeaderFooterMobile: 0,
                 
+                heightSectionForSlider: `unset`,
+                scrolledWhenSliderOpened: 0,
             }
         },
 
@@ -494,6 +497,12 @@
 
             headerContainer() {
                 return this.$refs['header-container'];
+            },
+            header() {
+                return this.$refs['header'];
+            },
+            footer() {
+                return this.$refs['footer'];
             },
 
             isMoile() {
@@ -523,6 +532,20 @@
             },
             currentAlbum(value) {
                 this.currentAlbumObject = {...value};
+            },
+            async openBigMyPhoto(value) {
+                if (value) {
+                    this.heightSectionForSlider = `calc(100vh + 160px + 510px - ${this.heightHeaderFooterMobile}px)`;
+                    this.scrolledWhenSliderOpened = window.pageYOffset;
+                console.log('this.scrolledWhenSliderOpened = ',this.scrolledWhenSliderOpened );
+                    window.scrollTo({ top: 0 });
+                }
+                else {
+                    this.heightSectionForSlider = `unset`;
+                    while (window.pageYOffset!==this.scrolledWhenSliderOpened) {
+                        await window.scrollTo({ top: `${this.scrolledWhenSliderOpened}` });                      
+                    }
+                }
             }
 
         },
@@ -660,6 +683,11 @@
                 this.changedPhoto = {...myPhotoObject};
             },
 
+            clickEditAlbumHeader() {
+                this.changedAlbum = {...this.currentAlbumObject}; 
+                this.openEditHeader=true;
+            },
+
             loadAlbumPreview(e) {
                 this.loadedAlbumPreview = e.target.files[0];
                 renderer(this.loadedAlbumPreview).then(pic => {                 
@@ -695,11 +723,8 @@
                 this.openEditHeader=false;
             },
 
-            clickEditAlbumHeader() {
-                this.changedAlbum = {...this.currentAlbumObject}; 
-                this.openEditHeader=true;
-            },
 
+            // ***** Открыть фотографию в слайдере по клику *****
             clickMyPhotoHandler(myPhotoObject) {
                 if (!this.isMoile) this.bigCardSliderTop = window.pageYOffset + 50;
                 let photoIndex = 0;
@@ -710,6 +735,8 @@
                 });                
                 this.flickityOptions.initialIndex = this.idCurrentClickedPhoto;
                 this.openBigMyPhoto = true;
+                
+                // window.scrollTo({ top: 0 });
             },
 
             // ***** Сохранение фото после изменений (2 вида: редактирование по клику на существующей фото и при добавлении новых фото заполнение полей) ******
@@ -737,6 +764,11 @@
                 this.openEditPhoto = false;
             },
 
+            // ***** Закрыть фотографию в слайдере по клику на крестик *****
+            closeBigCardHandler() {
+                // window.scrollTo({ top: `${this.scrolledWhenSliderOpened}px` });
+                this.openBigMyPhoto = false;                
+            },
 
             async deletePhotoHandle() {
                 if (this.isNewPhotosEditing) {
@@ -795,6 +827,10 @@
         mounted() {
             window.addEventListener('scroll', this.scrollHandle);
             this.loggedUserObject.id = localStorage.getItem('userId');
+            if (this.header && this.footer) { 
+                this.heightHeaderFooterMobile = parseFloat(getComputedStyle(this.header).height) + parseFloat(getComputedStyle(this.footer).height);
+            }
+
         }
 
     }
@@ -1185,7 +1221,10 @@
         padding: 30px 0;
         background: $color-white;
         /* position: relative; */
-        min-height: $min-height-section-for-slider;
+        
+        @include tablets {
+            min-height: $min-height-section-for-slider;
+        }
         
         &__container {
             margin: 0 auto;
@@ -1205,7 +1244,6 @@
             transform: translateY(-50%);
             z-index: 9;
         }
-
 
         &__photos-list {
             position: relative;
@@ -1252,6 +1290,7 @@
 
         &__big-card-slider {
             @include popup-container;
+            /* bottom: 0; */
             top: 0;
             width: 100%;
             margin: 0;
@@ -1744,10 +1783,17 @@
             position: relative;
             border-radius: 1px;
             background-color: rgb(207, 216, 220);
-            width: 59px;
-            height: 59px;
-            margin-right: 10px;
-            margin-bottom: 10px;
+            width: 80px;
+            height: 80px;
+            margin-right: 30px;
+            margin-bottom: 30px;
+
+            @include tablets {
+                width: 59px;
+                height: 59px;
+                margin-right: 10px;
+                margin-bottom: 10px;
+            }
 
             background-position: center;
             background-size: contain;

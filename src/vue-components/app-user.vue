@@ -7,7 +7,7 @@
             @click="openEditHeader = false"
         ></div>
 
-		<header class="header" :style="{ backgroundImage: `url(${currentAuthorObject.cover})` }">
+		<header ref='header' class="header" :style="{ backgroundImage: `url(${currentAuthorObject.cover})` }">
 
             <div class="header__container" v-if="!openEditHeader">		
                 <div class="header__button-logout" v-if="currentAuthorObject.id==loggedUserObject.id">
@@ -272,7 +272,7 @@
         </header>
 
         <main class="maincontent">
-            <div class="my-search" v-if="!openEditHeader">
+            <div class="my-search" v-if="!openEditHeader && !openBigCardSlider">
                 <div class="my-search__container">
                     <form class="form-search">
                         <input type="search" placeholder="Исследовать мир" class="form-search__input">
@@ -286,7 +286,7 @@
             </div>
 
 
-            <section class="new"
+            <section class="new" :style="{ height: heightSectionForSlider }"
                 v-if="currentAuthorObject.id==loggedUserObject.id">
 
                 <div class="new__container" v-if="!openBigCardSlider">
@@ -300,8 +300,7 @@
                         <li v-for="card in loadedCards" :key="card.id" class="new__card-item">
                             <appCard
                                 :cardObject="card"
-                                @click-card="cardClickHandler"
-                            >
+                                @click-card="cardClickHandler">
                             </appCard>
                         </li>
                     </ul> 
@@ -314,7 +313,6 @@
                             :class="{disabled : amountLoadedPhotos===-1}"
                         >Показать ещё</button>
                     </div>
-
                 </div>
 
 
@@ -401,7 +399,7 @@
             </section>
         </main>
 
-		<footer class="footer" :style="{ backgroundImage: `url(${currentAuthorObject.cover})`}" >
+		<footer ref='footer' class="footer" :style="{ backgroundImage: `url(${currentAuthorObject.cover})`}" >
 
             <div class="footer__container">	
 
@@ -513,6 +511,8 @@
                     name: '',
                     description: '',                    
                 },
+                heightHeaderFooterMobile: 0,
+                heightSectionForSlider: `unset`,
 
             }
         },
@@ -529,6 +529,12 @@
                 thisAuthor: state => state.author
             }),
             
+            header() {
+                return this.$refs['header'];
+            },
+            footer() {
+                return this.$refs['footer'];
+            },
 
             socEdit() {
                 return this.$refs['soc-edit'];
@@ -741,7 +747,6 @@
 
             cardClickHandler(cardId) {
                 
-                this.openBigCardSlider = true;
                 if (!this.isMoile) this.bigCardSliderTop = window.pageYOffset + 40;
 
                 let photoIndex = 0;
@@ -751,6 +756,8 @@
                     else this.idCurrentPhoto = photoIndex;
                 });                
                 this.flickityOptions.initialIndex = this.idCurrentPhoto;
+                this.openBigCardSlider = true;
+                window.scrollTo({ top: 0 });
             },
 
             checkWidth() {
@@ -842,6 +849,14 @@
             loggedUser() {
                 console.log('loggedUser changed: ',this.loggedUser);//!!!!!!!!!!!!!!!!!!
             },
+            openBigCardSlider(value) {
+                if (value) {
+                    this.heightSectionForSlider = `calc(100vh + 160px + 510px - ${this.heightHeaderFooterMobile}px)`;
+                }
+                else {
+                    this.heightSectionForSlider = `unset`;
+                }
+            }
         },
 
         async created() {
@@ -856,6 +871,9 @@
             this.windowWidth = window.innerWidth;
             this.loggedUserObject.id = localStorage.getItem('userId');
             this.editedAlbum.author = this.loggedUserObject.id;
+            if (this.header && this.footer) { 
+                this.heightHeaderFooterMobile = parseFloat(getComputedStyle(this.header).height) + parseFloat(getComputedStyle(this.footer).height);
+            }
         },
             
     }
@@ -1582,7 +1600,10 @@
         min-width: 320px;
         padding: 30px 0;        
         /* position: relative; */
-        min-height: $min-height-section-for-slider;
+
+        @include tablets {
+            min-height: $min-height-section-for-slider;
+        }
 
         &__container {
             margin: 0 auto;

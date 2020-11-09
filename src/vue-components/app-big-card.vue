@@ -1,6 +1,6 @@
 <template>
         
-    <div class="big-card" >
+    <div class="big-card">
         <div class="big-card__card">
 
             <div class="big-card__card-img">
@@ -336,7 +336,7 @@
             display: flex;
             flex-direction: column;
             background-color: transparent;
-            height: 100vh;
+            /* height: 100vh; */
 
             @include tablets {
                 height: unset;
@@ -346,7 +346,8 @@
         &__card-img {
             width: 100%;
             /* height: 350px; */
-            height: max(50vh, 50%);
+            /* height: calc(100vh - 70px - 160px - 21px - 139px - 200px); */
+            height: calc(100vh - 70px); 
 
             position: relative;
             border-radius: 3px 3px 0 0;
@@ -359,12 +360,13 @@
         }
 
         &__img {
-            object-fit: cover;
+                object-fit: contain;                
+            /* object-fit: cover; */
             width: 100%;
             height: 100%;
-            @include tablets {
+            /* @include tablets {
                 object-fit: contain;                
-            }
+            } */
         }
 
         &__author-info {
@@ -410,17 +412,22 @@
         }
             
         &__button-tick {
-            font-family: 'Panton-Bold';
-            font-size: 16px;
-            color: $color-white;
-            background-repeat: no-repeat;
-            background-image: svg-load('arrow_left.svg', fill=rgba(#{$color-text}, 0.2));
-            background-position: 50%;
-            padding: 0px;
-            height: 20px;
-            width: 20px;
-            background-size: 8px;
-            transform: rotate(90deg);
+            display: none;
+
+            @include tablets {
+                display: block;
+                font-family: 'Panton-Bold';
+                font-size: 16px;
+                color: $color-white;
+                background-repeat: no-repeat;
+                background-image: svg-load('arrow_left.svg', fill=rgba(#{$color-text}, 0.2));
+                background-position: 50%;
+                padding: 0px;
+                height: 20px;
+                width: 20px;
+                background-size: 8px;
+                transform: rotate(90deg);
+            }
         }
 
         &__button-likes {
@@ -467,7 +474,8 @@
             padding: 20px 0;
             background-color: rgb(246, 246, 246);
             border-radius: 0 0 3px 3px;
-            height: calc(100% - max(50vh, 50%) - 160px - 70px);
+            /* height: 200px; */
+            /* height: calc(100% - 50vh - 160px - 70px); */
 
             @include tablets {
                 height: unset;
@@ -479,6 +487,7 @@
             align-items: center;
             margin-bottom: 10px;
             padding: 0 10px;
+            height: 21px;
         }
 
         &__comments-title {
@@ -515,6 +524,7 @@
 
         &__my-comment {
             padding: 0 10px 10px;
+            height: 139px;
 
             @include tablets {
                 display: flex;
@@ -530,22 +540,21 @@
 
         &__my-comment-input {
             @include popup-input();
-
-            width: 80%;
+            width: 100%;
             padding: 13px 16px;
             resize: vertical;            
             min-height: 48px;
             max-height: 150px;
             margin-bottom: 10px;
-
-            @include tablets {
-                width: 100%;
-            }
         }
 
         &__users-comments {
             overflow-y: scroll;
-            height: 280px;
+            height: 300px;
+
+            @include tablets {
+                height: 200px;
+            }
         }
 
     }
