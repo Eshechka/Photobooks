@@ -1520,8 +1520,6 @@
         height: 60px;
         overflow: hidden;
 
-
-
         &__container {
             /* padding: 10px 5%; */
             padding: 10px 0;
@@ -1658,6 +1656,18 @@
                 }
 
                 &:nth-child(3n) {
+                    margin-right: 0;
+                }
+            }
+            @include desktopHd {
+                width: 23%;
+                margin-right: 2%;
+
+                &:nth-child(3n) {
+                    margin-right: 2%;
+                }
+
+                &:nth-child(4n) {
                     margin-right: 0;
                 }
             }
@@ -1860,7 +1870,6 @@
                 &:nth-child(3n) {
                     margin-right: 0;
                 }
-
             }
             @include desktop {
                 width: 23.8%;
@@ -1870,11 +1879,23 @@
                 &:nth-child(3n) {
                     margin-right: 1.6%;
                 }
-
                 &:nth-child(4n) {
                     margin-right: 0;
                 }
+            }
+            @include desktopHd {
+                width: 18.4%;
+                margin-right: 2%;
 
+                &:nth-child(3n) {
+                    margin-right: 2%;
+                }
+                &:nth-child(4n) {
+                    margin-right: 2%;
+                }
+                &:nth-child(5n) {
+                    margin-right: 0;
+                }
             }
         }
 

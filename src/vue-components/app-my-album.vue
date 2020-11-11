@@ -86,6 +86,9 @@
 			@include tablets {
 				height: 224px;
 			}
+			@include desktop {
+				height: 300px;
+			}
 		}
 
 		&__img {

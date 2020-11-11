@@ -1261,16 +1261,35 @@
             @include tablets {
                 width: 48%;
                 margin-bottom: 20px;
+                margin-right: 4%;
 
                 &:nth-child(2n) {
-                    margin-left: 4%;
+                    margin-right: 0;
                 }
             }      
+            @include desktop {
+                width: 32%;
+                margin-right: 2%;
+                
+                &:nth-child(2n) {
+                    margin-right: 2%;
+                }
+                &:nth-child(3n) {
+                    margin-right: 0;
+                }
+            }        
             @include desktopHd {
                 width: 22%;
+                margin-right: 4%;
 
-                &:nth-child(4n+3) {
-                    margin-left: 4%;
+                &:nth-child(2n) {
+                    margin-right: 4%;
+                }
+                &:nth-child(3n) {
+                    margin-right: 4%;
+                }
+                &:nth-child(4n) {
+                    margin-right: 0;
                 }
             }            
         }
