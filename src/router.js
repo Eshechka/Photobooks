@@ -22,6 +22,10 @@ const routes = [
             public: true,
         },
     },
+    {
+        path: '/search',
+        component: () => import('./vue-components/app-search.vue'),
+    },
     { 
         path: '/:id',
         component: () => import('./vue-components/app-user.vue'),

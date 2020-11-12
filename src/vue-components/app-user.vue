@@ -11,21 +11,21 @@
 
             <div class="header__container" v-if="!openEditHeader">		
                 <div class="header__button-logout" v-if="currentAuthorObject.id==loggedUserObject.id">
-                    <button type='button' class="button button_icon_space button_size_changing button_theme_color_changing"
+                    <button type='button' title="Выйти из своего аккаунта" class="button button_icon_space button_size_changing button_theme_color_changing"
                         @click="logoutUser">
                         <span class="button__text">Выйти</span>                    
                         <span class="button__icon button__icon_logout"></span>                    
                     </button>
                 </div>
                 <div class="header__button-edit" v-if="currentAuthorObject.id==loggedUserObject.id">
-                    <button type='button' class="button button_icon_space button_size_changing button_theme_color_changing"
+                    <button type='button' title="Редактировать свой профиль" class="button button_icon_space button_size_changing button_theme_color_changing"
                         @click="editUserHeaderHandler">
                         <span class="button__text">Редактировать</span>
                         <span class="button__icon button__icon_edit"></span>
                     </button>
                 </div>
                 <div class="header__button-home" v-if="currentAuthorObject.id!=loggedUserObject.id">
-                    <router-link class="button button_icon_space button_size_changing button_theme_color_changing"
+                    <router-link title="Перейти на главную" class="button button_icon_space button_size_changing button_theme_color_changing"
                         to="/"
                         @click.prevent>
                         <span class="button__text">На главную</span>
@@ -93,7 +93,7 @@
                                     </div>
 
                                     <div class="form-edit-profile__button">
-                                        <button class="button button_icon button_size_m button_theme_light" type="button">Загрузить фотографию</button>
+                                        <button title="Загрузить фотографию" class="button button_icon button_size_m button_theme_light" type="button">Загрузить фотографию</button>
                                          <div class="form-edit-profile__notice-size">(файл должен быть размером не более 512 КБ)</div>
                                     </div>
 
@@ -107,7 +107,7 @@
                                     </div>
 
                                     <div class="form-edit-profile__button">
-                                        <button class="button button_icon button_size_m button_theme_light" type="button">Загрузить фон</button>
+                                        <button title="Загрузить фон" class="button button_icon button_size_m button_theme_light" type="button">Загрузить фон</button>
                                         <div class="form-edit-profile__notice-size">(файл должен быть размером не более 1024 КБ)</div>
                                     </div>
 
@@ -276,11 +276,14 @@
                 <div class="my-search__container">
                     <form class="form-search">
                         <input type="search" placeholder="Исследовать мир" class="form-search__input">
-                        <button type="submit" class="form-search__submit">
+                        <router-link type="submit" class="form-search__submit"
+                            to="search"
+                            @click.prevent>
+                            <!-- @click="clickSearchHandle" -->
                             <svg class="form-search__icon">
                                 <use :xlink:href="urlInlineSvgSprite+'#search'"></use>
                             </svg>
-                        </button>
+                        </router-link>
                     </form>
                 </div>
             </div>
@@ -306,11 +309,11 @@
                     </ul> 
 
                     <div class="new__button-show-more">
-                        <!-- <button type="button" class="site-button site-button_theme-light" -->
                         <button type="button" class="button button_size_m button_theme_light"
                             v-if="loadedCards.length"
                             @click="loadedCardsPush(startPhotoLoadingPos)"
-                            :class="{disabled : amountLoadedPhotos===-1}"
+                            :disabled="amountLoadedPhotos===-1"
+                            :title="amountLoadedPhotos===-1 ? 'Больше нет фотографий для загрузки' : 'Загрузить фотографии'"
                         >Показать ещё</button>
                     </div>
                 </div>
@@ -360,7 +363,7 @@
                             v-else>Альбомы</h2>
                         <div class="my-albums__button-plus"
                             v-if="currentAuthorObject.id==loggedUserObject.id">
-                            <button class="button button_icon_expand button_size_s button_theme_pale"                            
+                            <button title="Добавить новый альбом" class="button button_icon_expand button_size_s button_theme_pale"                            
                                 @click="addNewAlbumHandler">
                                 <span class="button__icon button__icon_plus"></span>
                             </button>
@@ -404,7 +407,7 @@
             <div class="footer__container">	
 
                 <div class="footer__button-up">
-                    <button class="button button_size_s button_icon_expand button_theme_pale"
+                    <button title="Вернуться в начало страницы" class="button button_size_s button_icon_expand button_theme_pale"
                         @click="scrollToTop">
                         <span class="button__icon button__icon_up"></span>
                     </button>
@@ -524,7 +527,7 @@
             }),
             ...mapState('user', {
                 loggeduser: state => state.user
-            }),            
+            }),
             ...mapState('authors', {
                 thisAuthor: state => state.author
             }),
@@ -566,14 +569,6 @@
                 this.editedAlbum={...clickedAlbum};
             },
 
-            cancelEditHeaderHandler() {
-                this.renderedUserCover = '';
-                this.isUserCoverLoaded = false;
-                this.renderedUserAvatar = '';
-                this.isUserAvatarLoaded = false;
-                this.openEditHeader=false;
-            },
-
             async submitChangeMyAlbum(data, mode) {
                 
                 if (mode === "add") {
@@ -610,17 +605,20 @@
                     this.openChangeMyAlbum=false;
             },
 
+
             logoutUser() {
                 this.logout();
                 this.$router.push('/login');
             },
 
+
+            // ***** Нажата кнопка редактирования профиля пользователя *****
             editUserHeaderHandler() {
                 this.openEditHeader=true;
                 this.changedUser = {...this.currentAuthorObject};
             },
 
-            // *********
+            // ***** Обработка загрузки аватара пользователя *****
             loadUserAvatar(e) {
                 this.loadedUserAvatar = e.target.files[0];
                 renderer(this.loadedUserAvatar).then(pic => {                 
@@ -628,6 +626,8 @@
                     this.isUserAvatarLoaded = true;
                 });
             },
+
+            // ***** Обработка загрузки обложки для пользователя *****
             loadUserCover(e) {
                 this.loadedUserCover = e.target.files[0];
                 renderer(this.loadedUserCover).then(pic => {                 
@@ -636,6 +636,7 @@
                 });
             },
 
+            // ***** Сохранить изменения, внесенные в профиль пользователя *****
             async submitEditUserHeaderHandler() {
                 const formData = new FormData();
                     if (this.loadedUserAvatar.name) formData.append('avatar', this.loadedUserAvatar);
@@ -651,20 +652,14 @@
                 this.openEditHeader=false;
             },
 
-
-            // cancelChangeAlbumHeaderHandler() {
-            //     this.isAlbumPreviewLoaded=false;
-            //     this.previewTitle = "Изменить превью альбома";
-            //     this.changedAlbum= {
-            //         id: Number,
-            //         description: '',
-            //         title: '',
-            //         preview: '',
-            //     };
-            //     this.openEditHeader=false;
-            // },
-
-            // *********
+            // ***** Закрыть форму редактирования профиля пользователя без сохранения изменений *****
+            cancelEditHeaderHandler() {
+                this.renderedUserCover = '';
+                this.isUserCoverLoaded = false;
+                this.renderedUserAvatar = '';
+                this.isUserAvatarLoaded = false;
+                this.openEditHeader=false;
+            },
 
 
 
@@ -745,6 +740,9 @@
                 }
             },
 
+
+
+            // ***** Клик по фотографии (открытие слайдера) *****
             cardClickHandler(cardId) {
                 
                 if (!this.isMoile) this.bigCardSliderTop = window.pageYOffset + 40;
@@ -827,7 +825,6 @@
                 await this.refreshAuthor(this.idCurrentAuthor);
                 this.currentAuthorObject = {...this.thisAuthor};
                 this.currentAuthorObject.cover = this.currentAuthorObject.cover ? `${this.urlPhotos}/${this.currentAuthorObject.cover}` : "../img/no_album_cover.jpg";
-                console.log('this.currentAuthorObject.cover: ',this.currentAuthorObject.cover);
                 this.myAlbums = this.thisAuthor.albums;
             },
 
@@ -956,6 +953,8 @@
             height: 50px;
             flex-shrink: 0;
             margin-right: 22px;
+            display: inline-block;		
+            vertical-align: middle;
 
             @include tablets {
                 width: 102px;
@@ -1023,11 +1022,6 @@
                 line-height: 24px;
                 margin-bottom: 30px;
             }
-        }
-
-        &__avatar {
-            display: inline-block;		
-            vertical-align: middle;
         }
 
         &__edit-profile {
@@ -1510,13 +1504,7 @@
     .my-search {
         min-width: 300px;
         font-family: 'ProximaNova-Light';
-        /* display: flex; */
-        /* flex-direction: column; */        
-        
         background-color: #f1f1f1;
-        /* padding: 10px 5%; */
-        /* position: relative; */
-
         height: 60px;
         overflow: hidden;
 
@@ -1524,16 +1512,14 @@
             /* padding: 10px 5%; */
             padding: 10px 0;
             display: flex;
-            flex-direction: column;
             justify-content: center;
-            align-items: center;
             margin: 0 auto;
             width: 90%;
             position: relative;
             @include max-with-container;        
             
             @include tablets {
-                align-items: flex-end;
+                justify-content: flex-end;
             }
         }
         
@@ -1546,7 +1532,7 @@
 
     .form-search {
         position: relative;
-        width: 350px;
+        width: 100%;
         height: 40px;
         border-radius: 40px;
         box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
@@ -1574,10 +1560,10 @@
         &__submit {
             position: absolute;
             top: 50%;
-            left: 20px;
+            left: 10px;
             transform: translateY(-50%);
-            height: 15px;
-            width: 15px;
+            height: 30px;
+            width: 30px;
             padding: 0;
             margin: 0;
             border: none;
@@ -1586,10 +1572,18 @@
             cursor: pointer;
 
             & svg {
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
                 width: 15px;
                 height: 15px;
                 fill: $color-text;
             }
+        }
+
+        @include tablets {
+            width: 350px;
         }
     }
 

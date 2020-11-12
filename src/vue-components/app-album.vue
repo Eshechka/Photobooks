@@ -16,7 +16,7 @@
 
                 <div class="header__button-home" 
                     :class="{'header__button-home_scrolled' : isScrolledHeader}">
-                    <router-link class="button button_icon_space button_size_changing button_theme_color_changing"
+                    <router-link title="Перейти на главную" class="button button_icon_space button_size_changing button_theme_color_changing"
                         to="/"
                         @click.prevent>
                         <span class="button__text">На главную</span>
@@ -24,7 +24,7 @@
                     </router-link>
                 </div>
                 <div class="header__button-edit" v-if="currentAlbumObject.author.id==loggedUserObject.id">
-                    <button type='button' class="button button_icon_space button_size_changing button_theme_color_changing"
+                    <button type='button' title="Перейти на главную" class="button button_icon_space button_size_changing button_theme_color_changing"
                         @click="clickEditAlbumHeader">
                         <span class="button__text">Редактировать</span>
                         <span class="button__icon button__icon_edit"></span>
@@ -162,7 +162,7 @@
                                     <div class="edit-photo__topgroup">
                                         <h4 class="edit-photo__title">Редактировать фотографию</h4>
 
-                                        <button type="button" class="button button_icon button_size_s button_theme_minimalizm"
+                                        <button title="Редактировать фотографию" type="button" class="button button_icon button_size_s button_theme_minimalizm"
                                             @click="openEditPhoto=false" >
                                             <span class="button__icon button__icon_close"></span>
                                         </button>
@@ -206,10 +206,10 @@
                                                     :disabled="$v.changedPhoto.$invalid"
                                                     :title="$v.changedPhoto.$invalid ? 'Для отправки необходимо исправить название и описание' : '' "
                                                 >Сохранить</button>
-                                                <button class="button button_size_m button_theme_minimalizm" type="button"
+                                                <button title="Закрыть форму добавления фотографий без сохранения" class="button button_size_m button_theme_minimalizm" type="button"
                                                     @click="openEditPhoto=false"
                                                 >Отменить</button>
-                                                <button class="button button_icon button_size_m button_theme_carrot form-editPhoto__in" type="button"
+                                                <button title="Удалить фотографию из списка загрузки" class="button button_icon button_size_m button_theme_carrot form-editPhoto__in" type="button"
                                                     @click.prevent="deletePhotoHandle">
                                                     <span class="button__text">Удалить</span>
                                                     <span class="button__icon button__icon_delete"></span>                                        
@@ -297,7 +297,7 @@
                                                     :disabled="!isAllPhotosValid || !renderedPhotos.length"
                                                     :title="titleDisabledBtnAddPhoto"
                                                 >Сохранить</button>
-                                                <button class="button button_size_m button_theme_minimalizm" type="button"
+                                                <button title="Закрыть форму добавления фотографий без сохранения" class="button button_size_m button_theme_minimalizm" type="button"
                                                     @click="closeAddedPhotosHandler"
                                                 >Отменить</button>
                                             </div>
@@ -333,7 +333,7 @@
                         <!-- <div class="big-card-slider__close"> -->
                             <!-- !!!!!!!!!!!!! что-то одно из этого надо оставить -->
                             <!-- <button class="round-button round-button_close-transparent" type="button" -->
-                            <button class="big-card-slider__control big-card-slider__control_close" type="button"
+                            <button title="Закрыть слайдер" class="big-card-slider__control big-card-slider__control_close" type="button"
                                 @click="openBigMyPhoto=false"
                             ></button>
                             <!-- <button class="button button_icon button_size_s button_theme_pale" type="button"
@@ -361,7 +361,7 @@
 			<div class="footer__container">	
 	
 				<div class="footer__button-up">
-                    <button class="button button_size_s button_icon_expand button_theme_pale"
+                    <button title="Вернуться в начало страницы" class="button button_size_s button_icon_expand button_theme_pale"
                         @click="scrollToTop">
                         <span class="button__icon button__icon_up"></span>
                     </button>
@@ -675,19 +675,22 @@
 
 
 
-
-
-
+            // ***** Обработка клика "редактировать", пришедшего из компонента my-photo *****
             editMyPhotoHandler(myPhotoObject) {
                 this.openEditPhoto=true;
                 this.changedPhoto = {...myPhotoObject};
             },
 
+
+            // ********* Блок "Редактирование шапки в альбоме" **********
+
+            // ***** Обработка клика "редактировать" в шапке альбома *****
             clickEditAlbumHeader() {
                 this.changedAlbum = {...this.currentAlbumObject}; 
                 this.openEditHeader=true;
             },
 
+            // ***** Обработка файла, загруженного для превью албома *****
             loadAlbumPreview(e) {
                 this.loadedAlbumPreview = e.target.files[0];
                 renderer(this.loadedAlbumPreview).then(pic => {                 
@@ -697,6 +700,7 @@
                 });
             },
 
+            // ***** Сохранить внесенные изменения в шапке альбома *****
             async submitChangeAlbumHeaderHandler() {
                 const formData = new FormData();
                     if (this.loadedAlbumPreview.name) formData.append('preview', this.loadedAlbumPreview);
@@ -711,6 +715,7 @@
                 this.openEditHeader=false;
             },
 
+            // ***** СВыйти из редактирования шапки альбома без сохранения изменений *****
             cancelChangeAlbumHeaderHandler() {
                 this.isAlbumPreviewLoaded=false;
                 this.previewTitle = "Изменить превью альбома";
@@ -722,6 +727,7 @@
                 };
                 this.openEditHeader=false;
             },
+
 
 
             // ***** Открыть фотографию в слайдере по клику *****
@@ -770,6 +776,7 @@
                 this.openBigMyPhoto = false;                
             },
 
+            // ***** Удалить фотографию ранее загруженную или из списка загрузки *****
             async deletePhotoHandle() {
                 if (this.isNewPhotosEditing) {
                     this.removeRenderedPhotoHandler(this.renderedPhotos.find(photo => photo.id == this.editingNewPhoto.id));
@@ -780,9 +787,11 @@
                     this.openEditPhoto = false;
             },
 
+            // ***** Получить данные текущего залогиненного юзера *****
             async updateLoggedUser() {
                 this.loggedUserObject = {...this.loggeduser};
             },
+
 
             scrollToTop() {
                 window.scrollTo({

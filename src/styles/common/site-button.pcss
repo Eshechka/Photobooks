@@ -195,14 +195,15 @@ $icons-changing: (home, edit, logout);
 		border: 2px solid $color-blue;
 
 		&.disabled, &:disabled {
-			color: rgba($color-blue, 0.3);
-			border: 2px solid rgba($color-blue, 0.3);
+			color: rgba($color-text, 0.3);
+			border: 2px solid rgba($color-text, 0.3);
 		}
 		&:not(:disabled):hover {
 			background-color: $color-blue;
 			color: $color-white;
 		}
-		&:active, &:focus {
+		&:not(:disabled):active, 
+		&:not(:disabled):focus {
 			background-color: transparent;
 			color: rgba($color-blue, 0.7);
 			border: 2px solid rgba($color-blue, 0.7);
@@ -247,6 +248,7 @@ $icons-changing: (home, edit, logout);
 		background-color: $color-white;
 		color: $color-white;
 		border: none;
+		box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.22);
 
 		&.disabled, &:disabled {
 			background-color: rgba($color-text, 0.5);
@@ -255,6 +257,7 @@ $icons-changing: (home, edit, logout);
 		&:not(:disabled):active,
 		&:not(:disabled):focus {
 			background-color: $color-blue;
+			box-shadow: unset;
 
 			& .button__icon {				
 				@each $icon in $icons-changing {
