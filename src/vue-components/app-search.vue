@@ -32,16 +32,13 @@
                         <h2 class="header__user-name">{{loggedUserObject.name}}</h2>
                     </div>
 
-                    <form class="form-search">
+                    <form class="form-search" @submit.prevent="clickSearchHandle">
                         <input type="search" placeholder="Исследовать мир" class="form-search__input">
-                        <router-link type="submit" class="form-search__submit"
-                            to="search"
-                            @click.prevent="clickSearchHandle"
-                            >
+                        <button type="submit" class="form-search__submit">
                             <svg class="form-search__icon">
                                 <use :xlink:href="urlInlineSvgSprite+'#search'"></use>
                             </svg>
-                        </router-link>
+                        </button>
                     </form>
 
                     <div class="header__show-new">
@@ -63,8 +60,11 @@
 
                 <div class="searched__container" v-if="!openBigCardSlider">
 
-                    <p class="searched__text" v-if="loadedCards.length">
-                        По запросу найдено {{loadedCards.length}} результатов
+                    <p class="searched__text" v-if="node='new'">
+                        Новое в мире
+                    </p>
+                    <p class="searched__text" v-else-if="loadedCards.length">
+                        По запросу найдено {{cards.length}} результатов
                     </p>
                     <p class="searched__text" v-else>
                         Увы, ничего не нашлось ничего по запросу
@@ -153,7 +153,7 @@
 
     import { baseStorageUrl } from '../requests.js';    import dataJSON_socials from '../json/socials.json'
 
-    import { mapState, mapActions, mapGetters } from 'vuex';
+    import { mapState, mapActions } from 'vuex';
 
     import Flickity from 'vue-flickity';
 
@@ -229,12 +229,23 @@
                 await this.updateAllCards();
                 this.cards = this.allCards;
             },
+            async updateSearchedCards(searchedWord) {
+                await this.updateAllCards();
+
+                this.cards = this.allCards.filter(card => {
+                    if (card.description.indexOf(`${searchedWord}`) !== -1)
+                    return card;
+                })
+
+                console.log('this.cards:',this.cards);
+            },
 
             // ***** Нажат поиск по слову/хэштегу *****
             clickSearchHandle() {
                 this.mode = 'search';
             },
             
+            // ***** Загрузить некоторое количество фотографий (определяется шириной экрана), начиная с переданной позиции *****
             loadedCardsPush(startPos) {
 
                 this.checkWidth();
@@ -297,7 +308,17 @@
         },
 
         watch: {
-            
+            async mode(value) {
+
+                if (value==='new') {
+                    await this.updateCards();
+                }
+                else if (value==='search') {
+                    await this.updateSearchedCards('80');
+                }
+
+                this.loadedCardsPush(this.startPhotoLoadingPos);
+            }
         },
 
         async created() {

@@ -46,7 +46,7 @@ export default {
         async updatePhotoComments(store, photoId) {               
                 try {               
                 const { data } = await $axios.get(`/v1/comments`,
-                                    { params: {'include':`author`, 'where':`photoId:eq:${photoId}`, 'limit': 50, 'sort':'createdAt:desc'} },
+                                    { params: {'include':`author`, 'where':`photoId:eq:${photoId}`, 'sort':'createdAt:desc'} },
                                     {'Content-Type': 'application/json'}
                     );
                               

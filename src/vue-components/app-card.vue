@@ -32,7 +32,7 @@
         </div>
 
         <div class="card__signs-wrapper card__signs-wrapper_toright">
-            <div class="card__signs card__signs_name">{{cardObject.title}}</div>
+            <div class="card__signs card__signs_name">{{cardObject.album.title}}</div>
         </div>
 
     </div>	

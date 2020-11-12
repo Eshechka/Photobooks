@@ -77,14 +77,9 @@
                                     <input class="form-edit-profile__input" type="text" placeholder="Антон">
                                 </label>
 
-                                <!-- <label class="form-edit-profile__label form-edit-profile__label_no_top_padding">Фамилия
-                                    <input class="form-edit-profile__input" type="text" placeholder="Черепов">
-                                </label> -->
-
                                 <label class="form-edit-profile__label">О себе
                                     <textarea class="form-edit-profile__input form-edit-profile__input_textarea" cols="20" rows="5" placeholder="Описание альбома"></textarea>
-                                </label>
-                        
+                                </label>                        
 
                                 <div class="form-edit-profile__load-image">
 
@@ -842,9 +837,6 @@
                 this.updateCards();
                 this.updateAlbums();
                 this.openBigCardSlider=this.openEditProfile=this.openChangeMyAlbum=false;
-            },
-            loggedUser() {
-                console.log('loggedUser changed: ',this.loggedUser);//!!!!!!!!!!!!!!!!!!
             },
             openBigCardSlider(value) {
                 if (value) {
