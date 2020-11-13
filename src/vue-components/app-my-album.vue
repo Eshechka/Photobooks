@@ -1,10 +1,9 @@
 <template>    
 
     <div class="my-album">
-        <router-link class="my-album__img-my-album"
+        <router-link :title="`Нажмите для перехода в альбом ${myAlbumObject.title}`" class="my-album__img-my-album"
 				tag="div"
-				:to="'/album/'+myAlbumObject.id"
-		>
+				:to="'/album/'+myAlbumObject.id">
 			<img class="my-album__img" :src="`${urlPhotos}/${myAlbumObject.preview}`" alt="album image">
             <div class="my-album__img-overlay"
 				
@@ -13,11 +12,13 @@
 
         
         <div class="my-album__folder">
-            <button type="button" class="my-album__button my-album__button_edit"
+            <!-- <button title="Редактировать альбом" type="button" class="my-album__button my-album__button_edit" -->
+            <button title="Редактировать альбом" type="button" class="button button_size_s button_icon button_theme_controls"
 				v-if="isLoggedUser"
-				 @click="$emit('click-edit-my-album', myAlbumObject)"
-			></button>
-			<router-link class="my-album__folder-name" 
+				@click="$emit('click-edit-my-album', myAlbumObject)">
+				<span class="button__icon button__icon_edit"></span>
+			</button>
+			<router-link :title="`Нажмите для перехода в альбом ${myAlbumObject.title}`" class="my-album__folder-name" 
 				:to="'/album/'+myAlbumObject.id"
 				@click.prevent
 			>{{myAlbumObject.title}}</router-link>
@@ -138,7 +139,7 @@
 			white-space: nowrap;
 		}
 
-		&__button {
+		/* &__button {
 			height: 30px;
 			width: 30px;
 			background-repeat: no-repeat;
@@ -154,7 +155,7 @@
 				}
 			}		
 
-		}
+		} */
 
 	}
 

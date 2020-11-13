@@ -15,9 +15,11 @@
 		</div>
 
 		<div class="my-photo__name-wrapper">
-			<button title="Редактировать фотографию" type="button" class="my-photo__button my-photo__button_edit" v-if="myPhotoObject.author.id==loggedUserObject.id"
-                @click="$emit('click-edit-my-photo', myPhotoObject)"
-            ></button>
+			<!-- <button title="Редактировать фотографию" type="button" class="my-photo__button my-photo__button_edit" v-if="myPhotoObject.author.id==loggedUserObject.id" -->
+			<button title="Редактировать фотографию" type="button" class="button button_icon button_size_s button_theme_controls" v-if="myPhotoObject.author.id==loggedUserObject.id"
+                @click="$emit('click-edit-my-photo', myPhotoObject)">
+                <span class="button__icon button__icon_edit"></span>
+            </button>
 			<div class="my-photo__name"> {{myPhotoObject.title}} </div>			
 		</div>
 
@@ -142,7 +144,7 @@
             }
         }
 
-        &__button {
+        /* &__button {
             background-repeat: no-repeat;
             background-size: 20px;
             background-position: 0 50%;
@@ -161,7 +163,7 @@
                 }
 
             }
-        }
+        } */
 
         
         &__name-wrapper {

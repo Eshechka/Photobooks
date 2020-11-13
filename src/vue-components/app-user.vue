@@ -385,7 +385,7 @@
 
                 <div class="my-albums__change-album" v-if="openChangeMyAlbum">
                     <appChangeAlbum                                                
-                        @click-close-change-my-album="openChangeMyAlbum=false"
+                        @click-close-change-my-album="cancelChangeMyAlbum"
                         @submit-change-my-album="submitChangeMyAlbum"
                         @delete-album="deleteAlbumHandler"
                         :editedAlbumObject="editedAlbum"
@@ -553,6 +553,18 @@
             ...mapActions('albums', ['addAlbum', 'deleteAlbum', 'changeAlbum']),
             ...mapActions('user', ['logout', 'changeUserWithFiles']),
 
+
+            // ***** Обработка нажатия клавиш *****
+            keyDownHandle(e) {
+                switch(e.code ) {
+                    case 'Escape':
+                        if (this.openEditHeader) this.cancelEditHeaderHandler();
+                        if (this.openChangeMyAlbum) this.cancelChangeMyAlbum();
+                        break;
+                }
+                    // console.log('e =',e);
+            },
+
             addNewAlbumHandler() {
                 this.openChangeMyAlbum=true; 
                 this.albumChangeMode='add';
@@ -562,6 +574,11 @@
                 this.openChangeMyAlbum=true; 
                 this.albumChangeMode='edit';
                 this.editedAlbum={...clickedAlbum};
+            },
+
+            // ***** Закрыть форму редактирования альбома без сохранения изменений *****
+            cancelChangeMyAlbum() {
+                this.openChangeMyAlbum=false;
             },
 
             async submitChangeMyAlbum(data, mode) {
@@ -854,7 +871,8 @@
             await this.updateAlbums();
             await this.updateLoggedUser();
             this.loadedCardsPush(this.startPhotoLoadingPos);
-            window.addEventListener('resize', this.checkWidth);            
+            window.addEventListener('resize', this.checkWidth);    
+            document.addEventListener('keydown', this.keyDownHandle);        
         },
 
         mounted() {

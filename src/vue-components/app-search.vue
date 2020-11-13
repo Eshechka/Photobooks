@@ -35,7 +35,7 @@
                     <form class="form-search" @submit.prevent="clickSearchHandle">
                         <input type="search" placeholder="Исследовать мир" class="form-search__input"
                             v-model="searchedStr">
-                        <button type="submit" class="form-search__submit">
+                        <button title="Нажмите для поиска" type="submit" class="form-search__submit">
                             <svg class="form-search__icon">
                                 <use :xlink:href="urlInlineSvgSprite+'#search'"></use>
                             </svg>
@@ -44,9 +44,8 @@
 
                     <div class="header__show-new">
                         <button class="button button_size_m button_theme_minimalizm"
-                            @click="mode='new'"
-                        >
-                            <span class="button__text">Показать новые</span>                            
+                            @click="mode='new'">
+                            <span title="Показать новые фотографии" class="button__text">Показать новые</span>                            
                         </button>
                     </div>
 
@@ -462,6 +461,9 @@
                 width: 150px;
 
                 @include tablets {
+                    width: 130px;
+                }
+                @include desktop {
                     width: 300px;
                 }
             }
@@ -492,7 +494,7 @@
             margin-top: 12px;
 
             @include tablets {
-                margin-left: 15px;
+                margin-left: 20px;
                 margin-top: 0;
             }
         }
@@ -554,7 +556,7 @@
         }
 
         @include tablets {
-            width: 300px;
+            width: 280px;
         }
         @include desktop {
             width: 380px;
@@ -593,7 +595,14 @@
             font-family: 'Proxima Nova Semibold';
             font-size: 21px;
             color: rgba($color-text, 1);
-            margin-top: 30px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+
+            @include tablets {
+                font-size: 28px;
+                margin-top: 30px;
+                margin-bottom: 30px;
+            }
         }
 
         &__button-show-more {

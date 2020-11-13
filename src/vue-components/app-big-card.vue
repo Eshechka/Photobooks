@@ -175,7 +175,8 @@
 
         methods: {
             ...mapActions('comments', ['addComment', 'deleteComment', 'changeComment', 'updatePhotoComments']),
-
+            
+            // ***** Обработка нажатия клавиш *****
             keyDownHandle(e) {
                 switch(e.code ) {
                     case 'Escape':

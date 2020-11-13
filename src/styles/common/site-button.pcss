@@ -1,4 +1,4 @@
-$icons: (home, logout, edit, plus, up, close, delete, heart);
+$icons: (home, logout, edit, plus, up, close, delete, heart, edit);
 $icons-changing: (home, edit, logout);
 
 .button {
@@ -307,7 +307,7 @@ $icons-changing: (home, edit, logout);
 	}
 
 	&_theme_minimalizm.button {
-		padding: 0;
+		// padding: 0;
 		color: $color-blue;
 		font-family: 'Proxima Nova Semibold';
 		background-color: transparent;
@@ -321,6 +321,38 @@ $icons-changing: (home, edit, logout);
 		&:not(:disabled):focus {			
 			background-color: transparent;
 			color: rgba($color-blue-hover, 1);
+		}
+	}
+
+	&_theme_controls.button {
+		color: rgba($color-text, 0.2);
+		background-color: transparent;
+
+		&__icon {	
+			@each $icon in $icons {
+				&_#{$icon} {
+					background-image: svg-load('#{$icon}.svg', fill=rgba(#{$color-text}, 0.2), height='20px')
+				}
+			}
+		}
+
+		&:disabled {
+			background-color: rgba($color-text, 0.3);
+			color: rgba($color-text, 0.8);
+		}
+		&:not(:disabled):hover,			
+		&:not(:disabled):active,			
+		&:not(:disabled):focus {			
+			background-color: transparent;
+			color: rgba($color-text, 0.8);
+
+			& .button__icon {	
+				@each $icon in $icons {
+					&_#{$icon} {
+						background-image: svg-load('#{$icon}.svg', fill=rgba(#{$color-text}, 0.8), height='20px')
+					}
+				}
+			}
 		}
 	}
 }

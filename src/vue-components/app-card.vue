@@ -11,9 +11,9 @@
         <div class="card__info">
 
             <router-link class="card__avatar"
-                tag="div"
+                tag="a"
                 :to="'/'+cardObject.author.id"
-            >
+                :title="`Перейти в профиль пользователя ${cardObject.author.name}`">
                 <img class="card__avatar-img" :src="`${urlAvatars}/${cardObject.author.avatar}`" alt="card avatar">
                 <div class="card__avatar-overlay"></div>
             </router-link>
@@ -32,7 +32,11 @@
         </div>
 
         <div class="card__signs-wrapper card__signs-wrapper_toright">
-            <div class="card__signs card__signs_name">{{cardObject.album.title}}</div>
+            <router-link :title="`Нажмите для перехода в альбом ${cardObject.album.title}`" class="card__signs card__signs_name"
+                :to="'/album/'+cardObject.album.id"
+                @click.prevent
+            >
+                {{cardObject.album.title}}</router-link>
         </div>
 
     </div>	
@@ -222,7 +226,8 @@
                     margin-right: 15px;
                 }
             
-            &_name {                
+            &_name {         
+                text-decoration: none;       
                 background-image: svg-load('album.svg', fill=rgba(#{$color-text}, 0.2));                
             }
             &_comments {

@@ -3,12 +3,13 @@
         <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigMyPhoto || openAddPhoto"
             @click="openBigMyPhoto = openAddPhoto = false"
         ></div>
-        <div class="wrapper__overlay wrapper__overlay_black-z" v-if="openEditPhoto"
-            @click="openEditPhoto = false"
+        <div class="wrapper__overlay wrapper__overlay_black-z" v-if="openEditPhoto || openConfirmation"
+            @click="openEditPhoto=false"
         ></div>
         <div class="wrapper__overlay wrapper__overlay_white" v-if="openEditHeader"
             @click="openEditHeader = false"
         ></div>
+
 
 		<header class="header" ref='header' :style="{ backgroundImage: `url(${urlPhotos}/${currentAlbumObject.preview})` }">
 	
@@ -168,27 +169,35 @@
                                         </button>
                                     </div>
                                     
-                                    <div class="edit-photo__form">
+                                    <div class="edit-photo__form">                                          
 
                                         <form class="form-editPhoto"
                                             @submit.prevent="saveChangePhotoHandler">
 
-                                            <label class="form-editPhoto__label">Название
+                                            <div class="form-editPhoto__confirmation" v-if="openConfirmation">
+
+                                                <appConfirmation>
+                                                    
+                                                </appConfirmation>
+
+                                            </div>
+
+                                            <label class="form-editPhoto__label" v-if="!openConfirmation">Название
                                                 <input class="form-editPhoto__input" type="text" placeholder="Название фотографии"
                                                 v-model="changedPhoto.title">
                                             </label>
-                                            <div class="form-editPhoto__error form-editPhoto__error_title">
+                                            <div class="form-editPhoto__error form-editPhoto__error_title" v-if="!openConfirmation">
                                                 <span v-show="$v.changedPhoto.title.$invalid">
                                                     Обязательно для заполнения
                                                 </span>
                                             </div>
 
-                                            <label class="form-editPhoto__label">Описание
+                                            <label class="form-editPhoto__label"  v-if="!openConfirmation">Описание
                                                 <textarea class="form-editPhoto__input form-editPhoto__input_textarea" cols="10" rows="2" placeholder="Описание фотографии"
                                                     v-model="changedPhoto.description"
                                                 ></textarea>
                                             </label>
-                                            <div class="form-editPhoto__error form-editPhoto__error_description">
+                                            <div class="form-editPhoto__error form-editPhoto__error_description" v-if="!openConfirmation">
                                                 <span v-if="!$v.changedPhoto.description.minLength" v-show="$v.changedPhoto.description.$invalid">
                                                     Минимум символов в описании: {{ $v.changedPhoto.description.$params.minLength.min }}
                                                 </span>
@@ -209,7 +218,8 @@
                                                 <button title="Закрыть форму добавления фотографий без сохранения" class="button button_size_m button_theme_minimalizm" type="button"
                                                     @click="openEditPhoto=false"
                                                 >Отменить</button>
-                                                <button title="Удалить фотографию из списка загрузки" class="button button_icon button_size_m button_theme_carrot form-editPhoto__in" type="button"
+                                                <button class="button button_icon button_size_m button_theme_carrot form-editPhoto__in" type="button"
+                                                    :title="isNewPhotosEditing ? `Удалить фотографию из списка загрузки` : 'Удалить фотографию'"
                                                     @click.prevent="deletePhotoHandle">
                                                     <span class="button__text">Удалить</span>
                                                     <span class="button__icon button__icon_delete"></span>                                        
@@ -383,6 +393,7 @@
 <script>
     import appMyPhoto from '../vue-components/app-my-photo.vue';
     import appBigCard from '../vue-components/app-big-card.vue';    
+    import appConfirmation from '../vue-components/app-confirmation.vue';    
     
     import Flickity from 'vue-flickity';
 
@@ -402,6 +413,7 @@
         components: {
             appBigCard,
             appMyPhoto,
+            appConfirmation,
             Flickity, 
         },
 
@@ -414,6 +426,7 @@
                 openAddPhoto: false,
                 openEditHeader: false,
                 openBigMyPhoto: false,
+                openConfirmation: false,
 
                 isScrolledHeader: false,
 
@@ -782,7 +795,9 @@
                     this.removeRenderedPhotoHandler(this.renderedPhotos.find(photo => photo.id == this.editingNewPhoto.id));
                 }
                 else {
-                    await this.deleteCard(this.changedPhoto.id);
+                    //показать предупрждение
+                    this.openConfirmation=true;
+                    // если нажата да то await this.deleteCard(this.changedPhoto.id);
                 }
                     this.openEditPhoto = false;
             },
@@ -1510,6 +1525,16 @@
         display: flex;
         flex-direction: column;
         background-color: $color-white;
+        position: relative;
+
+        &__confirmation {
+            position: absolute;
+            top: 20px;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            z-index: 20;
+        }
 
         &__label {
             font-family: 'Proxima Nova Semibold';
