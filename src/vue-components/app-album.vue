@@ -537,7 +537,7 @@
                 if (value) {
                     this.heightSectionForSlider = `calc(100vh + 160px + 510px - ${this.heightHeaderFooterMobile}px)`;
                     this.scrolledWhenSliderOpened = window.pageYOffset;
-                console.log('this.scrolledWhenSliderOpened = ',this.scrolledWhenSliderOpened );
+                // console.log('this.scrolledWhenSliderOpened = ',this.scrolledWhenSliderOpened );
                     window.scrollTo({ top: 0 });
                 }
                 else {

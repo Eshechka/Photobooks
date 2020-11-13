@@ -313,7 +313,8 @@
                 if (this.amountLoadedPhotos === 0) {
                     if (this.amountLoadedPhotos !== 6 && this.windowWidth <= 768) this.amountLoadedPhotos = 6;
                     else if (this.amountLoadedPhotos !== 4 && this.windowWidth <= 1200) this.amountLoadedPhotos = 4;
-                    else if (this.amountLoadedPhotos !== 6 && this.windowWidth > 1200) this.amountLoadedPhotos = 6;
+                    else if (this.amountLoadedPhotos !== 6 && this.windowWidth <= 1600) this.amountLoadedPhotos = 6;
+                    else if (this.amountLoadedPhotos !== 8 && this.windowWidth > 1600) this.amountLoadedPhotos = 8;
                 }
             },
 
