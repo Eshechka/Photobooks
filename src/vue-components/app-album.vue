@@ -68,7 +68,7 @@
                     
                             <div class="edit-header__user">
                                 <div class="edit-header__user-img-wrapper">                                
-                                    <img class="edit-header__user-img" :src="`${urlAvatars}/${currentAlbumObject.author.avatar}`" alt="avatar image">
+                                    <img class="edit-header__user-img" :src='currentAlbumObject.author.avatar ? `${urlAvatars}/${currentAlbumObject.author.avatar}` : require("../img/no_avatar.png").default' alt="avatar image">
                                 </div>
                                     <div class="edit-header__user-name">{{currentAlbumObject.author.name}}</div>
                             </div>
@@ -1034,7 +1034,7 @@
             z-index: 12;
             background-repeat: no-repeat;
             background-size: cover;
-            background-image: linear-gradient(rgba($color-text, 0.95), rgba($color-text, 0.8)), url('/img/bg-main-header.png');
+            background-image: linear-gradient(rgba($color-text, 0.95), rgba($color-text, 0.8));
         }
     }
         
@@ -1079,7 +1079,7 @@
                 width: 60px;
             }
         }        
-        &__user-img {
+        &__user-img {            
             object-fit: cover;
             width: 100%;
             height: 100%;

@@ -58,7 +58,7 @@ export default {
         async refreshAlbumCards(store, albumId) {               
                 try {               
                 const { data } = await $axios.get(`/v1/photos`,
-                                    { params: {'include':'author,comments,likes', 'where':`albumId:eq:${albumId}`, 'sort':'createdAt:desc'} },
+                                    { params: {'include':'author,album,comments,likes', 'limit': 100, 'where':`albumId:eq:${albumId}`, 'sort':'createdAt:desc'} },
                                     {'Content-Type': 'application/json'}
                     );
                               
@@ -69,7 +69,7 @@ export default {
         async updateAllCards(store) {               
                 try {               
                 const { data } = await $axios.get(`/v1/photos`,
-                                    { params: {include :'author,album,comments', 'sort':'createdAt:desc'} },
+                                    { params: {include :'author,album,comments,likes', 'limit': 100, 'sort':'createdAt:desc'} },
                                     {'Content-Type': 'application/json'}
                     );
                 store.commit('SET_CARDS', data.cards);

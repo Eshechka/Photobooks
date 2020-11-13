@@ -33,7 +33,8 @@
                     </div>
 
                     <form class="form-search" @submit.prevent="clickSearchHandle">
-                        <input type="search" placeholder="Исследовать мир" class="form-search__input">
+                        <input type="search" placeholder="Исследовать мир" class="form-search__input"
+                            v-model="searchedStr">
                         <button type="submit" class="form-search__submit">
                             <svg class="form-search__icon">
                                 <use :xlink:href="urlInlineSvgSprite+'#search'"></use>
@@ -60,14 +61,14 @@
 
                 <div class="searched__container" v-if="!openBigCardSlider">
 
-                    <p class="searched__text" v-if="node='new'">
+                    <p class="searched__text" v-if="mode==='new'">
                         Новое в мире
                     </p>
                     <p class="searched__text" v-else-if="loadedCards.length">
-                        По запросу найдено {{cards.length}} результатов
+                        По запросу '{{searchedStrToShow}}' найдено {{cards.length}} результатов
                     </p>
                     <p class="searched__text" v-else>
-                        Увы, ничего не нашлось ничего по запросу
+                        Увы, ничего не нашлось ничего по запросу '{{searchedStrToShow}}'
                     </p>
 
                     <ul class="searched__card-list">
@@ -184,6 +185,10 @@
                 amountLoadedPhotos: 0,
                 startPhotoLoadingPos: 0,
 
+                mode: '',
+                searchedStr: '',
+                searchedStrToShow: '',
+
                 loggedUserObject: {
                     id: Number,
                     userSocials: [],
@@ -202,7 +207,7 @@
 
                 heightHeaderFooterMobile: 0,
                 heightSectionForSlider: `unset`,
-                mode: '',
+                
             }
         },
 
@@ -229,27 +234,47 @@
                 await this.updateAllCards();
                 this.cards = this.allCards;
             },
-            async updateSearchedCards(searchedWord) {
+            async updateSearchedCards(searchedStr) {
                 await this.updateAllCards();
-
                 this.cards = this.allCards.filter(card => {
-                    if (card.description.indexOf(`${searchedWord}`) !== -1)
-                    return card;
-                })
-
-                console.log('this.cards:',this.cards);
+                    
+                    if (card.description.indexOf(`${searchedStr}`) !== -1) {
+                        return card;
+                    }
+                });
+                this.searchedStrToShow=this.searchedStr;
             },
 
             // ***** Нажат поиск по слову/хэштегу *****
-            clickSearchHandle() {
-                this.mode = 'search';
+            async clickSearchHandle() {
+                //пустой запрос
+                if (this.searchedStr==='') {
+                    //предупреждение о пустом запросе
+                }
+                //до этого тоже был режим search
+                else if (this.mode==='search') {
+                    await this.updateSearchedCards(this.searchedStr);
+                    this.startNewLoad();
+                }
+                //до этого был режим new
+                else {
+                    this.mode = 'search';
+                }
             },
             
+
+            // ***** Начать загрузку фотографий по новой (при изменений искомого слова или смене режима: новые фото на поиск слова в описании или наоборот) *****
+            startNewLoad() {
+                this.loadedCards = [];
+                this.amountLoadedPhotos = 0;
+                this.startPhotoLoadingPos = 0;
+                this.loadedCardsPush(this.startPhotoLoadingPos);
+            },
+
             // ***** Загрузить некоторое количество фотографий (определяется шириной экрана), начиная с переданной позиции *****
             loadedCardsPush(startPos) {
 
                 this.checkWidth();
-
                 let posTop = (window.pageYOffset !== undefined) ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
                 for (let i = 0; i < this.amountLoadedPhotos; i++) {
                     if (this.cards[i+startPos]) this.loadedCards.push(this.cards[i+startPos]);
@@ -280,6 +305,7 @@
             },
 
 
+            // ***** Установка параметров в зависимости от текущей ширины экрана (кол-во загружаемых фотографий при клике на кнопку "загрузить еще") *****
             checkWidth() {
 
                 this.windowWidth = window.innerWidth;    
@@ -314,17 +340,16 @@
                     await this.updateCards();
                 }
                 else if (value==='search') {
-                    await this.updateSearchedCards('80');
+                    await this.updateSearchedCards(this.searchedStr);
                 }
 
-                this.loadedCardsPush(this.startPhotoLoadingPos);
-            }
+                this.startNewLoad();
+            },
         },
 
         async created() {
             await this.updateLoggedUser();
             await this.updateCards();
-            this.loadedCardsPush(this.startPhotoLoadingPos);
             window.addEventListener('resize', this.checkWidth);
             if (!this.showMode) this.mode = 'new';
         },
@@ -706,6 +731,7 @@
         background-image: linear-gradient(rgba(50, 50, 50, 0.5), rgba(50, 50, 50, 0.3)), url('/img/no_album_cover.jpg');
         background-repeat: no-repeat;
         background-size: cover;
+        background-position: bottom center;
 
         min-width: 320px;
         padding: 15px;

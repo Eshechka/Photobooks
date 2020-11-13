@@ -1896,6 +1896,7 @@
         background-image: linear-gradient(rgba(50, 50, 50, 0.5), rgba(50, 50, 50, 0.3)), url('/img/no_album_cover.jpg');
         background-repeat: no-repeat;
         background-size: cover;
+        background-position: bottom center;
 
         min-width: 320px;
         padding: 15px;
