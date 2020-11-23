@@ -4,7 +4,8 @@ export default {
     namespaced: true,
     state: {
       cards: [],
-      currentAlbumCards: []
+      currentAlbumCards: [],
+      searchedWord: '',
     },
     mutations: {
         SET_ALBUM_CARDS(state, currentAlbumCards) {
@@ -23,6 +24,12 @@ export default {
         },
         DELETE_ALBUM_CARD(state, deleteCardId) {
             state.currentAlbumCards = state.currentAlbumCards.filter(card => card.id !== deleteCardId);
+        },
+        SET_WORD(state, searchedWord) {
+            state.searchedWord = searchedWord;
+        },
+        DELETE_WORD(state) {
+            state.searchedWord = '';
         },
     },
     actions: {
@@ -76,5 +83,11 @@ export default {
             }
             catch(error) { throw new Error ( error.response.data.error || error.response.data.message ); }
         },
+        setSearchedWord(store, searchedWord) {
+            store.commit('SET_WORD', searchedWord);
+        },
+        deleteSearchedWord(store) {
+            store.commit('DELETE_WORD');
+        }        
     },
 };

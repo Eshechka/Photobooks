@@ -1,6 +1,22 @@
 <template>
     <div class="wrapper">
+
+		<div class="wrapper__overlay wrapper__overlay_black" v-if="loginError || regError"
+			@click="loginError = regError = false"
+        ></div>
+
         <section class="login">
+
+			<div class="login__ui" v-if="loginError || regError">
+				<appUI
+					@yes-ui="clickYesErrorAlert"
+					:textUI="loginError ? `Неверная пара логин-пароль` : `Необходимо корректно заполнить все поля`"
+					:yesText="`OK`"
+					>
+				</appUI>
+			</div>
+
+
             <div class="login__container">
 
                 <div class="login__greeting">
@@ -53,12 +69,10 @@
                             <p class="registration__text">Ваши данные остаются строго конфиденциальны</p>
 
                             <div class="registration__submit">
-                                <!-- <button class="site-button site-button_min_width" type="submit">Создать аккаунт</button> -->
-                                <button class="button button_size_l" type="submit">Создать аккаунт</button>
+								<button class="button button_size_l" type="submit">Создать аккаунт</button>
                             </div>
                             <div class="registration__toenter">
                                 <p class="registration__text">Уже зарегистрированы?</p>
-                                <!-- <button class="site-button site-button_theme-just-text" type="button" -->
                                 <button class="button button_theme_minimalizm" type="button"								
 									@click.prevent="stateRegistration=!stateRegistration; stateEnter=!stateEnter"
 								>Войти</button>
@@ -101,17 +115,14 @@
                             <button class="button button_theme_minimalizm" type="button"
 								@click.prevent="stateForgotPassword=!stateForgotPassword; stateEnter=!stateEnter"
 							>Забыли пароль?</button>
-                            <!-- <button class="site-button site-button_theme-just-text" type="button">Забыли пароль?</button> -->
 
                             <div class="enter__submit">
-                                <!-- <button class="site-button site-button_min_width" type="submit">Войти</button> -->
                                 <button class="button button_size_l" type="submit">Войти</button>
                             </div>
                             
                             
                             <div class="enter__toregistration">
-                                <p class="enter__text">Нет аккаунта?</p> 
-                                <!-- <button class="site-button site-button_theme-just-text" type="button" -->
+                                <p class="enter__text">Нет аккаунта?</p>
                                 <button class="button button_theme_minimalizm" type="button"
 									@click.prevent="stateRegistration=!stateRegistration; stateEnter=!stateEnter"
 								>Зарегистрироваться</button>
@@ -146,14 +157,12 @@
                         <div class="forgot__wrapper forgot__wrapper_bottom">
                             
                             <div class="forgot__submit">
-                                <!-- <button class="site-button site-button_min_width" type="submit">Восстановить пароль</button> -->
-                                <button class="button button_size_l" type="submit">Восстановить пароль</button>
+								<button class="button button_size_l" type="submit">Восстановить пароль</button>
                             </div>
                             
 
                             <div class="forgot__toanotherform forgot__toanotherform_center">
                                 <p class="forgot__text">Вспомнили пароль?</p> 
-                                <!-- <button class="site-button site-button_theme-just-text" type="button">Войти</button> -->
 								<button class="button button_theme_minimalizm" type="button"
 									@click.prevent="stateForgotPassword=!stateForgotPassword; stateEnter=!stateEnter"
 								>Войти</button>
@@ -182,13 +191,24 @@
 	import { mapState, mapActions } from 'vuex';
 	import axios from '../requests';
 
-  export default {   
+    import appUI from '../vue-components/app-UI.vue';    
+
+
+  export default { 
+	  
+	components: {
+		appUI,
+	},
 
     data() {
         return {
             stateEnter: !false,
             stateRegistration: !!false,
-            stateForgotPassword: !!false,
+			stateForgotPassword: !!false,
+			
+			loginError: false,
+			regError: false,
+			
             
             urlInlineSvgSprite: require('../img/spriteIcons.svg').default,
 
@@ -226,7 +246,7 @@
 				this.$router.replace(`/${response.data.user.id}`);
 
 			}).catch(error => {
-				alert('я ошибка login: ' + error.message);
+				this.loginError=true;
 			});
 		}, 
 
@@ -241,12 +261,21 @@
 				this.$router.replace(`/${response.data.user.id}`);
 
 			}).catch(error => {
-				alert('я ошибка register: ' + error.message);
+				this.regError=true;
 			});
 		},
 
 		forgotHandle() {
-			//
+			//метод обработки забытого пароля
+		},
+
+		clickYesErrorAlert() {
+			this.loginError=false;
+			this.regError=false;
+			this.loginUser = {
+				email: '',
+				password: '',
+			};
 		},
 
     },
@@ -277,6 +306,18 @@
     background-image: url('../img/bg.png');
 	background-repeat: no-repeat;
 	background-size: cover;
+
+	&__ui {
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		height: 160px;
+		width: 280px;
+		border-radius: 10px;
+		overflow: hidden;
+		z-index: 10;
+	}
 
 	&__container {
 		min-height: 100vh;
@@ -351,7 +392,7 @@
 
 	color: $color-text;
 	background-color: $color-white;
-	min-width: 300px;
+	min-width: 288px;
 	width: 90%;
 	min-height: 200px;
 	border-radius: 20px;
@@ -460,7 +501,8 @@
 
 	color: $color-text;
 	background-color: $color-white;
-	min-width: 300px;
+	min-width: 288px;
+	max-width: 400px;
 	width: 90%;
 	min-height: 200px;
 	border-radius: 20px;
@@ -469,6 +511,7 @@
     @include tablets {
         width: 273px;
         min-height: 200px;
+		max-width: unset;
     }
 
 
@@ -548,7 +591,7 @@
 
 	color: $color-text;
 	background-color: $color-white;
-	min-width: 300px;
+	min-width: 288px;
 	width: 90%;
 	min-height: 200px;
 	border-radius: 20px;

@@ -278,23 +278,23 @@
                     let startPos = 0;
 
                     while (true) {
-                        let foundHashtag = text.indexOf('#', startPos);
+                        let foundHashtagPos = text.indexOf('#', startPos);
 
-                        if (foundHashtag == -1) {
+                        if (foundHashtagPos == -1) {
                             textWithHashtags += text.slice(startPos, text.length);
                             break;
                         }
 
-                        let sliceText = text.slice(foundHashtag + 1);
+                        let sliceText = text.slice(foundHashtagPos + 1);
                         
-                        let endPos = sliceText.match(/[^A-Za-z0-9а-яА-ЯёЁ_]/).index + foundHashtag + 1;
+                        let endPos = sliceText.match(/[^A-Za-z0-9а-яА-ЯёЁ_]/).index + foundHashtagPos + 1;
 
                         if (endPos === -1) {
-                            textWithHashtags += text.slice(startPos, foundHashtag) + '<span class="site-tag">' + text.slice(foundHashtag, text.length) + '</span>';
+                            textWithHashtags += text.slice(startPos, foundHashtagPos) + '<span class="site-tag">' + text.slice(foundHashtagPos, text.length) + '</span>';
                             break;
                         }
                         else {
-                            textWithHashtags += text.slice(startPos, foundHashtag) + '<span class="site-tag">' + text.slice(foundHashtag, endPos) + '</span>';    
+                            textWithHashtags += text.slice(startPos, foundHashtagPos) + '<span class="site-tag">' + text.slice(foundHashtagPos, endPos) + '</span>';    
                             startPos = endPos;
                         }
                         
@@ -333,7 +333,7 @@
 
         &__card {
             overflow: hidden;
-            min-width: 300px;
+            min-width: 288px;
             display: flex;
             flex-direction: column;
             background-color: transparent;

@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
-        <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigCardSlider || openEditProfile || openChangeMyAlbum"
-            @click="openBigCardSlider = openEditProfile = openChangeMyAlbum = false"
+        <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigCardSlider || openChangeMyAlbum"
+            @click="openBigCardSlider = openChangeMyAlbum = false"
         ></div>
         <div class="wrapper__overlay wrapper__overlay_white" v-if="openEditHeader"
             @click="openEditHeader = false"
@@ -58,9 +58,9 @@
                 </div>
             </div>
 
-            <div class="header__edit-profile" v-if="openEditProfile">
+            <!-- <div class="header__edit-profile" v-if="openEditProfile">
 
-                <div class="edit-profile">
+                <div class="edit-profile">{{edit-profile}}
 
                     <div class="edit-profile__card">
 
@@ -98,7 +98,6 @@
 
                                     <div class="form-edit-profile__img-wrapper">
                                         <img class="form-edit-profile__img" :src='currentAuthorObject.cover' alt="background cover image">
-                                        <!-- <img class="form-edit-profile__img" :src='currentAuthorObject.cover ? `${urlPhotos}/${currentAuthorObject.cover}` : require("../img/no_album_cover.jpg").default' alt="background cover image"> -->
                                     </div>
 
                                     <div class="form-edit-profile__button">
@@ -128,7 +127,7 @@
                                 <div class="form-edit-profile__buttons">
                                     <button class="button button_size_m" type="submit">Сохранить</button>
                                     <button class="button button_size_m button_theme_minimalizm" type="button"
-                                        @click="openEditProfile=false"
+                                        @click="cancelChangeProfile"
                                     >Отменить</button>
                                 </div>
 
@@ -139,7 +138,7 @@
 
                 </div>
 
-            </div>
+            </div> -->
 
             <div class="header__edit-header" v-if="openEditHeader">
 
@@ -249,8 +248,8 @@
 
                                 
                                 <div class="form-edit-header__buttons">
-                                    <button class="button button_size_m form-edit-header__buttonspace" type="submit">Сохранить</button>
-                                    <button class="button button_size_m button_theme_minimalizm" type="button"
+                                    <button title="Сохранить изменения" class="button button_size_m form-edit-header__buttonspace" type="submit">Сохранить</button>
+                                    <button title="Закрыть без сохранения внесенных изменений" class="button button_size_m button_theme_minimalizm" type="button"
                                         @click="cancelEditHeaderHandler"
                                     >Отменить</button>
                                 </div>
@@ -270,11 +269,11 @@
             <div class="my-search" v-if="!openEditHeader && !openBigCardSlider">
                 <div class="my-search__container">
                     <form class="form-search">
-                        <input type="search" placeholder="Исследовать мир" class="form-search__input">
-                        <router-link type="submit" class="form-search__submit"
-                            to="search"
-                            @click.prevent>
-                            <!-- @click="clickSearchHandle" -->
+                        <input type="search" placeholder="Исследовать мир" class="form-search__input"
+                            v-model="searched">
+                        <router-link type="submit" class="form-search__submit" 
+                            tag="button"                           
+                            to="search">
                             <svg class="form-search__icon">
                                 <use :xlink:href="urlInlineSvgSprite+'#search'"></use>
                             </svg>
@@ -444,7 +443,7 @@
         data() {
             return {
                 openBigCardSlider: false,
-                openEditProfile: false,
+                // openEditProfile: false,
                 openEditHeader: false,
                 openChangeMyAlbum: false,
 
@@ -512,6 +511,7 @@
                 heightHeaderFooterMobile: 0,
                 heightSectionForSlider: `unset`,
 
+                searched: '',
             }
         },
 
@@ -548,11 +548,10 @@
 
 
         methods: {
-            ...mapActions('cards', ['updateAllCards']),
+            ...mapActions('cards', ['updateAllCards', 'setSearchedWord']),
             ...mapActions('authors', ['refreshAuthor']),
             ...mapActions('albums', ['addAlbum', 'deleteAlbum', 'changeAlbum']),
             ...mapActions('user', ['logout', 'changeUserWithFiles']),
-
 
             // ***** Обработка нажатия клавиш *****
             keyDownHandle(e) {
@@ -560,6 +559,7 @@
                     case 'Escape':
                         if (this.openEditHeader) this.cancelEditHeaderHandler();
                         if (this.openChangeMyAlbum) this.cancelChangeMyAlbum();
+                        // if (this.openEditProfile) this.cancelChangeProfile();
                         break;
                 }
                     // console.log('e =',e);
@@ -580,6 +580,11 @@
             cancelChangeMyAlbum() {
                 this.openChangeMyAlbum=false;
             },
+
+            // ***** Закрыть форму редактирования без сохранения изменений *****
+            // cancelChangeProfile() {
+            //     this.openEditProfile=false;
+            // },
 
             async submitChangeMyAlbum(data, mode) {
                 
@@ -847,14 +852,15 @@
                 
             previous() {
                 this.$refs.flickity.previous();
-            }
+            },
+
         },
 
-         watch: {
+        watch: {
             idCurrentAuthor() {
                 this.updateCards();
                 this.updateAlbums();
-                this.openBigCardSlider=this.openEditProfile=this.openChangeMyAlbum=false;
+                this.openBigCardSlider=this.openEditHeader=this.openChangeMyAlbum=false;
             },
             openBigCardSlider(value) {
                 if (value) {
@@ -882,6 +888,11 @@
             if (this.header && this.footer) { 
                 this.heightHeaderFooterMobile = parseFloat(getComputedStyle(this.header).height) + parseFloat(getComputedStyle(this.footer).height);
             }
+        },
+
+        beforeRouteLeave(to, from, next) {
+            this.setSearchedWord(this.searched);
+            next();
         },
             
     }
@@ -1059,7 +1070,7 @@
         overflow: hidden;
 
         &__card {
-            min-width: 300px;
+            min-width: 288px;
             display: flex;
             flex-direction: column;
             color: $color-text;
@@ -1307,7 +1318,7 @@
         @include popup;
 
         &__card {
-            min-width: 300px;
+            min-width: 288px;
             display: flex;
             flex-direction: column;
             background-color: #f2f2f2;
@@ -1513,7 +1524,7 @@
 
 
     .my-search {
-        min-width: 300px;
+        min-width: 288px;
         font-family: 'ProximaNova-Light';
         background-color: #f1f1f1;
         height: 60px;
@@ -1611,7 +1622,7 @@
         &__container {
             margin: 0 auto;
             width: 90%;
-            min-width: 300px;
+            min-width: 288px;
             @include max-with-container;
         }
         
@@ -1823,7 +1834,7 @@
         &__container {
             margin: 0 auto;
             width: 90%;
-            min-width: 300px;
+            min-width: 288px;
             @include max-with-container;
         }
 

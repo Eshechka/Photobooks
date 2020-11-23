@@ -1,5 +1,6 @@
 <template>
     <div class="wrapper">
+
         <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigCardSlider"
             @click="openBigCardSlider = false"
         ></div>
@@ -44,7 +45,7 @@
 
                     <div class="header__show-new">
                         <button class="button button_size_m button_theme_minimalizm"
-                            @click="mode='new'">
+                            @click="showMode='new'">
                             <span title="Показать новые фотографии" class="button__text">Показать новые</span>                            
                         </button>
                     </div>
@@ -60,7 +61,7 @@
 
                 <div class="searched__container" v-if="!openBigCardSlider">
 
-                    <p class="searched__text" v-if="mode==='new'">
+                    <p class="searched__text" v-if="showMode==='new'">
                         Новое в мире
                     </p>
                     <p class="searched__text" v-else-if="loadedCards.length">
@@ -148,11 +149,13 @@
 
 
 <script>
+    import dataJSON_socials from '../json/socials.json';//!!!!!!!!!!!!!!!
+
     import appCard from '../vue-components/app-card.vue'
     import appBigCard from '../vue-components/app-big-card.vue'
 
-    import { baseStorageUrl } from '../requests.js';    import dataJSON_socials from '../json/socials.json'
-
+    import { baseStorageUrl } from '../requests.js';
+    
     import { mapState, mapActions } from 'vuex';
 
     import Flickity from 'vue-flickity';
@@ -162,10 +165,6 @@
         components: {
             appCard, appBigCard,
             Flickity,
-        },
-
-        props: {
-            showMode: '',
         },
 
         data() {
@@ -184,7 +183,9 @@
                 amountLoadedPhotos: 0,
                 startPhotoLoadingPos: 0,
 
-                mode: '',
+
+                showMode: '',
+                // mode: '',
                 searchedStr: '',
                 searchedStrToShow: '',
 
@@ -213,11 +214,16 @@
 
         computed: {
             ...mapState('cards', {
-                allCards: state => state.cards
+                allCards: state => state.cards,
+                searchedWord: state => state.searchedWord,
             }),
+            mode() {
+                return this.searchedWord ? 'searched' : 'new';
+            },
             ...mapState('user', {
                 loggeduser: state => state.user
             }),
+
         },
 
 
@@ -233,11 +239,12 @@
                 await this.updateAllCards();
                 this.cards = this.allCards;
             },
+
+            // ***** Поиск по слову/хэштегу *****
             async updateSearchedCards(searchedStr) {
                 await this.updateAllCards();
                 this.cards = this.allCards.filter(card => {
-                    
-                    if (card.description.indexOf(`${searchedStr}`) !== -1) {
+                    if (card.description.toUpperCase().indexOf(searchedStr.toUpperCase()) !== -1) {
                         return card;
                     }
                 });
@@ -250,14 +257,16 @@
                 if (this.searchedStr==='') {
                     //предупреждение о пустом запросе
                 }
-                //до этого тоже был режим search
-                else if (this.mode==='search') {
+                //до этого тоже был режим search или это переход с другой страницы
+                else if (this.showMode==='search') {
                     await this.updateSearchedCards(this.searchedStr);
                     this.startNewLoad();
+                    this.searchedStr='';
+
                 }
                 //до этого был режим new
                 else {
-                    this.mode = 'search';
+                    this.showMode = 'search';
                 }
             },
             
@@ -330,34 +339,40 @@
                 
             previous() {
                 this.$refs.flickity.previous();
-            }
+            },
+
         },
 
         watch: {
-            async mode(value) {
+            async showMode(value) {
 
                 if (value==='new') {
                     await this.updateCards();
                 }
                 else if (value==='search') {
                     await this.updateSearchedCards(this.searchedStr);
+                    this.searchedStr='';                    
                 }
 
                 this.startNewLoad();
             },
         },
 
+
         async created() {
             await this.updateLoggedUser();
-            await this.updateCards();
             window.addEventListener('resize', this.checkWidth);
-            if (!this.showMode) this.mode = 'new';
+            
         },
 
-        mounted() {
+        async mounted() {
             this.loggedUserObject.id = localStorage.getItem('userId');
+            this.showMode = this.mode;
+            this.searchedStr = this.searchedWord;
+            this.clickSearchHandle();
+         
         },
-            
+
     }
 
 </script>
@@ -484,7 +499,7 @@
         }
 
         &__search {
-            min-width: 300px;
+            min-width: 288px;
             font-family: 'ProximaNova-Light';
             background-color: #f1f1f1;
             overflow: hidden;
@@ -575,7 +590,7 @@
         &__container {
             margin: 0 auto;
             width: 90%;
-            min-width: 300px;
+            min-width: 288px;
             @include max-with-container;
         }
         

@@ -63,7 +63,7 @@
     @import '../styles/layout.pcss';
 
     .my-album {
-		min-width: 300px;
+		min-width: 288px;
 		margin: 0 auto;
 		display: flex;
 		flex-direction: column;

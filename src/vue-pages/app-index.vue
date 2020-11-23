@@ -1,6 +1,7 @@
 <template>        
       
-    <router-view></router-view>
+    <router-view>
+    </router-view>
 
 </template>
 
@@ -14,6 +15,7 @@
         components: {
             appAlbum, appUser, appSearch
         },
+
     }
 </script>
 

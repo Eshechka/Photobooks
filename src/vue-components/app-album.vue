@@ -3,8 +3,8 @@
         <div class="wrapper__overlay wrapper__overlay_black" v-if="openBigMyPhoto || openAddPhoto"
             @click="openBigMyPhoto = openAddPhoto = false"
         ></div>
-        <div class="wrapper__overlay wrapper__overlay_black-z" v-if="openEditPhoto || openConfirmation"
-            @click="openEditPhoto=false"
+        <div class="wrapper__overlay wrapper__overlay_black-z" v-if="openEditPhoto || openConfirmDeletePhoto"
+            @click="openEditPhoto = openConfirmDeletePhoto = false"
         ></div>
         <div class="wrapper__overlay wrapper__overlay_white" v-if="openEditHeader"
             @click="openEditHeader = false"
@@ -25,7 +25,7 @@
                     </router-link>
                 </div>
                 <div class="header__button-edit" v-if="currentAlbumObject.author.id==loggedUserObject.id">
-                    <button type='button' title="Перейти на главную" class="button button_icon_space button_size_changing button_theme_color_changing"
+                    <button type='button' title="Редактировать название и описание альбома" class="button button_icon_space button_size_changing button_theme_color_changing"
                         @click="clickEditAlbumHeader">
                         <span class="button__text">Редактировать</span>
                         <span class="button__icon button__icon_edit"></span>
@@ -155,6 +155,9 @@
                         </li>
 
 
+
+                    </ul>
+                </div>
                         <div class="my-photos__edit-photo" v-if="openEditPhoto">
                             
                             <div class="edit-photo">
@@ -164,40 +167,45 @@
                                         <h4 class="edit-photo__title">Редактировать фотографию</h4>
 
                                         <button title="Редактировать фотографию" type="button" class="button button_icon button_size_s button_theme_minimalizm"
-                                            @click="openEditPhoto=false" >
+                                            @click="closeEditPhotoHandler" >
                                             <span class="button__icon button__icon_close"></span>
                                         </button>
                                     </div>
                                     
-                                    <div class="edit-photo__form">                                          
-
+                                    <div class="edit-photo__form">
+                              
                                         <form class="form-editPhoto"
                                             @submit.prevent="saveChangePhotoHandler">
 
-                                            <div class="form-editPhoto__confirmation" v-if="openConfirmation">
+                                            <div class="form-editPhoto__confirmDeletePhoto"
+                                                v-if="openConfirmDeletePhoto">
 
-                                                <appConfirmation>
-                                                    
-                                                </appConfirmation>
+                                                <appUI 
+                                                    @yes-ui="confirmDeletePhotoHandle"
+                                                    @no-ui="cancelDeletePhotoHandle"
+                                                    :textUI="`Подтверждаете удаление?`"
+                                                    :yesText="Да"
+                                                    :isConfirmation=true>
+                                                </appUI>
 
                                             </div>
 
-                                            <label class="form-editPhoto__label" v-if="!openConfirmation">Название
+                                            <label class="form-editPhoto__label" v-if="!openConfirmDeletePhoto">Название
                                                 <input class="form-editPhoto__input" type="text" placeholder="Название фотографии"
                                                 v-model="changedPhoto.title">
                                             </label>
-                                            <div class="form-editPhoto__error form-editPhoto__error_title" v-if="!openConfirmation">
+                                            <div class="form-editPhoto__error form-editPhoto__error_title" v-if="!openConfirmDeletePhoto">
                                                 <span v-show="$v.changedPhoto.title.$invalid">
                                                     Обязательно для заполнения
                                                 </span>
                                             </div>
 
-                                            <label class="form-editPhoto__label"  v-if="!openConfirmation">Описание
+                                            <label class="form-editPhoto__label"  v-if="!openConfirmDeletePhoto">Описание
                                                 <textarea class="form-editPhoto__input form-editPhoto__input_textarea" cols="10" rows="2" placeholder="Описание фотографии"
                                                     v-model="changedPhoto.description"
                                                 ></textarea>
                                             </label>
-                                            <div class="form-editPhoto__error form-editPhoto__error_description" v-if="!openConfirmation">
+                                            <div class="form-editPhoto__error form-editPhoto__error_description" v-if="!openConfirmDeletePhoto">
                                                 <span v-if="!$v.changedPhoto.description.minLength" v-show="$v.changedPhoto.description.$invalid">
                                                     Минимум символов в описании: {{ $v.changedPhoto.description.$params.minLength.min }}
                                                 </span>
@@ -210,15 +218,15 @@
                                             </div>
 
                                     
-                                            <div class="form-editPhoto__buttons">
+                                            <div class="form-editPhoto__buttons" v-if="!openConfirmDeletePhoto">
                                                 <button class="button button_size_m form-editPhoto__buttonspace" type="submit"
                                                     :disabled="$v.changedPhoto.$invalid"
                                                     :title="$v.changedPhoto.$invalid ? 'Для отправки необходимо исправить название и описание' : '' "
                                                 >Сохранить</button>
                                                 <button title="Закрыть форму добавления фотографий без сохранения" class="button button_size_m button_theme_minimalizm" type="button"
-                                                    @click="openEditPhoto=false"
+                                                    @click="closeEditPhotoHandler"
                                                 >Отменить</button>
-                                                <button class="button button_icon button_size_m button_theme_carrot form-editPhoto__in" type="button"
+                                                <button class="button button_icon button_size_s_m button_theme_carrot form-editPhoto__in" type="button"
                                                     :title="isNewPhotosEditing ? `Удалить фотографию из списка загрузки` : 'Удалить фотографию'"
                                                     @click.prevent="deletePhotoHandle">
                                                     <span class="button__text">Удалить</span>
@@ -320,9 +328,6 @@
 
 
                         </div>
-
-                    </ul>
-                </div>
                 
 
                 <div class="my-photos__big-card-slider" v-if="openBigMyPhoto"
@@ -340,17 +345,10 @@
                                 @previous="previous()" -->
                         </flickity>
 
-                        <!-- <div class="big-card-slider__close"> -->
-                            <!-- !!!!!!!!!!!!! что-то одно из этого надо оставить -->
-                            <!-- <button class="round-button round-button_close-transparent" type="button" -->
                             <button title="Закрыть слайдер" class="big-card-slider__control big-card-slider__control_close" type="button"
-                                @click="openBigMyPhoto=false"
+                                @click="clickCloseSlider"
                             ></button>
-                            <!-- <button class="button button_icon button_size_s button_theme_pale" type="button"
-                                @click="openBigMyPhoto=false">
-                                <span class="button__icon button__icon_close"></span>
-                                </button> -->
-                        <!-- </div> -->
+
 
                         <button type="button" class="big-card-slider__control big-card-slider__control_prev"
                             @click="previous()"
@@ -393,7 +391,7 @@
 <script>
     import appMyPhoto from '../vue-components/app-my-photo.vue';
     import appBigCard from '../vue-components/app-big-card.vue';    
-    import appConfirmation from '../vue-components/app-confirmation.vue';    
+    import appUI from '../vue-components/app-UI.vue';    
     
     import Flickity from 'vue-flickity';
 
@@ -413,7 +411,7 @@
         components: {
             appBigCard,
             appMyPhoto,
-            appConfirmation,
+            appUI,
             Flickity, 
         },
 
@@ -426,7 +424,7 @@
                 openAddPhoto: false,
                 openEditHeader: false,
                 openBigMyPhoto: false,
-                openConfirmation: false,
+                openConfirmDeletePhoto: false,
 
                 isScrolledHeader: false,
 
@@ -487,6 +485,7 @@
                 titleDisabledBtnAddPhoto: 'Необходимо добавить фотографии',
 
                 heightHeaderFooterMobile: 0,
+                // heightConfirmation: `unset`,
                 
                 heightSectionForSlider: `unset`,
                 scrolledWhenSliderOpened: 0,
@@ -503,6 +502,7 @@
             ...mapState('user', {
                 loggeduser: state => state.user
             }),
+            
 
             thisAlbumPhotos() {
                 return this.allCards.sort( (a, b) => b.id - a.id );
@@ -517,6 +517,10 @@
             footer() {
                 return this.$refs['footer'];
             },
+            // formEditPhoto() {
+            //     return this.$refs['form-edit-photo'];
+            // },
+            
 
             isMoile() {
                 return window.innerWidth < 768;
@@ -550,7 +554,6 @@
                 if (value) {
                     this.heightSectionForSlider = `calc(100vh + 160px + 510px - ${this.heightHeaderFooterMobile}px)`;
                     this.scrolledWhenSliderOpened = window.pageYOffset;
-                // console.log('this.scrolledWhenSliderOpened = ',this.scrolledWhenSliderOpened );
                     window.scrollTo({ top: 0 });
                 }
                 else {
@@ -559,7 +562,16 @@
                         await window.scrollTo({ top: `${this.scrolledWhenSliderOpened}` });                      
                     }
                 }
+            },
+            openEditPhoto(value) {
+                if (value) {
+
+                }
+                else {
+
+                }
             }
+
 
         },
 
@@ -728,7 +740,7 @@
                 this.openEditHeader=false;
             },
 
-            // ***** СВыйти из редактирования шапки альбома без сохранения изменений *****
+            // ***** Выйти из редактирования шапки альбома без сохранения изменений *****
             cancelChangeAlbumHeaderHandler() {
                 this.isAlbumPreviewLoaded=false;
                 this.previewTitle = "Изменить превью альбома";
@@ -783,24 +795,41 @@
                 this.openEditPhoto = false;
             },
 
+            // ***** Закрыть форму редактирвания/удаления фотографии по клику на крестик или кнопку "отменить" ******
+            closeEditPhotoHandler() {
+                this.openEditPhoto=false;
+                if (this.openConfirmDeletePhoto) this.openConfirmDeletePhoto=false;
+            },
+
             // ***** Закрыть фотографию в слайдере по клику на крестик *****
             closeBigCardHandler() {
                 // window.scrollTo({ top: `${this.scrolledWhenSliderOpened}px` });
                 this.openBigMyPhoto = false;                
             },
 
-            // ***** Удалить фотографию ранее загруженную или из списка загрузки *****
+            // *****  Начать удаление фотографии ранее загруженной или удалить фотографию из списка загрузки *****
             async deletePhotoHandle() {
                 if (this.isNewPhotosEditing) {
                     this.removeRenderedPhotoHandler(this.renderedPhotos.find(photo => photo.id == this.editingNewPhoto.id));
+                    this.openEditPhoto = false;
                 }
                 else {
-                    //показать предупрждение
-                    this.openConfirmation=true;
-                    // если нажата да то await this.deleteCard(this.changedPhoto.id);
+                    this.openConfirmDeletePhoto=true;
                 }
-                    this.openEditPhoto = false;
             },
+
+            // ***** Подтверждение удаления фотографии ранее загруженной в альбом *****
+            confirmDeletePhotoHandle() {
+                this.deleteCard(this.changedPhoto.id);
+                this.openEditPhoto = false;
+                this.openConfirmDeletePhoto = false;
+            },
+            // ***** Отмена подтверждения удаления фотографии ранее загруженной в альбом *****
+            cancelDeletePhotoHandle() {
+                this.openEditPhoto = true;
+                this.openConfirmDeletePhoto = false;
+            },
+
 
             // ***** Получить данные текущего залогиненного юзера *****
             async updateLoggedUser() {
@@ -828,6 +857,12 @@
                         }
                 }
                     
+            },
+
+            async clickCloseSlider() {
+                await this.refreshAlbumCards(this.$route.params.albumid);
+                await this.refreshThisAlbum(this.$route.params.albumid);
+                this.openBigMyPhoto=false;
             },
 
             next() {
@@ -1059,7 +1094,7 @@
         overflow: hidden;
 
         &__card {
-            min-width: 300px;
+            min-width: 288px;
             display: flex;
             flex-direction: column;
             color: $color-text;
@@ -1184,6 +1219,12 @@
             &_file-load {
                 width: 100%;
                 position: relative;
+
+                    &:hover .form-edit-header__cover-img-wrapper,
+                    &:active .form-edit-header__cover-img-wrapper,
+                    &:focus .form-edit-header__cover-img-wrapper {
+                        box-shadow: 0 0 5px 2px white;
+                    }
             }
         }
 
@@ -1251,9 +1292,9 @@
         }
         
         &__container {
-            margin: 0 auto;
+            margin: 0 5%;
             width: 90%;
-            min-width: 300px;
+            min-width: 288px;
             @include max-with-container;
         }
 
@@ -1325,6 +1366,7 @@
         &__edit-photo {
             @include fixed-popup-container;
             z-index: 12;
+            overflow: hidden;
             @include tablets {
                 width: 70%;
                 margin: 0 max(15%,calc((100% - 1480px)/2));
@@ -1425,7 +1467,7 @@
         @include popup;
 
         &__card {
-            min-width: 300px;
+            min-width: 288px;
             background-color: #f2f2f2;
             display: flex;
             flex-direction: column;
@@ -1489,7 +1531,6 @@
         @include popup;
 
         &__card {
-            min-width: 300px;
             background-color: #f2f2f2;
             display: flex;
             flex-direction: column;
@@ -1526,20 +1567,17 @@
         flex-direction: column;
         background-color: $color-white;
         position: relative;
+        height: 300px;
 
-        &__confirmation {
-            position: absolute;
-            top: 20px;
-            bottom: 20px;
-            left: 0;
-            right: 0;
+        &__confirmDeletePhoto {
             z-index: 20;
+            flex-grow: 1;
         }
 
         &__label {
             font-family: 'Proxima Nova Semibold';
             font-size: 14px;
-            padding: 15px 10px 10px;
+            padding: 10px 10px 0 10px;
 
             @include tablets {
                 display: flex;
@@ -1555,7 +1593,11 @@
 
             &_textarea {
                 resize: none;
-                min-height: 120px;
+                min-height: 90px;
+
+                @include tablets {
+                    min-height: 120px;
+                }
             }
             
             @include tablets {
@@ -1564,7 +1606,7 @@
             }
         }
 
-         &__cover {
+        &__cover {
             display: flex;
             align-items: center;
             padding: 10px;
@@ -1576,13 +1618,14 @@
             border-radius: 50%;
             overflow: hidden;
         }
+
         &__cover-img {
             object-fit: cover;
             width: 100%;
             height: 100%;
         }
 
-         &__cover-button {
+        &__cover-button {
              margin-left: 18px;
         }
 
@@ -1596,6 +1639,7 @@
         &__in {
             margin-left: auto;
         }
+
         &__buttonspace {
             margin-right: 10px;
         }
@@ -1609,13 +1653,17 @@
                 top: 5px;
             }
         }
+
+        @include tablets {
+            height: 315px;
+        }
     }
 
     .add-photo {
         @include popup;
 
         &__card {
-            min-width: 300px;
+            min-width: 288px;
             background-color: #f2f2f2;
             display: flex;
             flex-direction: column;

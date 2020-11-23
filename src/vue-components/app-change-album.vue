@@ -205,7 +205,7 @@
         @include popup;
 
         &__card {
-            min-width: 300px;
+            min-width: 288px;
             background-color: #f2f2f2;
             display: flex;
             flex-direction: column;
