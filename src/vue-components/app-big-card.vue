@@ -30,9 +30,15 @@
 
                 <h3 class="big-card__title">{{cardObject.title}}</h3>
             
-                <div class="big-card__desc-text"
-                    v-html="descriptionHandle(cardObject.description)"
-                ></div>
+                <div class="big-card__desc-text">
+                    <div v-for="hashtag in hastagsArr" :key="hashtag.id" class="big-card__text-before-hashtag">
+                        {{hashtag.text}}
+                        <span class="big-card__hashtag"
+                            @click="clickHashtagHandle(hashtag.hash)"
+                        >{{hashtag.hash}}</span>
+                    </div>
+
+                </div> 
 
             </div> 
 
@@ -116,7 +122,6 @@
 
 
 <script >
-
     import { mapState, mapActions } from 'vuex';
 
     import dataJSON_likes from '../json/likes.json';
@@ -125,6 +130,7 @@
     import $axios from '../requests';
     import { baseStorageUrl } from '../requests.js';
     export default {
+
         props: {
             cardObject: Object,
             loggedUserObject: Object,
@@ -156,6 +162,8 @@
                 commentText: '',
             },
 
+            hastagsArr: [],
+
           }
 
         },
@@ -174,7 +182,14 @@
 
 
         methods: {
+            ...mapActions('cards', ['setSearchedWord']),
             ...mapActions('comments', ['addComment', 'deleteComment', 'changeComment', 'updatePhotoComments']),
+
+            // ***** Обработка клика по хэштегу *****
+            clickHashtagHandle(searchedHashtag) {
+                this.setSearchedWord(searchedHashtag);
+                this.$router.push('../search');
+            },
             
             // ***** Обработка нажатия клавиш *****
             keyDownHandle(e) {
@@ -272,8 +287,6 @@
             },
 
             descriptionHandle(text) {
-                let textWithHashtags = '';
-
                 if (text) {
                     let startPos = 0;
 
@@ -281,7 +294,6 @@
                         let foundHashtagPos = text.indexOf('#', startPos);
 
                         if (foundHashtagPos == -1) {
-                            textWithHashtags += text.slice(startPos, text.length);
                             break;
                         }
 
@@ -290,20 +302,49 @@
                         let endPos = sliceText.match(/[^A-Za-z0-9а-яА-ЯёЁ_]/).index + foundHashtagPos + 1;
 
                         if (endPos === -1) {
-                            textWithHashtags += text.slice(startPos, foundHashtagPos) + '<span class="site-tag">' + text.slice(foundHashtagPos, text.length) + '</span>';
+                            this.hastagsArr.push({text: text.slice(startPos, foundHashtagPos), hash: text.slice(foundHashtagPos, text.length)});
                             break;
                         }
                         else {
-                            textWithHashtags += text.slice(startPos, foundHashtagPos) + '<span class="site-tag">' + text.slice(foundHashtagPos, endPos) + '</span>';    
+                            this.hastagsArr.push({text: text.slice(startPos, foundHashtagPos), hash: text.slice(foundHashtagPos, endPos)});
                             startPos = endPos;
-                        }
-                        
+                        }                        
                     }
-
                 }
-
-                return textWithHashtags;
             },
+            // descriptionHandle(text) {
+            //     let textWithHashtags = '';
+
+            //     if (text) {
+            //         let startPos = 0;
+
+            //         while (true) {
+            //             let foundHashtagPos = text.indexOf('#', startPos);
+
+            //             if (foundHashtagPos == -1) {
+            //                 textWithHashtags += text.slice(startPos, text.length);
+            //                 break;
+            //             }
+
+            //             let sliceText = text.slice(foundHashtagPos + 1);
+                        
+            //             let endPos = sliceText.match(/[^A-Za-z0-9а-яА-ЯёЁ_]/).index + foundHashtagPos + 1;
+
+            //             if (endPos === -1) {
+            //                 textWithHashtags += text.slice(startPos, foundHashtagPos) + '<span class="site-tag">' + text.slice(foundHashtagPos, text.length) + '</span>';
+            //                 break;
+            //             }
+            //             else {
+            //                 textWithHashtags += text.slice(startPos, foundHashtagPos) + '<span class="site-tag">' + text.slice(foundHashtagPos, endPos) + '</span>';    
+            //                 startPos = endPos;
+            //             }
+                        
+            //         }
+
+            //     }
+
+            //     return textWithHashtags;
+            // },
         },
 
         async created() {
@@ -313,8 +354,10 @@
         },
         mounted() {
             this.activeLike= this.likes.find(like => (like.userId == this.loggedUserObject.id && like.photoId == this.cardObject.id));
+            this.descriptionHandle(this.cardObject.description);
             // this.isActiveLike= !!this.activeLike;
         },
+
     }
 </script>
 
@@ -466,6 +509,18 @@
             @include tablets {
                 height: 53px;
             }
+        }
+
+        &__text-before-hashtag {
+            display: inline-block;
+        }
+
+        &__hashtag {
+            cursor: pointer;
+            color: $color-blue;
+            font-family: 'Proxima Nova Semibold';
+            font-size: 14px;
+            font-weight: bolder;
         }
 
         &__comments {
@@ -646,13 +701,13 @@
 
     }
 
-
+/* 
     .site-tag {
         cursor: pointer;
         color: $color-blue;
         font-family: 'Proxima Nova Semibold';
         font-size: 14px;
         font-weight: bolder;
-    }
+    } */
 
 </style>

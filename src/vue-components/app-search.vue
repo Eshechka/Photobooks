@@ -228,7 +228,7 @@
 
 
         methods: {
-            ...mapActions('cards', ['updateAllCards']),
+            ...mapActions('cards', ['updateAllCards', 'deleteSearchedWord']),
 
             async updateLoggedUser() {
                 this.loggedUserObject = {...this.loggeduser};
@@ -368,9 +368,9 @@
         async mounted() {
             this.loggedUserObject.id = localStorage.getItem('userId');
             this.showMode = this.mode;
-            this.searchedStr = this.searchedWord;
-            this.clickSearchHandle();
-         
+            this.searchedStr = this.searchedWord;            
+            await this.clickSearchHandle();
+            this.deleteSearchedWord();
         },
 
     }

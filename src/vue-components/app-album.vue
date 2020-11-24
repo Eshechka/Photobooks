@@ -889,8 +889,14 @@
             if (this.header && this.footer) { 
                 this.heightHeaderFooterMobile = parseFloat(getComputedStyle(this.header).height) + parseFloat(getComputedStyle(this.footer).height);
             }
+        },
 
-        }
+        // beforeRouteLeave(to, from, next) {
+        //     console.log('ROUTE LEAVE !!!!! HASH = ',this.$refs.bigCardSlider.searchedHashtag);
+        //     this.$refs.bigCardSlider.searchedHashtag;
+        //     this.setSearchedWord(this.searched);
+        //     next();
+        // },
 
     }
 

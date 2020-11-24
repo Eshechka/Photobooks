@@ -268,16 +268,15 @@
         <main class="maincontent">
             <div class="my-search" v-if="!openEditHeader && !openBigCardSlider">
                 <div class="my-search__container">
-                    <form class="form-search">
+                    <form class="form-search" 
+                        @submit.prevent="clickSubmitSearch">
                         <input type="search" placeholder="Исследовать мир" class="form-search__input"
                             v-model="searched">
-                        <router-link type="submit" class="form-search__submit" 
-                            tag="button"                           
-                            to="search">
+                        <button title="Нажмите для поиска" type="submit" class="form-search__submit">
                             <svg class="form-search__icon">
                                 <use :xlink:href="urlInlineSvgSprite+'#search'"></use>
                             </svg>
-                        </router-link>
+                        </button>
                     </form>
                 </div>
             </div>
@@ -552,6 +551,13 @@
             ...mapActions('authors', ['refreshAuthor']),
             ...mapActions('albums', ['addAlbum', 'deleteAlbum', 'changeAlbum']),
             ...mapActions('user', ['logout', 'changeUserWithFiles']),
+
+            clickSubmitSearch() {
+                if (this.searched) {
+                    this.setSearchedWord(this.searched);
+                    this.$router.push('search');
+                }
+            },
 
             // ***** Обработка нажатия клавиш *****
             keyDownHandle(e) {
@@ -890,10 +896,11 @@
             }
         },
 
-        beforeRouteLeave(to, from, next) {
-            this.setSearchedWord(this.searched);
-            next();
-        },
+        // beforeRouteLeave(to, from, next) {
+        //     console.log('ROUTE LEAVE !!!!!');
+        //     this.setSearchedWord(this.searched);
+        //     next();
+        // },
             
     }
 
