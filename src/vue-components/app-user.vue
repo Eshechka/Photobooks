@@ -270,7 +270,10 @@
                 <div class="my-search__container">
                     <form class="form-search" 
                         @submit.prevent="clickSubmitSearch">
-                        <input type="search" placeholder="Исследовать мир" class="form-search__input"
+                        <input type="search" class="form-search__input"
+                            :class="{'form-search__input_empty': emptySearch}"
+                            :placeholder="emptySearch ? 'Заполните поле поиска' : 'Исследовать мир'"
+                            @input="emptySearch=false"
                             v-model="searched">
                         <button title="Нажмите для поиска" type="submit" class="form-search__submit">
                             <svg class="form-search__icon">
@@ -511,6 +514,7 @@
                 heightSectionForSlider: `unset`,
 
                 searched: '',
+                emptySearch: false,
             }
         },
 
@@ -556,6 +560,9 @@
                 if (this.searched) {
                     this.setSearchedWord(this.searched);
                     this.$router.push('search');
+                }
+                else {
+                    this.emptySearch=true;
                 }
             },
 
@@ -896,11 +903,6 @@
             }
         },
 
-        // beforeRouteLeave(to, from, next) {
-        //     console.log('ROUTE LEAVE !!!!!');
-        //     this.setSearchedWord(this.searched);
-        //     next();
-        // },
             
     }
 
@@ -1584,7 +1586,13 @@
             &::-webkit-search-cancel-button {
                 appearance: none;
             }
+
+            &_empty::placeholder {
+                color: $color-carrot;
+            }
+
         }
+
 
         &__submit {
             position: absolute;
@@ -1701,10 +1709,6 @@
             top: 0;
             width: 100%;
             margin: 0;
-
-            @include tablets {
-                @include popup-container;
-            }
         }
 
     }

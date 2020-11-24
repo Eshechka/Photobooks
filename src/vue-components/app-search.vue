@@ -34,7 +34,10 @@
                     </div>
 
                     <form class="form-search" @submit.prevent="clickSearchHandle">
-                        <input type="search" placeholder="Исследовать мир" class="form-search__input"
+                        <input type="search" class="form-search__input"
+                            :class="{'form-search__input_empty': emptySearch}"
+                            :placeholder="emptySearch ? 'Заполните поле поиска' : 'Исследовать мир'"
+                            @input="emptySearch=false"
                             v-model="searchedStr">
                         <button title="Нажмите для поиска" type="submit" class="form-search__submit">
                             <svg class="form-search__icon">
@@ -45,7 +48,7 @@
 
                     <div class="header__show-new">
                         <button class="button button_size_m button_theme_minimalizm"
-                            @click="showMode='new'">
+                            @click="showMode='new'; emptySearch=false">
                             <span title="Показать новые фотографии" class="button__text">Показать новые</span>                            
                         </button>
                     </div>
@@ -65,7 +68,7 @@
                         Новое в мире
                     </p>
                     <p class="searched__text" v-else-if="loadedCards.length">
-                        По запросу '{{searchedStrToShow}}' найдено {{cards.length}} результатов
+                        Количество найденных результатов по запросу '{{searchedStrToShow}}': <span class="searched__amount">{{cards.length}}</span>
                     </p>
                     <p class="searched__text" v-else>
                         Увы, ничего не нашлось ничего по запросу '{{searchedStrToShow}}'
@@ -185,9 +188,9 @@
 
 
                 showMode: '',
-                // mode: '',
                 searchedStr: '',
                 searchedStrToShow: '',
+                emptySearch: false,
 
                 loggedUserObject: {
                     id: Number,
@@ -240,29 +243,36 @@
                 this.cards = this.allCards;
             },
 
-            // ***** Поиск по слову/хэштегу *****
+            // ***** Обновить поиск по слову/хэштегу *****
             async updateSearchedCards(searchedStr) {
                 await this.updateAllCards();
+                let hashtagSearch = searchedStr[0] === '#';
                 this.cards = this.allCards.filter(card => {
-                    if (card.description.toUpperCase().indexOf(searchedStr.toUpperCase()) !== -1) {
+                    let isDescriptionHasSearched = card.description.toUpperCase().indexOf(searchedStr.toUpperCase()) !== -1;
+                    let isTitleHasSearched = card.title.toUpperCase().indexOf(searchedStr.toUpperCase()) !== -1;
+                    if (isDescriptionHasSearched || (!hashtagSearch && isTitleHasSearched)) {
                         return card;
                     }
                 });
                 this.searchedStrToShow=this.searchedStr;
             },
 
-            // ***** Нажат поиск по слову/хэштегу *****
-            async clickSearchHandle() {
+            // ***** Обновление результата поиска (при переходе с другой страницы или при повторном подряд клике по иконке в режиме search) *****
+            async updateSearchHandle() {
+                await this.updateSearchedCards(this.searchedStr);
+                this.startNewLoad();
+                this.searchedStr='';
+            },
+
+            // ***** Нажата иконка поиска по слову/хэштегу *****
+            clickSearchHandle() {
                 //пустой запрос
                 if (this.searchedStr==='') {
-                    //предупреждение о пустом запросе
+                        this.emptySearch = true;
                 }
-                //до этого тоже был режим search или это переход с другой страницы
-                else if (this.showMode==='search') {
-                    await this.updateSearchedCards(this.searchedStr);
-                    this.startNewLoad();
-                    this.searchedStr='';
-
+                //повторный клик по иконке поиска в режиме search
+                else if (this.showMode === 'search') {
+                    this.updateSearchHandle();
                 }
                 //до этого был режим new
                 else {
@@ -356,20 +366,27 @@
 
                 this.startNewLoad();
             },
+            async searchedWord(value) {
+                if (value) {
+                    this.showMode = 'search';
+                    this.searchedStr = value;            
+                    await this.updateSearchHandle();
+                    this.deleteSearchedWord();
+                }
+            },
         },
 
 
         async created() {
             await this.updateLoggedUser();
-            window.addEventListener('resize', this.checkWidth);
-            
+            window.addEventListener('resize', this.checkWidth);            
         },
 
         async mounted() {
             this.loggedUserObject.id = localStorage.getItem('userId');
             this.showMode = this.mode;
-            this.searchedStr = this.searchedWord;            
-            await this.clickSearchHandle();
+            this.searchedStr = this.searchedWord;
+            await this.updateSearchHandle();
             this.deleteSearchedWord();
         },
 
@@ -534,11 +551,15 @@
             font-size: 14px;
             background: transparent;
             color: $color-text;
-            
+            width: calc(100% - 48px);
             height: 40px;
             border: none;
             appearance: none;
             outline: none;
+            
+            &_empty::placeholder {
+                color: $color-carrot;
+            }
 
             &::-webkit-search-cancel-button {
                 appearance: none;
@@ -609,7 +630,7 @@
         &__text {
             font-family: 'Proxima Nova Semibold';
             font-size: 21px;
-            color: rgba($color-text, 1);
+            color: rgba($color-text, 0.9);
             margin-top: 20px;
             margin-bottom: 20px;
 
@@ -617,6 +638,16 @@
                 font-size: 28px;
                 margin-top: 30px;
                 margin-bottom: 30px;
+            }
+        }
+
+        &__amount {
+            font-family: 'Panton-Bold';
+            font-size: 24px;
+            color: rgba($color-text, 1);
+            
+            @include tablets {
+                font-size: 32px;
             }
         }
 

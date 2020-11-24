@@ -31,13 +31,13 @@
                 <h3 class="big-card__title">{{cardObject.title}}</h3>
             
                 <div class="big-card__desc-text">
-                    <div v-for="hashtag in hastagsArr" :key="hashtag.id" class="big-card__text-before-hashtag">
-                        {{hashtag.text}}
-                        <span class="big-card__hashtag"
-                            @click="clickHashtagHandle(hashtag.hash)"
-                        >{{hashtag.hash}}</span>
+                    <div v-for="part in partsTextAndHashtag" :key="part.id" class="big-card__text-before-hashtag"
+                        >{{part.text}}<span class="big-card__hashtag"
+                            @click="clickHashtagHandle(part.hash)"
+                        >{{part.hash}}</span>
                     </div>
-
+                    <div v-if="!partsTextAndHashtag.length" class="big-card__text-no-hashtags">{{cardObject.description}}
+                    </div>
                 </div> 
 
             </div> 
@@ -63,12 +63,11 @@
                         <div class="big-card__my-comment-name">{{this.loggedUserObject.name}}</div>
                     
                         <form class="big-card__my-comment-form"
-                            @submit.prevent="sumbitNewCommentHandler"
-                        >
+                            @submit.prevent="sumbitNewCommentHandler">
 
                             <textarea class="big-card__my-comment-input" cols="10" rows="1" placeholder="Добавить комментарий"
-                                v-model="newComment.commentText"
-                            ></textarea>
+                                v-model="newComment.commentText">
+                            </textarea>
                             <div class="big-card__my-comment-submit">
                                 <button class="button button_theme_light button_size_m" type="submit">Добавить</button>
                             </div>
@@ -162,7 +161,7 @@
                 commentText: '',
             },
 
-            hastagsArr: [],
+            partsTextAndHashtag: [],
 
           }
 
@@ -188,7 +187,12 @@
             // ***** Обработка клика по хэштегу *****
             clickHashtagHandle(searchedHashtag) {
                 this.setSearchedWord(searchedHashtag);
-                this.$router.push('../search');
+                if (this.$route.path==='/search') {
+                    this.$emit('close-bid-card');                    
+                }
+                else {
+                    this.$router.push('../search');
+                }
             },
             
             // ***** Обработка нажатия клавиш *****
@@ -225,7 +229,6 @@
             },
 
             async saveCommentHandler() {
-                // console.log('0) this.changedComment',this.changedComment);
                 await this.changeComment(this.changedComment);
                 await this.updatePhotoComments(this.cardObject.id);            
                 this.comments = this.commentsCurrentPhoto;
@@ -286,65 +289,31 @@
                     this.myCommentToggler.style.transform = 'rotate(270deg)';
             },
 
-            descriptionHandle(text) {
+            // ***** Разделение описания на отдельные части: текст + хэштег *****
+            splitDescriptionWithHashtags(text) {
                 if (text) {
-                    let startPos = 0;
+                    let startPos = 0, i = 1;
 
                     while (true) {
                         let foundHashtagPos = text.indexOf('#', startPos);
 
                         if (foundHashtagPos == -1) {
+                            if (startPos !==0) {
+                                this.partsTextAndHashtag.push({id: i, text: text.slice(startPos, text.length), hash: ''});
+                            }
                             break;
                         }
 
                         let sliceText = text.slice(foundHashtagPos + 1);
                         
                         let endPos = sliceText.match(/[^A-Za-z0-9а-яА-ЯёЁ_]/).index + foundHashtagPos + 1;
+console.log(`startPos= ${startPos}, endPos= ${endPos}, foundHashtagPos= ${foundHashtagPos}, sliceText= ${sliceText}, что будет в arr:${text.slice(startPos, foundHashtagPos)}  `);
 
-                        if (endPos === -1) {
-                            this.hastagsArr.push({text: text.slice(startPos, foundHashtagPos), hash: text.slice(foundHashtagPos, text.length)});
-                            break;
-                        }
-                        else {
-                            this.hastagsArr.push({text: text.slice(startPos, foundHashtagPos), hash: text.slice(foundHashtagPos, endPos)});
-                            startPos = endPos;
-                        }                        
+                        this.partsTextAndHashtag.push({id: i++, text: text.slice(startPos, foundHashtagPos), hash: text.slice(foundHashtagPos, endPos)});
+                        startPos = endPos;                      
                     }
                 }
-            },
-            // descriptionHandle(text) {
-            //     let textWithHashtags = '';
-
-            //     if (text) {
-            //         let startPos = 0;
-
-            //         while (true) {
-            //             let foundHashtagPos = text.indexOf('#', startPos);
-
-            //             if (foundHashtagPos == -1) {
-            //                 textWithHashtags += text.slice(startPos, text.length);
-            //                 break;
-            //             }
-
-            //             let sliceText = text.slice(foundHashtagPos + 1);
-                        
-            //             let endPos = sliceText.match(/[^A-Za-z0-9а-яА-ЯёЁ_]/).index + foundHashtagPos + 1;
-
-            //             if (endPos === -1) {
-            //                 textWithHashtags += text.slice(startPos, foundHashtagPos) + '<span class="site-tag">' + text.slice(foundHashtagPos, text.length) + '</span>';
-            //                 break;
-            //             }
-            //             else {
-            //                 textWithHashtags += text.slice(startPos, foundHashtagPos) + '<span class="site-tag">' + text.slice(foundHashtagPos, endPos) + '</span>';    
-            //                 startPos = endPos;
-            //             }
-                        
-            //         }
-
-            //     }
-
-            //     return textWithHashtags;
-            // },
+            },            
         },
 
         async created() {
@@ -354,7 +323,7 @@
         },
         mounted() {
             this.activeLike= this.likes.find(like => (like.userId == this.loggedUserObject.id && like.photoId == this.cardObject.id));
-            this.descriptionHandle(this.cardObject.description);
+            this.splitDescriptionWithHashtags(this.cardObject.description);
             // this.isActiveLike= !!this.activeLike;
         },
 
@@ -513,6 +482,7 @@
 
         &__text-before-hashtag {
             display: inline-block;
+            white-space: pre;
         }
 
         &__hashtag {

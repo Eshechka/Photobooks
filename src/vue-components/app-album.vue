@@ -1381,13 +1381,11 @@
 
         &__big-card-slider {
             @include popup-container;
-            /* bottom: 0; */
             top: 0;
             width: 100%;
             margin: 0;
 
             @include tablets {
-                @include popup-container;
                 top: 100px;
             }
         }
