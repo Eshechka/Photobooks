@@ -242,6 +242,7 @@
                 await this.updateAllCards();
                 this.cards = this.allCards;
             },
+            
 
             // ***** Обновить поиск по слову/хэштегу *****
             async updateSearchedCards(searchedStr) {
@@ -268,7 +269,7 @@
             clickSearchHandle() {
                 //пустой запрос
                 if (this.searchedStr==='') {
-                        this.emptySearch = true;
+                    this.emptySearch = true;
                 }
                 //повторный клик по иконке поиска в режиме search
                 else if (this.showMode === 'search') {

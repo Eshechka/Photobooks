@@ -57,7 +57,7 @@
                     <div class="header__info-button header__info-button_photos"> {{+thisAlbumPhotos.length}} </div>
                     <div class="header__info-button header__info-button_likes"> {{+thisAlbumPhotos.reduce((sum, myPhoto) => sum + myPhoto.likeCount, 0)}} </div>
                     <!-- !!!! раскомментить как будут готовы лайки <div class="header__info-button header__info-button_likes"> {{+thisAlbumPhotos.reduce((sum, myPhoto) => sum + myPhoto.likes.length, 0)}} </div> -->
-                    <div class="header__info-button header__info-button_comments"> {{+thisAlbumPhotos.reduce((sum, myPhoto) => sum + myPhoto.comments.length, 0)}} </div>
+                    <div class="header__info-button header__info-button_comments"> {{commentCount}} </div>
                 </div>
             </div>
             
@@ -485,10 +485,11 @@
                 titleDisabledBtnAddPhoto: 'Необходимо добавить фотографии',
 
                 heightHeaderFooterMobile: 0,
-                // heightConfirmation: `unset`,
                 
                 heightSectionForSlider: `unset`,
                 scrolledWhenSliderOpened: 0,
+                // ----- сумма комментариев во всех фотографиях этого альбома
+                commentCount: Number,
             }
         },
 
@@ -561,6 +562,7 @@
                     while (window.pageYOffset!==this.scrolledWhenSliderOpened) {
                         await window.scrollTo({ top: `${this.scrolledWhenSliderOpened}` });                      
                     }
+                    this.commentCount = +this.thisAlbumPhotos.reduce((sum, photo) => sum + photo.comments.length, 0);
                 }
             },
             openEditPhoto(value) {
@@ -888,15 +890,10 @@
             this.loggedUserObject.id = localStorage.getItem('userId');
             if (this.header && this.footer) { 
                 this.heightHeaderFooterMobile = parseFloat(getComputedStyle(this.header).height) + parseFloat(getComputedStyle(this.footer).height);
-            }
+            };
+            this.commentCount = +this.thisAlbumPhotos.reduce((sum, photo) => sum + photo.comments.length, 0);
         },
 
-        // beforeRouteLeave(to, from, next) {
-        //     console.log('ROUTE LEAVE !!!!! HASH = ',this.$refs.bigCardSlider.searchedHashtag);
-        //     this.$refs.bigCardSlider.searchedHashtag;
-        //     this.setSearchedWord(this.searched);
-        //     next();
-        // },
 
     }
 
