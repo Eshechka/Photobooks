@@ -1,4 +1,5 @@
 import $axios from '../../requests';
+import router from '../../router';
 
 export default {
     namespaced: true,
@@ -86,7 +87,11 @@ export default {
                               
                 store.commit('SET_CURRENT_ALBUM', data.album);
             }
-            catch(error) { throw new Error ( error.response.data.error || error.response.data.message ); }
+            catch(error) { 
+                console.log('Невозможно обновить этот альбом');
+                router.push('/not-found');
+                // throw new Error ( error.response.data.error || error.response.data.message ); 
+            }
         }
     },
 };

@@ -10,8 +10,15 @@ html {
   min-width: 320px;
   overflow: hidden;
   min-height: 100%;
-
   position: relative;
+
+  &_not_found {
+    background-color: #3E3A39;
+    background-image: url('/img/not-found.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+  }
 
   &__overlay {
     position: absolute;
@@ -40,12 +47,6 @@ html {
   display: flex;
   flex-direction: column;
 }
-
-// .container {  
-//   margin: 0 auto;
-//   max-width: 1480px;
-//   width: 95%;  
-// }
 
 button {
   border: 0;

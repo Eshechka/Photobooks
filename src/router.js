@@ -3,7 +3,7 @@ import VueRouter from 'vue-router';
 
 import { store } from './store/index';
 
-import guard from './requests'
+import guard from './requests';
 
 Vue.use(VueRouter);
 
@@ -15,6 +15,10 @@ const routes = [
         redirect: `/${userId}`, 
         component: () => import('./vue-components/app-user.vue'),
     },
+    {
+        path: '/not-found',
+        component: () => import('./vue-pages/app-page-not-found.vue'),
+    },    
     {
         path: '/login',
         component: () => import('./vue-pages/app-login.vue'),
@@ -34,6 +38,11 @@ const routes = [
         path: '/album/:albumid',
         component: () => import('./vue-components/app-album.vue'),
     },
+    // {
+    //     path: '*',
+    //     redirect: '/not-found',
+    //     component: () => import('./vue-pages/app-page-not-found.vue'),
+    // },  
 ];
 
 
@@ -45,29 +54,54 @@ const router = new VueRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
+    // console.log('to = ', to);
+    // console.log('to.matched = ', to.matched);
+    // console.log('to.matched[0].path = ', to.matched[0].path);
+    // console.log('to.path = ', to.path);
+
+    // const isSuchRoute = routes.find(route => {
+    //     console.log('route.path = ', route.path);
+    //     return route.path === to.matched[0].path;
+    // });
+    // const isSuchRoute = routes.find(route => route.path === to.matched[0].path);
+    
+
     const isPublicRoute = to.matched.some(route => route.meta.public);
     const isUserLogged = store.getters['user/userIsLogged'];
 
-    if (!isPublicRoute && !isUserLogged) {
-        const token = localStorage.getItem('token');
-        guard.defaults.headers["Authorization"] = `Bearer ${token}`;
-
-       try {
-            const {data} = await guard.get('/user');
-            localStorage.setItem('userId', data.id);
-            store.commit('user/SET_USER', data);
-            next();
-        } 
-        catch (error) {  
-            router.replace('/login');
-            localStorage.clear();
+    if (!isPublicRoute) {
+        if (isUserLogged) {
+                try {
+                    next();
+                }
+                catch (error) {
+                    router.replace('/not-found');
+                }
+        }
+        else {
+            const token = localStorage.getItem('token');
+            guard.defaults.headers["Authorization"] = `Bearer ${token}`;
+            try {
+                const {data} = await guard.get('/user');
+                localStorage.setItem('userId', data.id);
+                store.commit('user/SET_USER', data);
+                next();
+            } 
+            catch (error) {  
+                router.replace('/login');
+                localStorage.clear();
+            }
         }
     }
     else {
-        if (isPublicRoute && isUserLogged) router.replace('/');
-        else next();
+        // if (isUserLogged) {
+        //     router.replace('/');
+        // }
+        // else {
+            next();
+        // }
     }
 
   })
-// export default new VueRouter({ routes, mode: 'history' });
+
 export default router;

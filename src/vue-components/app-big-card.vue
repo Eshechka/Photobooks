@@ -191,7 +191,7 @@
                     this.$emit('close-bid-card');                    
                 }
                 else {
-                    this.$router.push('../search');
+                    this.$router.push('/search');
                 }
             },
             
@@ -307,7 +307,6 @@
                         let sliceText = text.slice(foundHashtagPos + 1);
                         
                         let endPos = sliceText.match(/[^A-Za-z0-9а-яА-ЯёЁ_]/).index + foundHashtagPos + 1;
-console.log(`startPos= ${startPos}, endPos= ${endPos}, foundHashtagPos= ${foundHashtagPos}, sliceText= ${sliceText}, что будет в arr:${text.slice(startPos, foundHashtagPos)}  `);
 
                         this.partsTextAndHashtag.push({id: i++, text: text.slice(startPos, foundHashtagPos), hash: text.slice(foundHashtagPos, endPos)});
                         startPos = endPos;                      

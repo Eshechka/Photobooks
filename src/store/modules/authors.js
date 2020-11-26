@@ -21,10 +21,10 @@ export default {
                 );
                 if (data.author) store.commit('SET_AUTHOR', data.author);
             }
-            catch(error) { 
-                console.log('error refreshAuthor');
-                router.replace('/');
-                throw new Error ( error.response.data.error || error.response.data.message ); }
+            catch(error) {
+                router.push('/not-found');
+                // throw new Error ( error.response.data.error || error.response.data.message );                
+            }
         },
     },
 };

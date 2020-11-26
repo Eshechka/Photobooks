@@ -518,10 +518,10 @@
             footer() {
                 return this.$refs['footer'];
             },
-            // formEditPhoto() {
-            //     return this.$refs['form-edit-photo'];
-            // },
-            
+
+            idCurrentAlbum() {
+                return this.$route.params.albumid;
+            },            
 
             isMoile() {
                 return window.innerWidth < 768;
@@ -562,18 +562,9 @@
                     while (window.pageYOffset!==this.scrolledWhenSliderOpened) {
                         await window.scrollTo({ top: `${this.scrolledWhenSliderOpened}` });                      
                     }
-                    this.commentCount = +this.thisAlbumPhotos.reduce((sum, photo) => sum + photo.comments.length, 0);
+                    this.commentCount = +this.thisAlbumPhotos.reduce((sum, photo) => sum + photo.comments.length, 0);//!!!!!!! тут потом также должны добавиться лайки
                 }
             },
-            openEditPhoto(value) {
-                if (value) {
-
-                }
-                else {
-
-                }
-            }
-
 
         },
 
@@ -737,7 +728,7 @@
                     let changedAlbumId = this.changedAlbum.id;
 
                 await this.changeAlbumWithFiles( {changedAlbum: formData, changedAlbumId: changedAlbumId} );
-                await this.refreshThisAlbum(this.$route.params.albumid);
+                await this.refreshThisAlbum(this.idCurrentAlbum);
 
                 this.openEditHeader=false;
             },
@@ -862,8 +853,8 @@
             },
 
             async clickCloseSlider() {
-                await this.refreshAlbumCards(this.$route.params.albumid);
-                await this.refreshThisAlbum(this.$route.params.albumid);
+                await this.refreshAlbumCards(this.idCurrentAlbum);
+                await this.refreshThisAlbum(this.idCurrentAlbum);
                 this.openBigMyPhoto=false;
             },
 
@@ -876,10 +867,18 @@
             }
         },
 
+        watch: {
+            idCurrentAlbum() {
+                this.refreshAlbumCards(this.idCurrentAlbum);
+                this.refreshThisAlbum(this.idCurrentAlbum);
+                this.openEditPhoto=this.openAddPhoto=this.openEditHeader=this.openBigMyPhoto=this.openConfirmDeletePhoto=false;
+            },
+        },
+
         async created () {
             await this.updateLoggedUser();
-            await this.refreshAlbumCards(this.$route.params.albumid);
-            await this.refreshThisAlbum(this.$route.params.albumid);
+            await this.refreshAlbumCards(this.idCurrentAlbum);
+            await this.refreshThisAlbum(this.idCurrentAlbum);
             this.currentAlbumObject = {...this.currentAlbum};
             this.currentAlbumObject.preview = this.currentAlbumObject.preview ? this.currentAlbumObject.preview : '../img/no_album_cover.jpg';
             this.changedAlbum = {...this.currentAlbumObject};
@@ -893,7 +892,6 @@
             };
             this.commentCount = +this.thisAlbumPhotos.reduce((sum, photo) => sum + photo.comments.length, 0);
         },
-
 
     }
 
@@ -2002,7 +2000,6 @@
         }
 
     }
-
  
 
 </style>

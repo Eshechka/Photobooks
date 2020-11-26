@@ -71,7 +71,9 @@ export default {
                               
                 store.commit('SET_ALBUM_CARDS', data.cards);
             }
-            catch(error) { throw new Error ( error.response.data.error || error.response.data.message ); }
+            catch(error) { 
+                console.log('Невозможно обновить фотографии этого альбома');
+                throw new Error ( error.response.data.error || error.response.data.message ); }
         },
         async updateAllCards(store) {               
                 try {               
