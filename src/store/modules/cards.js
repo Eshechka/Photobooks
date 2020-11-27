@@ -63,7 +63,7 @@ export default {
             catch(error) { throw new Error ( error.response.data.error || error.response.data.message ); }
         },
         async refreshAlbumCards(store, albumId) {               
-                try {               
+                try {      //зачем тут получать все photos если можно просто albumID
                 const { data } = await $axios.get(`/v1/photos`,
                                     { params: {'include':'author,album,comments,likes', 'limit': 100, 'where':`albumId:eq:${albumId}`, 'sort':'createdAt:desc'} },
                                     {'Content-Type': 'application/json'}

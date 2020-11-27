@@ -12,7 +12,6 @@
 
         
         <div class="my-album__folder">
-            <!-- <button title="Редактировать альбом" type="button" class="my-album__button my-album__button_edit" -->
             <button title="Редактировать альбом" type="button" class="button button_size_s button_icon button_theme_controls"
 				v-if="isLoggedUser"
 				@click="$emit('click-edit-my-album', myAlbumObject)">

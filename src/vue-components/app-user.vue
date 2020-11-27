@@ -394,6 +394,7 @@
                         :mode="albumChangeMode"
                         :toDisabledSubmit="toDisabledSubmit"
                     ></appChangeAlbum>
+
                 </div>
             </section>
         </main>
@@ -521,7 +522,8 @@
 
         computed: {
             ...mapState('cards', {
-                allCards: state => state.cards
+                allCards: state => state.cards,
+                // deletedAlbumCards: state => state.currentAlbumCards
             }),
             ...mapState('user', {
                 loggeduser: state => state.user
@@ -551,6 +553,7 @@
 
 
         methods: {
+            // ...mapActions('cards', ['updateAllCards', 'setSearchedWord', 'refreshAlbumCards']),
             ...mapActions('cards', ['updateAllCards', 'setSearchedWord']),
             ...mapActions('authors', ['refreshAuthor']),
             ...mapActions('albums', ['addAlbum', 'deleteAlbum', 'changeAlbum']),
@@ -630,10 +633,23 @@
             },
 
             async deleteAlbumHandler(albumId) {
-                    await this.deleteAlbum(albumId);
-                    this.updateAlbums();
-                    this.openChangeMyAlbum=false;
+                await this.deleteAlbum(albumId);
+                this.updateAlbums();
+                this.openChangeMyAlbum=false;                        
             },
+            // async deleteAlbumHandler(albumId) {
+            //     await this.refreshAlbumCards(albumId);
+            //     let isEmptyAlbum = this.deletedAlbumCards.length === 0;
+                
+            //         if (isEmptyAlbum) {
+            //             await this.deleteAlbum(albumId);
+            //             this.updateAlbums();
+            //             this.openChangeMyAlbum=false;                        
+            //         }
+            //         else {
+            //             console.log('альбом не пустой');//!!!!!!!!!!!!!!!!!!!!!
+            //         }
+            // },
 
 
             logoutUser() {
@@ -1929,7 +1945,7 @@
         &__change-album {
             @include fixed-popup-container;
         }
-        
+
     }
 
 

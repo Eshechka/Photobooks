@@ -9,7 +9,7 @@
             <button type="button" class="button button_size_m button_theme_controls"
                 v-if="isConfirmation"
                 @click="$emit('no-ui')"
-            >Отменить</button>
+            >{{noText}}</button>
         </div>
     </div>
 </template>
@@ -22,6 +22,7 @@
         props: {
             textUI: String,
             yesText: String,
+            noText: String,
             isConfirmation: Boolean,
         },
 

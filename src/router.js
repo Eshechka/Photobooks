@@ -38,11 +38,11 @@ const routes = [
         path: '/album/:albumid',
         component: () => import('./vue-components/app-album.vue'),
     },
-    // {
-    //     path: '*',
-    //     redirect: '/not-found',
-    //     component: () => import('./vue-pages/app-page-not-found.vue'),
-    // },  
+    {
+        path: '*',
+        redirect: '/not-found',
+        component: () => import('./vue-pages/app-page-not-found.vue'),
+    },  
 ];
 
 

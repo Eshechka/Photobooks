@@ -184,7 +184,8 @@
                                                     @yes-ui="confirmDeletePhotoHandle"
                                                     @no-ui="cancelDeletePhotoHandle"
                                                     :textUI="`Подтверждаете удаление?`"
-                                                    :yesText="Да"
+                                                    :yesText="`Да`"
+                                                    :noText="`Отмена`"
                                                     :isConfirmation=true>
                                                 </appUI>
 
