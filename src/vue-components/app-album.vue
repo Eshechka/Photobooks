@@ -83,14 +83,34 @@
 
                                     <label class="form-edit-header__label">
                                         <input class="form-edit-header__input" placeholder="Название альбома"
-                                            v-model="changedAlbum.title"
-                                        >
+                                            v-model="changedAlbum.title">
                                     </label>
+                                    <div class="form-edit-header__error form-edit-header__error_title">
+                                        <span v-if="!$v.changedAlbum.title.maxLength" v-show="$v.changedAlbum.title.$invalid">
+                                            Максимум символов в названии: {{ $v.changedAlbum.title.$params.maxLength.max }}
+                                        </span>
+                                        <span v-else v-show="$v.changedAlbum.title.$invalid">
+                                            Обязательно для заполнения
+                                        </span>
+                                    </div>
+
                                     <label class="form-edit-header__label">
                                         <textarea class="form-edit-header__input form-edit-header__input_textarea" cols="20" rows="2" placeholder="Описание альбома"
                                             v-model="changedAlbum.description"
                                         ></textarea>
                                     </label>
+                                    <div class="form-edit-header__error form-edit-header__error_description">
+                                        <span v-if="!$v.changedAlbum.description.minLength" v-show="$v.changedAlbum.description.$invalid">
+                                            Минимум символов в описании: {{ $v.changedAlbum.description.$params.minLength.min }}
+                                        </span>
+                                        <span v-else-if="!$v.changedAlbum.description.maxLength" v-show="$v.changedAlbum.description.$invalid">
+                                            Максимум символов в описании: {{ $v.changedAlbum.description.$params.maxLength.max }}
+                                        </span>
+                                        <span v-else v-show="$v.changedAlbum.description.$invalid">
+                                            Обязательно для заполнения
+                                        </span>
+                                    </div>
+
 
                                     <div class="form-edit-header__load-album-preview">
 
@@ -112,7 +132,10 @@
 
                                 
                                 <div class="form-edit-header__buttons">
-                                    <button class="button button_size_m" type="submit">Сохранить</button>
+                                    <button class="button button_size_m" type="submit"
+                                        :disabled="$v.changedAlbum.$invalid"
+                                        :title="$v.changedAlbum.$invalid ? 'Необходимо ввести корректное название и описание альбома' : 'Сохранить изменения' "
+                                    >Сохранить</button>
                                     <button class="button button_size_m button_theme_minimalizm" type="button"
                                         @click="cancelChangeAlbumHeaderHandler"
                                     >Отменить</button>
@@ -222,7 +245,7 @@
                                             <div class="form-editPhoto__buttons" v-if="!openConfirmDeletePhoto">
                                                 <button class="button button_size_m form-editPhoto__buttonspace" type="submit"
                                                     :disabled="$v.changedPhoto.$invalid"
-                                                    :title="$v.changedPhoto.$invalid ? 'Для отправки необходимо исправить название и описание' : '' "
+                                                    :title="$v.changedPhoto.$invalid ? 'Необходимо исправить название и описание' : 'Сохранить изменения' "
                                                 >Сохранить</button>
                                                 <button title="Закрыть форму добавления фотографий без сохранения" class="button button_size_m button_theme_minimalizm" type="button"
                                                     @click="closeEditPhotoHandler"
@@ -531,7 +554,17 @@
         },
 
         validations: {
-
+            changedAlbum: {
+                title: {        
+                    maxLength: maxLength(100),
+                    required
+                },
+                description: {
+                    minLength: minLength(60),
+                    maxLength: maxLength(600),
+                    required
+                },
+            },
             changedPhoto: {
                 title: {
                     required
@@ -1152,7 +1185,7 @@
 
             @include tablets {
                 flex-wrap: wrap;
-                height: 120px;
+                height: 200px;
                 width: 80%;
             }            
         }
@@ -1162,6 +1195,10 @@
             min-height: 50px;
             margin-bottom: 20px;
             margin-top: 10px;
+            
+            @include tablets {
+                max-width: 20%;
+            }
         }
 
         &__added-photo {
@@ -1230,9 +1267,20 @@
             }
         }
 
+        &__error {   
+            @include error;
+            min-height: 18px;
+
+            @include tablets {
+                padding-left: 20px;
+                width: 80%;
+            }
+
+        }     
+
         &__input-load {
             cursor: pointer;
-            opacity: 0;    
+            opacity: 0;
             width: 100%;    
             height: 100%;    
             position: absolute;
@@ -1247,10 +1295,6 @@
             &_textarea {
                 height: 100px;
                 resize: none;
-
-                @include tablets {
-                    height: unset;                    
-                }
             }
         }
 

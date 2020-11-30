@@ -176,11 +176,30 @@
                                         <input class="form-edit-header__input" type="text" placeholder="Введите имя"
                                             v-model="changedUser.name">
                                     </label>
+                                    <div class="form-edit-header__error form-edit-header__error_name">
+                                        <span v-if="!$v.changedUser.name.maxLength" v-show="$v.changedUser.name.$invalid">
+                                            Максимум символов в имени: {{ $v.changedUser.name.$params.maxLength.max }}
+                                        </span>
+                                        <span v-else v-show="$v.changedUser.name.$invalid">
+                                            Обязательно для заполнения
+                                        </span>
+                                    </div>
 
                                     <label class="form-edit-header__label">
                                         <textarea class="form-edit-header__input form-edit-header__input_textarea" cols="20" rows="2" placeholder="Краткая информация о пользователе"
                                             v-model="changedUser.description"></textarea>
-                                    </label>
+                                    </label>                                    
+                                    <div class="form-edit-header__error form-edit-header__error_description">
+                                        <span v-if="!$v.changedUser.description.minLength" v-show="$v.changedUser.description.$invalid">
+                                            Минимум символов в описании: {{ $v.changedUser.description.$params.minLength.min }}
+                                        </span>
+                                        <span v-else-if="!$v.changedUser.description.maxLength" v-show="$v.changedUser.description.$invalid">
+                                            Максимум символов в описании: {{ $v.changedUser.description.$params.maxLength.max }}
+                                        </span>
+                                        <span v-else v-show="$v.changedUser.description.$invalid">
+                                            Обязательно для заполнения
+                                        </span>
+                                    </div>
 
                                     <div class="form-edit-header__socials">
                                         <div class="socials">
@@ -200,14 +219,12 @@
                                             <div class="soc-edit"
                                                 ref="soc-edit"
                                                 :class="{'soc-edit_showed' : isActiveSocial}" 
-                                                @mouseleave="socEditMouseLeaveHandler"                                             
-                                            >
+                                                @mouseleave="socEditMouseLeaveHandler">
                                                 <div class="soc-edit__card">
 
                                                     <form class="soc-edit__form">
                                                         <input  type="text" class="soc-edit__input"
-                                                            v-model="activeSocialLink"
-                                                        >
+                                                            v-model="activeSocialLink">
 
                                                         <div class="soc-edit__buttons">
                                                             <button type="submit" class="button button_size_m">Сохранить</button>
@@ -248,7 +265,10 @@
 
                                 
                                 <div class="form-edit-header__buttons">
-                                    <button title="Сохранить изменения" class="button button_size_m form-edit-header__buttonspace" type="submit">Сохранить</button>
+                                    <button class="button button_size_m form-edit-header__buttonspace" type="submit"
+                                        :disabled="$v.changedUser.$invalid"
+                                        :title="$v.changedUser.$invalid ? 'Необходимо корректно заполнить все поля' : 'Сохранить изменения'" 
+                                    >Сохранить</button>
                                     <button title="Закрыть без сохранения внесенных изменений" class="button button_size_m button_theme_minimalizm" type="button"
                                         @click="cancelEditHeaderHandler"
                                     >Отменить</button>
@@ -434,6 +454,8 @@
 
     import { mapState, mapActions, mapGetters } from 'vuex';
 
+    import { required, minLength, maxLength } from 'vuelidate/lib/validators';
+
     import Flickity from 'vue-flickity';
 
     export default {   
@@ -520,6 +542,22 @@
         },
 
 
+        validations: {
+
+            changedUser: {
+                name: {
+                    required,
+                    maxLength: maxLength(50)
+                },
+                description: {
+                    minLength: minLength(60),
+                    maxLength: maxLength(200),
+                    required
+                },
+            },
+
+        },
+
         computed: {
             ...mapState('cards', {
                 allCards: state => state.cards,
@@ -553,7 +591,6 @@
 
 
         methods: {
-            // ...mapActions('cards', ['updateAllCards', 'setSearchedWord', 'refreshAlbumCards']),
             ...mapActions('cards', ['updateAllCards', 'setSearchedWord']),
             ...mapActions('authors', ['refreshAuthor']),
             ...mapActions('albums', ['addAlbum', 'deleteAlbum', 'changeAlbum']),
@@ -632,24 +669,12 @@
                 }
             },
 
+            // ***** Удаление альбома пользователя (нажата кнопка удалить в компоненте app-change-album) *****
             async deleteAlbumHandler(albumId) {
                 await this.deleteAlbum(albumId);
                 this.updateAlbums();
                 this.openChangeMyAlbum=false;                        
             },
-            // async deleteAlbumHandler(albumId) {
-            //     await this.refreshAlbumCards(albumId);
-            //     let isEmptyAlbum = this.deletedAlbumCards.length === 0;
-                
-            //         if (isEmptyAlbum) {
-            //             await this.deleteAlbum(albumId);
-            //             this.updateAlbums();
-            //             this.openChangeMyAlbum=false;                        
-            //         }
-            //         else {
-            //             console.log('альбом не пустой');//!!!!!!!!!!!!!!!!!!!!!
-            //         }
-            // },
 
 
             logoutUser() {
@@ -786,6 +811,9 @@
                 }
             },
 
+            socEditCancel() {
+                //метод по нажатию отмена при редактировании адреса соцсети
+            },
 
 
             // ***** Клик по фотографии (открытие слайдера) *****
@@ -855,10 +883,8 @@
                     });
             },
 
-            socEditCancel() {
-                //метод по нажатию отмена при редактировании адреса соцсети
-            },
 
+            // ***** Получить объект залогиненного пользователя из VUEX *****
             async updateLoggedUser() {
                 this.loggedUserObject = {...this.loggeduser};
             },
@@ -868,6 +894,7 @@
                 this.cards = this.allCards;
             },
 
+            // ***** Получить альбомы текущего пользователя (на странице которого находимся) *****
             async updateAlbums() {
                 await this.refreshAuthor(this.idCurrentAuthor);
                 this.currentAuthorObject = {...this.thisAuthor};
@@ -1156,9 +1183,7 @@
                 top: 0;
                 left: 0;
                 border-radius: 50%;
-                /* z-index: -1; */
             }
-
         }
 
         &__load-avatar {
@@ -1292,6 +1317,16 @@
             }
         }
 
+        &__error {
+            @include error;
+            min-height: 24px;
+
+            @include tablets {
+                align-self: flex-start;
+                margin-left: 18px;
+            }
+        }
+
         &__input-load {
             cursor: pointer;
             opacity: 0;    
@@ -1305,10 +1340,15 @@
 
         &__input {
             @include popup-input;
-            margin-top: 5px;
+            /* margin-top: 5px; */
 
             &_textarea {
                 resize: none;
+                height: 84px;
+
+                @include tablets {
+                    height: unset;
+                }
             }
         }
 

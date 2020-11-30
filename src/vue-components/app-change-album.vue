@@ -199,10 +199,10 @@
                 let isEmptyAlbum = this.deletedAlbumCards.length === 0;
                 
                     if (isEmptyAlbum) {
-                        this.$emit('delete-album', this.editedAlbumObject.id);                    
+                        this.$emit('delete-album', this.editedAlbumObject.id);
+                        this.deletedAlbumCards=[];
                     }
                     else {
-                        console.log('альбом не пустой');//!!!!!!!!!!!!!!!!!!!!!
                         this.deleteAlbumError = true;
                     }
             },
@@ -220,7 +220,6 @@
                 this.clearChangedAlbum();
             }
         },
-
 
     }
 
