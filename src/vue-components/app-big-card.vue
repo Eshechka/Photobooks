@@ -91,20 +91,34 @@
                                     v-model="changedComment.commentText"
                                 ></textarea>
                             </div>
+                            <div class="users-comments__error users-comments__error_text" v-if="openCommentEditing">
+                            <!-- <div class="users-comments__error users-comments__error_text"> -->
+                                <span v-if="!$v.changedComment.commentText.minLength" v-show="$v.changedComment.commentText.$invalid">
+                                    Минимум символов в комментарии: {{ $v.changedComment.commentText.$params.minLength.min }}
+                                </span>
+                                <span v-else-if="!$v.changedComment.commentText.maxLength" v-show="$v.changedComment.commentText.$invalid">
+                                    Максимум символов в комментарии: {{ $v.changedComment.commentText.$params.maxLength.max }}
+                                </span>
+                                <span v-else v-show="$v.changedComment.commentText.$invalid">
+                                    Комментарий не может быть пустым. Выскажитесь, не стесняйтесь!
+                                </span>
+                            </div>
+                            
                             <div class="users-comments__buttons-wrapper">
-                                    <button type='button' class="button button_icon button_size_s_m button_theme_pale users-comments__buttonspace" v-if="comment.author.id==loggedUserObject.id && comment.id!==changedComment.id"
+                                    <button type='button' title="Нажмите для редактирования этого комментария" class="button button_icon button_size_s_m button_theme_pale users-comments__buttonspace" v-if="comment.author.id==loggedUserObject.id && comment.id!==changedComment.id"
                                         @click="editCommentHandler(comment)">
                                         <span class="button__text">Редактировать</span>
                                         <span class="button__icon button__icon_edit"></span>
                                     </button>
-                                    <button type='button' class="button button_icon button_size_s_m button_theme_carrot" v-if="comment.author.id==loggedUserObject.id && comment.id!==changedComment.id"
+                                    <button type='button' title="Нажмите для удаления этого комментария" class="button button_icon button_size_s_m button_theme_carrot" v-if="comment.author.id==loggedUserObject.id && comment.id!==changedComment.id"
                                         @click="deleteCommentHandler(comment.id)">
                                         <span class="button__text">Удалить</span>
                                         <span class="button__icon button__icon_delete"></span>                                        
                                     </button>
                                     <button type='button' class="button button_size_m" v-if="comment.author.id==loggedUserObject.id && comment.id==changedComment.id"
-                                        @click="saveCommentHandler">
-                                        Сохранить</button>
+                                        :disabled="$v.changedComment.$invalid"
+                                        :title="$v.changedComment.$invalid ? 'Необходимо исправить текст' : 'Сохранить изменения' "                                                
+                                        @click="saveCommentHandler">Сохранить</button>
                             </div>
 
                         </li>
@@ -123,11 +137,14 @@
 <script >
     import { mapState, mapActions } from 'vuex';
 
-    import dataJSON_likes from '../json/likes.json';
     import dataJSON_all from '../../db.json';
 
     import $axios from '../requests';
+
+    import { required, minLength, maxLength } from 'vuelidate/lib/validators';
+
     import { baseStorageUrl } from '../requests.js';
+
     export default {
 
         props: {
@@ -136,35 +153,38 @@
         },
 
         data() {
-          return {
-            urlPhotos: baseStorageUrl+'/photos',
-            urlAvatars: baseStorageUrl+'/avatars',
+            return {
+                urlPhotos: baseStorageUrl+'/photos',
+                urlAvatars: baseStorageUrl+'/avatars',
 
-            likes: dataJSON_all.likes,
+                likes: dataJSON_all.likes,
 
-            comments: [],
+                comments: [],
 
-            isActiveLike: this.cardObject.isLikedByMe,
-            activeLike: [],
-            // isActiveLike: false,
-            // nowlikes: this.cardObject.likes,
-            isVisibleMyComment: true,
+                isActiveLike: this.cardObject.isLikedByMe,
+                activeLike: [],
+                // isActiveLike: false,
+                // nowlikes: this.cardObject.likes,
 
-            newComment: {
-                commentText: '',
-                authorId: Number,
-                photoId: Number,
-            },
-            
-            changedComment: {
-                id: Number,
-                commentText: '',
-            },
+                // ----- комментарии -----
+                isVisibleMyComment: true,
+                openCommentEditing: false,
 
-            partsTextAndHashtag: [],
+                newComment: {
+                    commentText: '',
+                    authorId: Number,
+                    photoId: Number,
+                },
+                
+                changedComment: {
+                    id: Number,
+                    commentText: '',
+                },
 
-          }
+                // ----- деление описания на секст и хэштег -----
+                partsTextAndHashtag: [],
 
+            }
         },
 
         
@@ -180,20 +200,23 @@
         },
 
 
+        validations: {
+
+            changedComment: {
+                commentText: {
+                    required,
+                    maxLength: maxLength(400),
+                    minLength: minLength(10)
+                },
+            },
+
+        },
+
+
         methods: {
             ...mapActions('cards', ['setSearchedWord']),
             ...mapActions('comments', ['addComment', 'deleteComment', 'changeComment', 'updatePhotoComments']),
 
-            // ***** Обработка клика по хэштегу *****
-            clickHashtagHandle(searchedHashtag) {
-                this.setSearchedWord(searchedHashtag);
-                if (this.$route.path==='/search') {
-                    this.$emit('close-bid-card');                    
-                }
-                else {
-                    this.$router.push('/search');
-                }
-            },
             
             // ***** Обработка нажатия клавиш *****
             keyDownHandle(e) {
@@ -213,6 +236,18 @@
                     // console.log('e =',e);
             },
 
+            // ***** Клик по хэштегу *****
+            clickHashtagHandle(searchedHashtag) {
+                this.setSearchedWord(searchedHashtag);
+                if (this.$route.path==='/search') {
+                    this.$emit('close-bid-card');                    
+                }
+                else {
+                    this.$router.push('/search');
+                }
+            },
+
+            // ***** Добавить новый комментарий *****
             async sumbitNewCommentHandler() {
                 this.newComment.photoId = this.cardObject.id;
                 this.newComment.authorId = +this.loggedUserObject.id;
@@ -223,15 +258,19 @@
                 this.comments = this.commentsCurrentPhoto;
             },
 
+            // ***** Редактировать комментарий *****
             editCommentHandler(comment) {
+                this.openCommentEditing = true;
                 this.changedComment.id = comment.id;
                 this.changedComment.commentText = comment.commentText;
             },
 
+            // ***** Сохранить отредактированный комментарий *****
             async saveCommentHandler() {
                 await this.changeComment(this.changedComment);
                 await this.updatePhotoComments(this.cardObject.id);            
                 this.comments = this.commentsCurrentPhoto;
+                this.openCommentEditing = false;
 
                 this.changedComment= {
                     id: Number,
@@ -239,11 +278,24 @@
                 };
             },
 
+            // ***** Удалить комментарий *****
             async deleteCommentHandler(commentId) {
                 await this.deleteComment(commentId);
                 await this.updatePhotoComments(this.cardObject.id);
                 this.comments = this.commentsCurrentPhoto;
+                this.openCommentEditing = false;
             },
+
+            // ***** Скрыть/отобразить форму добавления комментария *****
+            myCommentVisibleHandle() {
+                this.isVisibleMyComment=!this.isVisibleMyComment;
+                if (this.isVisibleMyComment)
+                    this.myCommentToggler.style.transform = 'rotate(90deg)';
+                else
+                    this.myCommentToggler.style.transform = 'rotate(270deg)';
+            },
+
+
 
             plusMyLike() {
                 this.isActiveLike = !this.isActiveLike;
@@ -280,14 +332,7 @@
 
 
             },
-            
-            myCommentVisibleHandle() {
-                this.isVisibleMyComment=!this.isVisibleMyComment;
-                if (this.isVisibleMyComment)
-                    this.myCommentToggler.style.transform = 'rotate(90deg)';
-                else
-                    this.myCommentToggler.style.transform = 'rotate(270deg)';
-            },
+
 
             // ***** Разделение описания на отдельные части: текст + хэштег *****
             splitDescriptionWithHashtags(text) {
@@ -645,6 +690,7 @@
         &__info-wrapper {
             position: relative;
         }
+
         &__text {
             font-family: 'ProximaNova-Light';
             font-size: 16px;
@@ -657,6 +703,16 @@
             left: 0;
             top: 18px;
             width: 100%;
+        }
+        
+        &__error {
+            @include error;
+            min-height: 24px;
+
+            @include tablets {
+                align-self: flex-start;
+                /* margin-left: 18px; */
+            }
         }
 
         &__buttons-wrapper {

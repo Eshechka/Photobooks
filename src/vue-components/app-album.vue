@@ -373,8 +373,8 @@
                                 @click="clickCloseSlider"
                             ></button>
 
-
                         <button type="button" class="big-card-slider__control big-card-slider__control_prev"
+                            
                             @click="previous()"
                         ></button>
                         <button type="button" class="big-card-slider__control big-card-slider__control_next"
@@ -1439,13 +1439,6 @@
         position: relative;
 
 
-        /* &__close {
-            position: absolute;
-            right: -36px;
-            top: -36px;
-            z-index: 15;
-        } */
-
         &__control {
             position: absolute;
             display: none;
@@ -1455,6 +1448,9 @@
             background-size: 15px;
             height: 30px;
             width: 20px; 
+                &:hover,&:active,&:focus {
+                    outline: none;
+                }
 
             &_close {
                 display: block;
@@ -1466,7 +1462,6 @@
                 right: 0;
 
                 &:hover,&:active,&:focus {
-                    outline: none;
                     background-size: 34px;
                 }
             }
@@ -1479,16 +1474,22 @@
 
                 &_prev {
                     left: -25px;
-                    /* top: 190px; */
                     top: calc(520px / 2);
                     background-image: svg-load('arrow_left.svg', fill=rgba(#a0a09f, 0.99));
+
+                    &:hover,&:active,&:focus {
+                        background-image: svg-load('arrow_left.svg', fill=rgba($color-white, 0.9));
+                    }
                 }
                 &_next {
                     right: -25px;
-                    /* top: 190px; */
                     top: calc(520px / 2);
                     background-image: svg-load('arrow_left.svg', fill=rgba(#a0a09f, 0.99));
                     transform: rotate(180deg);
+                    
+                    &:hover,&:active,&:focus {
+                        background-image: svg-load('arrow_left.svg', fill=rgba($color-white, 0.9));
+                    }
                 }
                 &_close {                    
                     width: 40px;
@@ -1500,6 +1501,7 @@
 
                     &:hover,&:active,&:focus {
                         background-size: 24px;
+                        background-image: svg-load('close.svg', fill=rgba($color-white, 0.9));
                     }
                 }
             }
