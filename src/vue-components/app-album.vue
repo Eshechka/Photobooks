@@ -11,9 +11,9 @@
         ></div>
 
 
-		<header class="header" ref='header' :style="{ backgroundImage: `url(${urlPhotos}/${currentAlbumObject.preview})` }">
+		<header class="header" ref="header" :style="{ backgroundImage: currentAlbumObject.preview ? `url(${urlPhotos}/${currentAlbumObject.preview})` : '' }">
 	
-			<div class="header__container" ref='header-container'>
+			<div class="header__container" ref="header-container">
 
                 <div class="header__button-home" 
                     :class="{'header__button-home_scrolled' : isScrolledHeader}">
@@ -25,7 +25,7 @@
                     </router-link>
                 </div>
                 <div class="header__button-edit" v-if="currentAlbumObject.author.id==loggedUserObject.id">
-                    <button type='button' title="Редактировать название и описание альбома" class="button button_icon_space button_size_changing button_theme_color_changing"
+                    <button type="button" title="Редактировать название и описание альбома" class="button button_icon_space button_size_changing button_theme_color_changing"
                         @click="clickEditAlbumHeader">
                         <span class="button__text">Редактировать</span>
                         <span class="button__icon button__icon_edit"></span>
@@ -117,7 +117,7 @@
                                         <label for="load-bgcover-header" class="form-edit-header__label form-edit-header__label_file-load">
                                             <input type="file" id="load-bgcover-header" class="form-edit-header__input-load"
                                                 @change="loadAlbumPreview">
-                                             <div class="form-edit-header__added-photo" v-if="isAlbumPreviewLoaded"
+                                             <div class="form-edit-header__added-photo" v-if="isAlbumPreviewLoaded"                                                
                                                 :style="{ backgroundImage : `url(${renderedAlbumPreview})` }">
                                             </div>
                                             <div class="form-edit-header__cover-img-wrapper" v-if="!isAlbumPreviewLoaded">
@@ -274,7 +274,7 @@
 
                                     <div class="add-photo__topgroup">
                                         <h4 class="add-photo__title">Добавить фотографии</h4>
-                                        <button type="button" class="button button_icon button_size_s button_theme_minimalizm"
+                                        <button title="Закрыть форму добавления фотографий без сохранения" type="button" class="button button_icon button_size_s button_theme_minimalizm"
                                             @click="closeAddedPhotosHandler">
                                             <span class="button__icon button__icon_close"></span>
                                         </button>
@@ -388,7 +388,7 @@
             
         </main>
 	
-		<footer ref='footer' class="footer" :style="{ backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.3)), url(${urlPhotos}/${currentAlbumObject.preview})`}" >
+		<footer ref='footer' class="footer" :style="{ backgroundImage: currentAlbumObject.preview ? `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.3)), url(${urlPhotos}/${currentAlbumObject.preview})` : ''}" >
 	
 			<div class="footer__container">	
 	
@@ -851,6 +851,7 @@
                 this.openEditPhoto = false;
                 this.openConfirmDeletePhoto = false;
             },
+
             // ***** Отмена подтверждения удаления фотографии ранее загруженной в альбом *****
             cancelDeletePhotoHandle() {
                 this.openEditPhoto = true;
@@ -1473,8 +1474,11 @@
                     }
 
                 &_prev {
+                    height: 480px;
+                    top: calc((520px - 480px) / 2);
+                    /* top: calc(520px / 2); */
+
                     left: -25px;
-                    top: calc(520px / 2);
                     background-image: svg-load('arrow_left.svg', fill=rgba(#a0a09f, 0.99));
 
                     &:hover,&:active,&:focus {
@@ -1482,8 +1486,11 @@
                     }
                 }
                 &_next {
-                    right: -25px;
-                    top: calc(520px / 2);
+                    height: 480px;
+                    top: calc((520px - 480px) / 2);
+                    /* top: calc(520px / 2); */
+                    
+                    right: -25px;                    
                     background-image: svg-load('arrow_left.svg', fill=rgba(#a0a09f, 0.99));
                     transform: rotate(180deg);
                     

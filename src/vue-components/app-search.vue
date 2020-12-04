@@ -152,8 +152,6 @@
 
 
 <script>
-    import dataJSON_socials from '../json/socials.json';//!!!!!!!!!!!!!!!
-
     import appCard from '../vue-components/app-card.vue'
     import appBigCard from '../vue-components/app-big-card.vue'
 
@@ -210,7 +208,8 @@
 
                 heightHeaderFooterMobile: 0,
                 heightSectionForSlider: `unset`,
-                
+
+                isMobile: window.innerWidth < 768,
             }
         },
 
@@ -310,7 +309,7 @@
             // ***** Клик по фотографии (открытие слайдера) *****
             cardClickHandler(cardId) {
                 
-                if (!this.isMoile) this.bigCardSliderTop = window.pageYOffset + 40;
+                // if (!this.isMobile) this.bigCardSliderTop = window.pageYOffset + 40;
 
                 let photoIndex = 0;
 
@@ -327,7 +326,10 @@
             // ***** Установка параметров в зависимости от текущей ширины экрана (кол-во загружаемых фотографий при клике на кнопку "загрузить еще") *****
             checkWidth() {
 
-                this.windowWidth = window.innerWidth;    
+                this.windowWidth = window.innerWidth;
+                
+                if (this.windowWidth < 768) this.isMobile=true;
+                else this.isMobile=false;
 
                 if (this.amountLoadedPhotos === 0) {
                     if (this.amountLoadedPhotos !== 6 && this.windowWidth <= 768) this.amountLoadedPhotos = 6;
@@ -375,6 +377,10 @@
                     this.deleteSearchedWord();
                 }
             },
+            isMobile(value) {
+                if (value) this.bigCardSliderTop = 0;
+                else this.bigCardSliderTop = window.pageYOffset + 40;
+            }
         },
 
 
@@ -385,6 +391,7 @@
 
         async mounted() {
             this.loggedUserObject.id = localStorage.getItem('userId');
+            this.bigCardSliderTop = this.isMobile ? 0 : window.pageYOffset + 40;
             this.showMode = this.mode;
             this.searchedStr = this.searchedWord;
             await this.updateSearchHandle();
@@ -723,7 +730,6 @@
         background-color: transparent;
         position: relative;
 
-
         &__control {
             position: absolute;
             display: none;
@@ -733,6 +739,9 @@
             background-size: 15px;
             height: 30px;
             width: 20px; 
+                &:hover,&:active,&:focus {
+                    outline: none;
+                }
 
             &_close {
                 display: block;
@@ -744,7 +753,6 @@
                 right: 0;
 
                 &:hover,&:active,&:focus {
-                    outline: none;
                     background-size: 34px;
                 }
             }
@@ -756,15 +764,29 @@
                     }
 
                 &_prev {
+                    height: 480px;
+                    top: calc((520px - 480px) / 2);
+                    /* top: calc(520px / 2); */
+
                     left: -25px;
-                    top: calc(520px / 2);
                     background-image: svg-load('arrow_left.svg', fill=rgba(#a0a09f, 0.99));
+
+                    &:hover,&:active,&:focus {
+                        background-image: svg-load('arrow_left.svg', fill=rgba($color-white, 0.9));
+                    }
                 }
                 &_next {
-                    right: -25px;
-                    top: calc(520px / 2);
+                    height: 480px;
+                    top: calc((520px - 480px) / 2);
+                    /* top: calc(520px / 2); */
+                    
+                    right: -25px;                    
                     background-image: svg-load('arrow_left.svg', fill=rgba(#a0a09f, 0.99));
                     transform: rotate(180deg);
+                    
+                    &:hover,&:active,&:focus {
+                        background-image: svg-load('arrow_left.svg', fill=rgba($color-white, 0.9));
+                    }
                 }
                 &_close {                    
                     width: 40px;
@@ -776,6 +798,7 @@
 
                     &:hover,&:active,&:focus {
                         background-size: 24px;
+                        background-image: svg-load('close.svg', fill=rgba($color-white, 0.9));
                     }
                 }
             }

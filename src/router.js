@@ -54,23 +54,18 @@ const router = new VueRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-    // console.log('to = ', to);
-    // console.log('to.matched = ', to.matched);
-    // console.log('to.matched[0].path = ', to.matched[0].path);
-    // console.log('to.path = ', to.path);
-
-    // const isSuchRoute = routes.find(route => {
-    //     console.log('route.path = ', route.path);
-    //     return route.path === to.matched[0].path;
-    // });
-    // const isSuchRoute = routes.find(route => route.path === to.matched[0].path);
-    
 
     const isPublicRoute = to.matched.some(route => route.meta.public);
     const isUserLogged = store.getters['user/userIsLogged'];
+    // const userIsFull = store.getters['user/userIsFull'];
 
     if (!isPublicRoute) {
         if (isUserLogged) {
+                // if (!userIsFull) {
+                //     alert('Не заполнен');
+                //     next();
+                // }
+                // else 
                 try {
                     next();
                 }

@@ -703,6 +703,7 @@
             left: 0;
             top: 18px;
             width: 100%;
+            outline: none;
         }
         
         &__error {

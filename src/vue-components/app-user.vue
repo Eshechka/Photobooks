@@ -48,7 +48,7 @@
                             <li class="socials__item"
                                 v-for="social in currentAuthorObject.userSocials" :key="social.id">
                                 <a class="socials__link" target="blank"
-                                    :class="`socials__link_${social.id}`"
+                                    :class="`socials__link_${social.name}`"
                                     :href="social.link"                                
                                 >{{social.text}}</a>
                             </li>
@@ -202,17 +202,22 @@
                                     </div>
 
                                     <div class="form-edit-header__socials">
-                                        <div class="socials">
+                                       <div class="socials"> 
 
                                             <ul class="socials__list">
-                                                <li v-for="social in currentAuthorObject.userSocials" :key="social.id" class="socials__item"> 
+                                                <!-- <li v-for="social in currentAuthorObject.userSocials" :key="social.id" class="socials__item">  -->
+                                                <li v-for="social in socialsFromBase" :key="social.id" class="socials__item"> 
                                                     <a
                                                         @mouseenter="socialMouseHandler(social.id, $event)" 
                                                         @mouseleave="socialMouseHandler(social.id, $event)" 
                                                         @click.prevent="socialClickHandler(social.id)" 
-                                                        :class="[`socials__link socials__link_${social.id}`,
+                                                        :class="[`socials__link socials__link_${social.name}`,//id было
                                                                 {'socials__link_active': social.isActive}]"
-                                                    >{{social.text}}</a>
+                                                    >{{social.name}}<!-- //text было -->
+                                                        <svg class="socials__icon">
+                                                            <use :xlink:href="urlInlineSvgSprite+'#'+`${social.icon}`.slice(0,-4)"></use>
+                                                        </svg>
+                                                    </a>
                                                 </li>
                                             </ul>
 
@@ -222,7 +227,9 @@
                                                 @mouseleave="socEditMouseLeaveHandler">
                                                 <div class="soc-edit__card">
 
-                                                    <form class="soc-edit__form">
+                                                    <form class="soc-edit__form"
+                                                        @submit.prevent="submitEditSocialHandler">
+                                                        
                                                         <input  type="text" class="soc-edit__input"
                                                             v-model="activeSocialLink">
 
@@ -448,7 +455,7 @@
     import appMyAlbum from '../vue-components/app-my-album.vue'
     import appChangeAlbum from '../vue-components/app-change-album.vue'
 
-    import { baseStorageUrl } from '../requests.js';    import dataJSON_socials from '../json/socials.json'
+    import { baseStorageUrl } from '../requests.js'; 
 
     import renderer from '../renderer.js';
 
@@ -457,6 +464,7 @@
     import { required, minLength, maxLength } from 'vuelidate/lib/validators';
 
     import Flickity from 'vue-flickity';
+    import $axios from '../requests';
 
     export default {   
 
@@ -468,7 +476,6 @@
         data() {
             return {
                 openBigCardSlider: false,
-                // openEditProfile: false,
                 openEditHeader: false,
                 openChangeMyAlbum: false,
 
@@ -480,6 +487,7 @@
                 currentSocialId: '',
                 windowWidth: 0,
                 activeSocialLink: '',
+                socialsFromBase: [],//!!!!!!!!!!!! это потом тут останется?
 
                 albumChangeMode: '',
                 toDisabledSubmit: false,
@@ -490,12 +498,11 @@
 
                 currentAuthorObject: {
                     albums: [],
+                    userSocials: [],
                 },
 
                 myAlbums: [],
-
-                socials: dataJSON_socials,
-
+                
                 loadedCards: [],
                 amountLoadedPhotos: 0,
                 startPhotoLoadingPos: 0,
@@ -538,6 +545,8 @@
 
                 searched: '',
                 emptySearch: false,
+
+                isMobile: window.innerWidth < 768,
             }
         },
 
@@ -561,7 +570,6 @@
         computed: {
             ...mapState('cards', {
                 allCards: state => state.cards,
-                // deletedAlbumCards: state => state.currentAlbumCards
             }),
             ...mapState('user', {
                 loggeduser: state => state.user
@@ -583,10 +591,6 @@
             idCurrentAuthor() {
                 return this.$route.params.id;
                 },
-            
-            isMoile() {
-                return window.innerWidth < 768;
-            }
         },
 
 
@@ -594,7 +598,7 @@
             ...mapActions('cards', ['updateAllCards', 'setSearchedWord']),
             ...mapActions('authors', ['refreshAuthor']),
             ...mapActions('albums', ['addAlbum', 'deleteAlbum', 'changeAlbum']),
-            ...mapActions('user', ['logout', 'changeUserWithFiles']),
+            ...mapActions('user', ['logout', 'changeUser', 'getUserWithSocials']),
 
             clickSubmitSearch() {
                 if (this.searched) {
@@ -618,11 +622,13 @@
                     // console.log('e =',e);
             },
 
+            // ***** Нажата кнопка добавить новый альбом *****
             addNewAlbumHandler() {
                 this.openChangeMyAlbum=true; 
                 this.albumChangeMode='add';
             },
 
+            // ***** Нажата кнопка редактировать альбом *****
             clickEditAlbumHandler(clickedAlbum) {
                 this.openChangeMyAlbum=true; 
                 this.albumChangeMode='edit';
@@ -639,6 +645,7 @@
             //     this.openEditProfile=false;
             // },
 
+            // ***** Нажата кнопка сохранить изменения (2 режима: добавить новый альбом / редактировать альбом) *****
             async submitChangeMyAlbum(data, mode) {
                 
                 if (mode === "add") {
@@ -717,7 +724,7 @@
 
                     let changedUserId = this.changedUser.id;
 
-                await this.changeUserWithFiles( {changedUser: formData, changedUserId: changedUserId} );
+                await this.changeUser( {changedUser: formData, changedUserId: changedUserId} );
                 await this.updateAlbums();
 
                 this.openEditHeader=false;
@@ -733,12 +740,17 @@
             },
 
 
+            // ***** Сохранить изменения адреса соц.сети *****
+            submitEditSocialHandler() {
+                console.log(`новая ссылка ${this.activeSocialLink} для социалки ${this.currentSocialId}`);
+            },
 
             socEditMouseLeaveHandler() {
                 if (this.windowWidth > 480) {
                     this.isActiveSocial = false;
 
-                    this.currentAuthorObject.userSocials.map(social => { 
+                    // this.currentAuthorObject.userSocials.map(social => { 
+                    this.socialsFromBase.map(social => { 
                         social.isActive = false;
                     });
                 }
@@ -750,7 +762,8 @@
                     
                     this.currentSocialId = socialId;
 
-                    this.currentAuthorObject.userSocials.map(social => { 
+                    // this.currentAuthorObject.userSocials.map(social => { 
+                    this.socialsFromBase.map(social => { 
                             if (this.currentSocialId) {
                                 if (social.id !== this.currentSocialId) {
                                     social.isActive = false;
@@ -776,7 +789,8 @@
 
                     this.currentSocialId = socialId; 
 
-                    this.currentAuthorObject.userSocials.map(social => { 
+                    // this.currentAuthorObject.userSocials.map(social => { 
+                    this.socialsFromBase.map(social => { 
                             if (this.currentSocialId) {
 
                                 if (social.id !== this.currentSocialId) {
@@ -800,7 +814,8 @@
                         }
                         
                         if (elem !== this.socEdit) {
-                            this.currentAuthorObject.userSocials.map(social => { 
+                            // this.currentAuthorObject.userSocials.map(social => { 
+                            this.socialsFromBase.map(social => { 
                                 social.isActive = false;
                             });
                             this.isActiveSocial = false;
@@ -818,8 +833,6 @@
 
             // ***** Клик по фотографии (открытие слайдера) *****
             cardClickHandler(cardId) {
-                
-                if (!this.isMoile) this.bigCardSliderTop = window.pageYOffset + 40;
 
                 let photoIndex = 0;
 
@@ -839,14 +852,20 @@
                     this.windowWidth = window.innerWidth;
     
                     if (this.windowWidth > 480) {
-    
+                        if (this.windowWidth < 768) this.isMobile=true;
+                        else this.isMobile=false;
+
                         this.isActiveSocial = false;
 
-                        if (this.currentAuthorObject.userSocials) this.currentAuthorObject.userSocials.map(social => 
+                        // if (this.currentAuthorObject.userSocials) this.currentAuthorObject.userSocials.map(social => 
+                        if (this.socialsFromBase) this.socialsFromBase.map(social => 
                             {
                                 social.isActive = false;
                             }
                         );
+                    }
+                    else {
+                        this.isMobile=true;
                     }
     
                     if (this.amountLoadedPhotos === 0) {
@@ -898,6 +917,35 @@
             async updateAlbums() {
                 await this.refreshAuthor(this.idCurrentAuthor);
                 this.currentAuthorObject = {...this.thisAuthor};
+                // this.currentAuthorObject.userSocials = await this.getUserWithSocials(currentAuthorObject.id);
+                    this.currentAuthorObject.userSocials = [//!!!!!!!!!!!!!!!! это потом придет из базы
+                        {   "id": "vk", 
+                            "icon": "../icons/soc_vk.svg", 
+                            "text": "vk", "isActive": false, 
+                            "link": "https://vk.com/" 
+                        },
+                        {   "id": "fb", 
+                            "icon": "../icons/soc_fb.svg", 
+                            "text": "fb", "isActive": false, 
+                            "link": "https://fb.com/" 
+                        },
+                        {   "id": "tw", 
+                            "icon": "../icons/soc_twitter.svg", 
+                            "text": "tw", "isActive": false, 
+                            "link": "https://twitter.com/" 
+                        },
+                        {   "id": "google", 
+                            "icon": "../icons/social_google.svg", 
+                            "text": "google", "isActive": false, 
+                            "link": "https://vk.com/" 
+                        },
+                        {   "id": "email", 
+                            "icon": "../icons/soc_email.svg", 
+                            "text": "email", "isActive": false, 
+                            "link": "https://vk.com/" 
+                        }
+                    ];
+
                 this.currentAuthorObject.cover = this.currentAuthorObject.cover ? `${this.urlPhotos}/${this.currentAuthorObject.cover}` : "../img/no_album_cover.jpg";
                 this.myAlbums = this.thisAuthor.albums;
             },
@@ -925,6 +973,10 @@
                 else {
                     this.heightSectionForSlider = `unset`;
                 }
+            },
+            isMobile(value) {
+                if (value) this.bigCardSliderTop = 0;
+                else this.bigCardSliderTop = window.pageYOffset + 40;
             }
         },
 
@@ -932,20 +984,26 @@
             await this.updateCards();
             await this.updateAlbums();
             await this.updateLoggedUser();
+            const { data } = await $axios.get(`/v1/socials`);
+            this.socialsFromBase = data.socials;
+            this.socialsFromBase.forEach(social => social.isActive = false);
+
+            // console.log('socialsFromBase = ',this.socialsFromBase[1]);
+
             this.loadedCardsPush(this.startPhotoLoadingPos);
             window.addEventListener('resize', this.checkWidth);    
-            document.addEventListener('keydown', this.keyDownHandle);        
+            document.addEventListener('keydown', this.keyDownHandle);
         },
 
         mounted() {
             this.windowWidth = window.innerWidth;
+            this.bigCardSliderTop = this.isMobile ? 0 : window.pageYOffset + 40;
             this.loggedUserObject.id = localStorage.getItem('userId');
             this.editedAlbum.author = this.loggedUserObject.id;
             if (this.header && this.footer) { 
                 this.heightHeaderFooterMobile = parseFloat(getComputedStyle(this.header).height) + parseFloat(getComputedStyle(this.footer).height);
-            }
+            };
         },
-
             
     }
 
@@ -1196,6 +1254,8 @@
                 margin-left: 5%;
                 height: 70px;
                 width: 70px;
+                align-self: flex-start;
+                margin-top: 40px;
             }  
             @include desktopHd {
                 margin-left: max(calc((100% - 1480px) /2), 10%);
@@ -1353,8 +1413,8 @@
         }
 
         &__socials {
-            margin-top: 20px;
-            margin-bottom: 10px;
+            margin-top: 5px;
+            margin-bottom: 30px;
             width: 88%;
         }
 
@@ -1512,50 +1572,24 @@
             margin-right: 5px;
             margin-bottom: 10px;
 
-            background-repeat: no-repeat;
+            /* background-repeat: no-repeat;
             background-size: 20px;
-            background-position: 50%;
-
+            background-position: 50%; */
 
             @include tablets {
                 margin-right: 10px;
             }
 
+            /* 
             &_vk {		
                 background-image: svg-load('soc_vk.svg', fill=rgba(#{$color-white}, 0.8));
                     &:hover, &:active, &:focus {
                         background-image: svg-load('soc_vk.svg', fill=rgba(#{$color-white}, 0.95));
                     }
-            }
-            &_tw {		
-                background-image: svg-load('soc_twitter.svg', fill=rgba(#{$color-white}, 0.8));
-                    &:hover, &:active, &:focus {
-                        background-image: svg-load('soc_twitter.svg', fill=rgba(#{$color-white}, 0.95));
-                    }
-            }
-            &_google {		
-                background-image: svg-load('social_google.svg', fill=rgba(#{$color-white}, 0.8));
-                    &:hover, &:active, &:focus {
-                        background-image: svg-load('social_google.svg', fill=rgba(#{$color-white}, 0.95));
-                    }
-            }
-            &_fb {		
-                background-image: svg-load('soc_fb.svg', fill=rgba(#{$color-white}, 0.8));
-                    &:hover, &:active, &:focus {
-                        background-image: svg-load('soc_fb.svg', fill=rgba(#{$color-white}, 0.95));
-                    }                
-            }
-            &_email {		
-                background-image: svg-load('soc_email.svg', fill=rgba(#{$color-white}, 0.8));
-                    &:hover, &:active, &:focus,
-                    .socials__link_active {
-                        background-image: svg-load('soc_email.svg', fill=rgba(#{$color-white}, 0.95));
-                    }                   
-            }
+            } */
             
             &_active {
                 position: relative;
-
                 box-sizing: content-box;
                 border-bottom: 10px solid transparent;
                 margin-bottom: 0px;
@@ -1572,9 +1606,31 @@
                     border-right: 7px solid transparent;
                     border-bottom: 8px solid $color-white;
                 }
+
+                &__icon {
+                    width: 22px;
+                    height: 22px;
+                    margin-left: -1px;
+                    margin-top: -1px;
+                    fill: rgba(#{$color-white}, 0.95);
+                }
             }
 
-            &:hover {
+            &:hover, &:active, &:focus {
+                box-sizing: content-box;
+                border-bottom: 10px solid transparent;
+                margin-bottom: 0px;
+                z-index: 20;
+
+                .socials__icon {
+                    width: 22px;
+                    height: 22px;
+                    margin-left: -1px;
+                    margin-top: -1px;
+                    fill: rgba(#{$color-white}, 0.95);
+                }
+            }
+            /* &:hover {
                 box-sizing: content-box;
                 border-bottom: 10px solid transparent;
                 margin-bottom: 0px;
@@ -1582,8 +1638,14 @@
             }
             &:hover, &:active, &:focus {
                 background-size: 22px;
-            }
+            } */
 
+        }
+
+        &__icon {
+            width: 20px;
+            height: 20px;
+            fill: rgba(#{$color-white}, 0.8);
         }
     }
 
@@ -1776,7 +1838,6 @@
         background-color: transparent;
         position: relative;
 
-
         &__control {
             position: absolute;
             display: none;
@@ -1786,6 +1847,9 @@
             background-size: 15px;
             height: 30px;
             width: 20px; 
+                &:hover,&:active,&:focus {
+                    outline: none;
+                }
 
             &_close {
                 display: block;
@@ -1797,7 +1861,6 @@
                 right: 0;
 
                 &:hover,&:active,&:focus {
-                    outline: none;
                     background-size: 34px;
                 }
             }
@@ -1809,17 +1872,29 @@
                     }
 
                 &_prev {
+                    height: 480px;
+                    top: calc((520px - 480px) / 2);
+                    /* top: calc(520px / 2); */
+
                     left: -25px;
-                    top: calc(520px / 2);
-                    /* top: 190px; */
                     background-image: svg-load('arrow_left.svg', fill=rgba(#a0a09f, 0.99));
+
+                    &:hover,&:active,&:focus {
+                        background-image: svg-load('arrow_left.svg', fill=rgba($color-white, 0.9));
+                    }
                 }
                 &_next {
-                    right: -25px;
-                    /* top: 190px; */
-                    top: calc(520px / 2);
+                    height: 480px;
+                    top: calc((520px - 480px) / 2);
+                    /* top: calc(520px / 2); */
+                    
+                    right: -25px;                    
                     background-image: svg-load('arrow_left.svg', fill=rgba(#a0a09f, 0.99));
                     transform: rotate(180deg);
+                    
+                    &:hover,&:active,&:focus {
+                        background-image: svg-load('arrow_left.svg', fill=rgba($color-white, 0.9));
+                    }
                 }
                 &_close {                    
                     width: 40px;
@@ -1831,6 +1906,7 @@
 
                     &:hover,&:active,&:focus {
                         background-size: 24px;
+                        background-image: svg-load('close.svg', fill=rgba($color-white, 0.9));
                     }
                 }
             }
