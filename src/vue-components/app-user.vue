@@ -213,6 +213,7 @@
                                                         @click.prevent="socialClickHandler(social.id)" 
                                                         :class="[`socials__link socials__link_${social.name}`,//id было
                                                                 {'socials__link_active': social.isActive}]"
+                                                        :title="social.name"
                                                     >{{social.name}}<!-- //text было -->
                                                         <svg class="socials__icon">
                                                             <use :xlink:href="urlInlineSvgSprite+'#'+`${social.icon}`.slice(0,-4)"></use>
@@ -564,7 +565,6 @@
                     required
                 },
             },
-
         },
 
         computed: {

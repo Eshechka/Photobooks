@@ -17,11 +17,30 @@
                         <input class="form-changeAlbum__input" type="text" placeholder="Название альбома"
                             v-model="myChangeCurrentObject.title">
                     </label>
+                    <div class="form-changeAlbum__error form-changeAlbum__error_album-title">
+                        <span v-if="!$v.myChangeCurrentObject.title.maxLength" v-show="$v.myChangeCurrentObject.title.$invalid">
+                            Максимум символов в описании: {{ $v.myChangeCurrentObject.title.$params.maxLength.max }}
+                        </span>
+                        <span v-else v-show="$v.myChangeCurrentObject.title.$invalid">
+                            Обязательно для заполнения
+                        </span>
+                    </div>
 
                     <label class="form-changeAlbum__label" v-if="!deleteAlbumError">Описание
                         <textarea class="form-changeAlbum__input form-changeAlbum__input_textarea" cols="20" rows="5" placeholder="Описание альбома"
                             v-model="myChangeCurrentObject.description"></textarea>
                     </label>
+                    <div class="form-changeAlbum__error form-changeAlbum__error_album-description">
+                        <span v-if="!$v.myChangeCurrentObject.description.minLength" v-show="$v.myChangeCurrentObject.description.$invalid">
+                            Минимум символов в описании: {{ $v.myChangeCurrentObject.description.$params.minLength.min }}
+                        </span>
+                        <span v-else-if="!$v.myChangeCurrentObject.description.maxLength" v-show="$v.myChangeCurrentObject.description.$invalid">
+                            Максимум символов в описании: {{ $v.myChangeCurrentObject.description.$params.maxLength.max }}
+                        </span>
+                        <span v-else v-show="$v.myChangeCurrentObject.description.$invalid">
+                            Обязательно для заполнения
+                        </span>
+                    </div>
             
 
                     <div class="form-changeAlbum__cover" v-if="!deleteAlbumError">
@@ -33,20 +52,27 @@
                                     @change='loadCover'
                                 >
                                 <div class="form-changeAlbum__added-photo" v-if="isCoverLoaded"
-                                    :style="{ backgroundImage : `url(${renderedCover.pic})` }">
+                                    :style="{ backgroundImage : `url(${renderedCover})` }">
                                 </div>
                                 <img class="form-changeAlbum__cover-img" v-if="!isCoverLoaded && (mode=='edit')" :src="`${urlPhotos}/${myChangeCurrentObject.preview}`" alt="album cover image">
                                 <img class="form-changeAlbum__cover-img" v-else-if="!isCoverLoaded && (mode=='add')" :src="require('../img/no_album_cover.jpg').default" alt="album cover image">
-                            </div>                                                          
+                            </div>
 
                             <div class="form-changeAlbum__cover-button">
                                 <button class="site-button site-button_theme-light" type="button">{{coverTitle}}</button>
                             </div>
 
                         </label>
+                        
 
                         <div class="form-changeAlbum__notice-size">(файл должен быть размером не более 1024 КБ)</div>
 
+                    </div>
+
+                    <div class="form-changeAlbum__error form-changeAlbum__error_album-cover">
+                        <span v-show="!isPreviewLoaded">
+                            Добавьте фото для обложки
+                        </span>
                     </div>
 
                     <div class="form-changeAlbum__confirmDeleteAlbum" v-if="deleteAlbumError">
@@ -60,7 +86,8 @@
                     
                     <div class="form-changeAlbum__buttons" v-if="!deleteAlbumError">
                         <button class="button button_size_m form-changeAlbum__buttonspace" type="submit"
-                            :disabled="isDisabledSubmit"
+                            :disabled="isDisabledSubmit || $v.$invalid"
+                            :title="`Нажмите для изменения данных`"
                         >Сохранить</button>    
                         <button class="button button_size_m button_theme_minimalizm" type="button"
                             @click.prevent="$emit('click-close-change-my-album')"                            
@@ -84,6 +111,8 @@
     import appUI from '../vue-components/app-UI.vue';
 
     import { mapState, mapActions, mapGetters } from 'vuex';
+
+    import { required, minLength, maxLength } from 'vuelidate/lib/validators';
 
     const renderer = file => {
         const reader = new FileReader();
@@ -120,7 +149,7 @@
                 title: 'Добавить альбом',
                 coverTitle: "Загрузить обложку",
 
-                renderedCover: {pic: ''},
+                renderedCover: '',
                 loadedCover: {},
                 isCoverLoaded: false,
 
@@ -133,6 +162,7 @@
                 },
 
                 isDisabledSubmit: this.toDisabledSubmit,
+                isPreviewLoaded: false,
                 deleteAlbumError: false,
             }
         },
@@ -143,15 +173,31 @@
             }),
         },
 
+        validations: {
+
+            myChangeCurrentObject: {
+                title: {
+                    required,
+                    maxLength: maxLength(50)
+                },
+                description: {
+                    minLength: minLength(60),
+                    maxLength: maxLength(200),
+                    required
+                },
+            },
+        },
+
         methods: {
             ...mapActions('cards', ['refreshAlbumCards']),
           
             loadCover(e) {
                 this.loadedCover = e.target.files[0];
                 renderer(this.loadedCover).then(pic => {                 
-                    this.renderedCover.pic = pic;
+                    this.renderedCover = pic;
                     this.isCoverLoaded = true;
                     this.coverTitle = "Изменить обложку";
+                    this.isPreviewLoaded = true;
                 });
             },
 
@@ -165,24 +211,25 @@
                 this.title = 'Добавить альбом';
                 this.coverTitle = "Добавить обложку";
                 this.myChangeCurrentObject = {
-                        id: this.editedAlbumObject.id,
-                        description: '',
-                        authorId: this.authorId,
-                        preview: '',
-                        title: ''
-                    };
+                    id: this.editedAlbumObject.id,
+                    description: '',
+                    authorId: this.authorId,
+                    preview: '',
+                    title: ''
+                };
             },
 
             submitChangeAlbumHandler() {
-
-                if (this.mode=='add' && this.renderedCover) {// else console.log('no file');//!!!!!!! validation
-                    const formData = new FormData();
+                if (this.mode=='add') {
+                    if (!this.$v.$invalid) {
+                        const formData = new FormData();
                         formData.append('preview', this.loadedCover);
                         formData.append('title', this.myChangeCurrentObject.title);
                         formData.append('description', this.myChangeCurrentObject.description);
                         formData.append('authorId', this.authorId);
                         this.isDisabledSubmit = true;
                         this.$emit('submit-change-my-album', formData, this.mode);
+                    }
                 }
                 else if (this.mode=='edit') {
                     const reNewData = {};
@@ -191,7 +238,7 @@
                         reNewData.description=this.myChangeCurrentObject.description;  
                         reNewData.authorId=this.authorId;
                         this.$emit('submit-change-my-album', reNewData, this.mode);
-                }
+                }                
             },
 
             async deleteAlbumHandler() {
@@ -200,7 +247,6 @@
                 
                     if (isEmptyAlbum) {
                         this.$emit('delete-album', this.editedAlbumObject.id);
-                        this.deletedAlbumCards=[];
                     }
                     else {
                         this.deleteAlbumError = true;
@@ -220,6 +266,10 @@
                 this.clearChangedAlbum();
             }
         },
+
+        mounted() {
+            this.isPreviewLoaded = this.myChangeCurrentObject.preview || this.renderedCover;
+        }
 
     }
 
@@ -259,11 +309,11 @@
         }
 
         &__form {
-            height: 380px;
+            height: 411px;
             display: flex;
 
             @include tablets {
-                min-height: 400px;
+                min-height: 426px;
             }
         }
 
@@ -310,8 +360,7 @@
         &__label {
             font-family: 'Proxima Nova Semibold';
             font-size: 14px;
-            padding: 15px 10px 10px;
-
+            padding: 15px 10px 5px;
             display: block;
 
             @include tablets {
@@ -323,15 +372,33 @@
                 position: relative;
                 display: flex;
 
-                &:hover .form-changeAlbum__cover-button button {
-                    background-color: $color-blue;
-                    color: $color-white;
-                }
-
-                &:active, &:focus .form-changeAlbum__cover-button button {
+                &:hover .form-changeAlbum__cover-button button, 
+                &:active .form-changeAlbum__cover-button button, 
+                &:focus .form-changeAlbum__cover-button button {
+                    color: $color-blue;
                     background-color: transparent;
-                    color: rgba($color-blue, 0.7);
-                    border: 2px solid rgba($color-blue, 0.7);
+                }
+            }
+        }
+
+        &__error {
+            @include error;
+            min-height: 18px;
+            padding-left: 20px;
+            padding-right: 20px;
+
+            @include tablets {
+                align-self: flex-start;
+                margin-left: 45px;
+            }
+
+            &_album-cover {
+                margin-top: -15px;
+                margin-bottom: 10px;
+
+                @include tablets {
+                    margin-top: -20px;
+                    margin-left: 100px;
                 }
             }
         }

@@ -834,7 +834,7 @@
                 this.openBigMyPhoto = false;                
             },
 
-            // *****  Начать удаление фотографии ранее загруженной или удалить фотографию из списка загрузки *****
+            // *****  Начать удаление фотографии, ранее загруженной, или удалить фотографию из списка загрузки *****
             async deletePhotoHandle() {
                 if (this.isNewPhotosEditing) {
                     this.removeRenderedPhotoHandler(this.renderedPhotos.find(photo => photo.id == this.editingNewPhoto.id));
