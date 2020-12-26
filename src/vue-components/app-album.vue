@@ -138,6 +138,7 @@
                                     >Сохранить</button>
                                     <button class="button button_size_m button_theme_minimalizm" type="button"
                                         @click="cancelChangeAlbumHeaderHandler"
+                                        title="Закрыть без сохранения внесенных изменений"
                                     >Отменить</button>
                                 </div>
 
@@ -282,8 +283,7 @@
                                     
                                     <div class="add-photo__form">
                                         <form class="form-addPhoto"
-
-                                        @submit.prevent='addPhotoHandler'>
+                                            @submit.prevent='addPhotoHandler'>
 
                                             <div class="form-addPhoto__album-name-label">Название
                                                 <span class="form-addPhoto__album-name" type="text"> {{currentAlbumObject.title}} </span>
@@ -311,7 +311,11 @@
                                                     </ul>
                                                 </div>
 
+
                                                 <label for="load-photo" class="form-addPhoto__label form-addPhoto__label_file-load" v-if="openAddPhoto && !isPhotosLoaded">
+                                                    <vue-dropzone id="dropzone-add-photos" 
+                                                        :options="dropzoneOptions"></vue-dropzone>
+
                                                     <input type="file" id="load-photo" multiple="multiple" class="form-addPhoto__input-load"
                                                         @change='loadPhotosFiles'
                                                     >
@@ -331,6 +335,9 @@
                                             <div class="form-addPhoto__error form-addPhoto__error_validphotos">
                                                 <span v-show="!isAllPhotosValid">
                                                     Необходимо действие: Добавьте название и описание для загружаемых фотографий.
+                                                </span>
+                                                <span v-show="isAllPhotosValid && !renderedPhotos.length">
+                                                    Можно загрузить максимум 5 фотографий, размером не более 1024 Кб каждая.
                                                 </span>
                                             </div>
                                     
@@ -429,6 +436,8 @@
 
     import { baseStorageUrl } from '../requests.js';
 
+    import vue2Dropzone from 'vue2-dropzone';
+    import 'vue2-dropzone/dist/vue2Dropzone.min.css';
 
     export default {
 
@@ -437,6 +446,7 @@
             appMyPhoto,
             appUI,
             Flickity, 
+            vueDropzone: vue2Dropzone,
         },
 
         data() {
@@ -514,6 +524,14 @@
                 scrolledWhenSliderOpened: 0,
                 // ----- сумма комментариев во всех фотографиях этого альбома
                 commentCount: Number,
+
+                dropzoneOptions: {
+                    url: 'https://httpbin.org/post',
+                    maxFilesize: 1,
+                    maxFiles: 5,
+                    chunking: false,
+                    addRemoveLinks: false,
+                },
             }
         },
 
@@ -611,12 +629,22 @@
 
             // ***** Загрузка фото по change input ******
             loadPhotosFiles(e) {
-                let id=0;
+                let notLoadedFiles = 0;
                 let photosAmount = e.target.files.length;
+                let id = 0;
+                let loadedPhotosIndex = 0;
 
                 for (let i=0; i<photosAmount; i++) {
-                    this.loadedPhotos.push(e.target.files[i]);
-                    this.renderedPhotos.push({pic: '', id: i,});
+                    if ((e.target.files[i].size/1024) < 1024) {
+                        this.loadedPhotos.push(e.target.files[i]);
+                        this.renderedPhotos.push({pic: '', id: loadedPhotosIndex,});
+                        loadedPhotosIndex++;
+                        if (loadedPhotosIndex >= 5) break;
+                    }
+                    else {
+                        notLoadedFiles++;
+                    }
+
                 }
 
                 this.loadedPhotos.forEach(photo => {
@@ -629,7 +657,8 @@
                         photo.description='';
                         id++;
                     
-                        if (id === photosAmount) this.isPhotosLoaded = !this.isPhotosLoaded;
+                        if (id === loadedPhotosIndex) this.isPhotosLoaded = !this.isPhotosLoaded;
+                        // if (id === photosAmount) this.isPhotosLoaded = !this.isPhotosLoaded;
                     })                    
                 });
                 this.isAllPhotosValid = false;
@@ -942,6 +971,15 @@
 
     @import '../styles/common/site-button.pcss';
 
+    #dropzone-add-photos {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        padding: 0;
+        min-height: unset;
+        /* border-radius: 50%; */
+        opacity: 0;
+    }
 
     .header {
         background-image: url('/img/no_album_cover.jpg');
@@ -1969,11 +2007,11 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background-color: rgba(white, 0.4);
+            background-color: rgba(gray, 0.6);
             background-repeat: no-repeat;
-            background-size: 40px;
+            background-size: 50px;
             background-position: 50%;
-            background-image: svg-load('check.svg', stroke=rgba(green, 0.9), fill=transparent, height='40px');
+            background-image: svg-load('check.svg', stroke=rgba(lime, 0.99), fill=transparent, height='50px');
         }
         &__invalid-sign {
             position: absolute;
@@ -1983,11 +2021,11 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background-color: rgba(white, 0.4);
+            background-color: rgba(gray, 0.6);
             background-repeat: no-repeat;
             background-size: 50px;
             background-position: 50%;
-            background-image: svg-load('exclamation.svg', fill=rgba(yellow, 0.8), height='50px');
+            background-image: svg-load('exclamation.svg', fill=rgba(yellow, 0.99), height='50px');
         }
     }
 

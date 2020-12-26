@@ -154,6 +154,9 @@
                                 <div class="form-edit-header__load-avatar">
 
                                     <label for="load-avatar-header" class="form-edit-header__label form-edit-header__label_file-load">
+                                        <vue-dropzone id="dropzone-edit-avatar" 
+                                            :options="dropzoneOptions"></vue-dropzone>
+
                                         <input type="file" id="load-avatar-header" class="form-edit-header__input-load"
                                             @change="loadUserAvatar">
 
@@ -185,7 +188,7 @@
                                         </span>
                                     </div>
 
-                                    <label class="form-edit-header__label">
+                                    <label class="form-edit-header__label form-edit-header__label_view_scroll">
                                         <textarea class="form-edit-header__input form-edit-header__input_textarea" cols="20" rows="2" placeholder="Краткая информация о пользователе"
                                             v-model="changedUser.description"></textarea>
                                     </label>                                    
@@ -254,6 +257,9 @@
                                 <div class="form-edit-header__load-cover">
 
                                     <label for="load-bgcover-header" class="form-edit-header__label form-edit-header__label_file-load">
+                                        <vue-dropzone id="dropzone-edit-cover" 
+                                            :options="dropzoneOptions"></vue-dropzone>
+                                        
                                         <input type="file" id="load-bgcover-header" class="form-edit-header__input-load"
                                             @change="loadUserCover">
 
@@ -467,11 +473,15 @@
     import Flickity from 'vue-flickity';
     import $axios from '../requests';
 
+    import vue2Dropzone from 'vue2-dropzone';
+    import 'vue2-dropzone/dist/vue2Dropzone.min.css';
+
     export default {   
 
         components: {
             appCard, appBigCard, appMyAlbum, appChangeAlbum,
-            Flickity,
+            Flickity,            
+            vueDropzone: vue2Dropzone,
         },
 
         data() {
@@ -548,6 +558,14 @@
                 emptySearch: false,
 
                 isMobile: window.innerWidth < 768,
+
+                dropzoneOptions: {
+                    url: 'https://httpbin.org/post',
+                    maxFilesize: 1,
+                    maxFiles: 1,
+                    chunking: false,
+                    addRemoveLinks: false,
+                }  
             }
         },
 
@@ -1018,6 +1036,24 @@
     @import '../styles/layout.pcss';
     @import '../styles/common/site-button.pcss';
 
+    #dropzone-edit-avatar {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        padding: 0;
+        min-height: unset;
+        border-radius: 50%;
+        opacity: 0;
+    }
+    #dropzone-edit-cover {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        padding: 0;
+        min-height: unset;
+        border-radius: 15px;
+        opacity: 0;
+    }
 
     .header {
         background-image: linear-gradient(rgba(50, 50, 50, 0.5), rgba(50, 50, 50, 0.3)), url('/img/no_album_cover.jpg');
@@ -1359,6 +1395,39 @@
             font-size: 14px;
             display: block;
             width: 90%;
+
+            &_view_scroll {
+
+                @include tablets {
+                    position: relative;
+
+                    & textarea.form-edit-header__input_textarea:active,
+                    & textarea.form-edit-header__input_textarea:focus {
+                        border-right-color: transparent;
+                    }
+
+                    &::after {
+                        content: '';
+                        position: absolute;
+                        right: 0;
+                        top: 0;
+                        width: 20px;
+                        height: 100%;
+                        border-radius: 0 20px 20px 0;
+                        background-color: rgba($color-white, 0.95);
+                        z-index: 50;                        
+                    }
+                }
+                    &:active {
+                        .form-edit-header__label_view_scroll::after {
+                            background: red;
+                        }
+                    }
+                    /* &:focus &::after {
+                        border: 1px solid $color-blue;
+                         
+                    }*/
+            }                
             
             &_file-load {
                 width: 100%;
@@ -1404,10 +1473,13 @@
 
             &_textarea {
                 resize: none;
-                height: 84px;
+                height: 84px;                
 
                 @include tablets {
                     height: unset;
+                    border-radius: 20px 0 0 20px;
+                    padding-right: 20px;
+                    width: calc(100% - 20px);
                 }
             }
         }

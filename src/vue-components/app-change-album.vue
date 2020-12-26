@@ -46,21 +46,27 @@
                     <div class="form-changeAlbum__cover" v-if="!deleteAlbumError">
 
                         <label for="load-bgcover-album" class="form-changeAlbum__label form-changeAlbum__label_file-load">
-
+                            <vue-dropzone ref="myVueDropzone" id="dropzone" 
+                                :options="dropzoneOptions"></vue-dropzone>
+                            
+                            <input type="file" id="load-bgcover-album" class="form-changeAlbum__input-load"
+                                @change='loadCover'>                                    
+                            
+                            
                             <div class="form-changeAlbum__cover-img-wrapper">
-                                <input type="file" id="load-bgcover-album" class="form-changeAlbum__input-load"
-                                    @change='loadCover'
-                                >
-                                <div class="form-changeAlbum__added-photo" v-if="isCoverLoaded"
-                                    :style="{ backgroundImage : `url(${renderedCover})` }">
-                                </div>
-                                <img class="form-changeAlbum__cover-img" v-if="!isCoverLoaded && (mode=='edit')" :src="`${urlPhotos}/${myChangeCurrentObject.preview}`" alt="album cover image">
-                                <img class="form-changeAlbum__cover-img" v-else-if="!isCoverLoaded && (mode=='add')" :src="require('../img/no_album_cover.jpg').default" alt="album cover image">
-                            </div>
 
+                                    <div class="form-changeAlbum__added-photo" v-if="isCoverLoaded"
+                                        :style="{ backgroundImage : `url(${renderedCover})` }">
+                                    </div>
+                                    <img class="form-changeAlbum__cover-img" v-if="!isCoverLoaded && (mode==='edit')" :src="`${urlPhotos}/${myChangeCurrentObject.preview}`" alt="album cover image edit">
+                                    <img class="form-changeAlbum__cover-img" v-else-if="!isCoverLoaded && (mode==='add')" :src="require('../img/no_album_cover.jpg').default" alt="album cover image add">
+                            </div>
+                            
                             <div class="form-changeAlbum__cover-button">
                                 <button class="site-button site-button_theme-light" type="button">{{coverTitle}}</button>
                             </div>
+                            
+                            
 
                         </label>
                         
@@ -87,13 +93,15 @@
                     <div class="form-changeAlbum__buttons" v-if="!deleteAlbumError">
                         <button class="button button_size_m form-changeAlbum__buttonspace" type="submit"
                             :disabled="isDisabledSubmit || $v.$invalid"
-                            :title="`Нажмите для изменения данных`"
+                            :title="isDisabledSubmit || $v.$invalid ? `Необходимо корректно заполнить все поля` : `Сохранить изменения`"
                         >Сохранить</button>    
                         <button class="button button_size_m button_theme_minimalizm" type="button"
-                            @click.prevent="$emit('click-close-change-my-album')"                            
+                            @click.prevent="$emit('click-close-change-my-album')"
+                            title="Закрыть без сохранения внесенных изменений"                         
                         >Отменить</button>
                         <button class="button button_size_m button_theme_carrot form-changeAlbum__in" type="button"
                             @click.prevent="deleteAlbumHandler"
+                            title="Удалить текущий альбом"
                         >Удалить</button>
                     </div>
 
@@ -114,6 +122,9 @@
 
     import { required, minLength, maxLength } from 'vuelidate/lib/validators';
 
+    import vue2Dropzone from 'vue2-dropzone';
+    import 'vue2-dropzone/dist/vue2Dropzone.min.css';
+
     const renderer = file => {
         const reader = new FileReader();
 
@@ -133,6 +144,7 @@
 
         components: {
             appUI,
+            vueDropzone: vue2Dropzone,
         },
 
         props: {
@@ -164,6 +176,14 @@
                 isDisabledSubmit: this.toDisabledSubmit,
                 isPreviewLoaded: false,
                 deleteAlbumError: false,
+
+                dropzoneOptions: {
+                    url: 'https://httpbin.org/post',
+                    maxFilesize: 1,
+                    maxFiles: 1,
+                    chunking: false,
+                    addRemoveLinks: false,
+                }            
             }
         },
 
@@ -193,12 +213,17 @@
           
             loadCover(e) {
                 this.loadedCover = e.target.files[0];
-                renderer(this.loadedCover).then(pic => {                 
-                    this.renderedCover = pic;
-                    this.isCoverLoaded = true;
-                    this.coverTitle = "Изменить обложку";
-                    this.isPreviewLoaded = true;
-                });
+                let fileSize = this.loadedCover.size/1024;
+                if (fileSize<1024)
+                    renderer(this.loadedCover).then(pic => {                 
+                        this.renderedCover = pic;
+                        this.isCoverLoaded = true;
+                        this.coverTitle = "Изменить обложку";
+                        this.isPreviewLoaded = true;
+                    });
+                else {
+                    console.log('SIZE!!!!');
+                }
             },
 
             setChangedAlbum() {
@@ -283,6 +308,16 @@
     @import '../styles/mixins.pcss';
     @import '../styles/layout.pcss';
     @import '../styles/common/site-button.pcss';   
+
+    #dropzone {
+        position: absolute;
+        height: 50px;
+        width: 50px;
+        padding: 0;
+        min-height: unset;
+        border-radius: 50%;
+        opacity: 0;
+    }
 
     .change-album {
 
