@@ -92,7 +92,6 @@
                                 ></textarea>
                             </div>
                             <div class="users-comments__error users-comments__error_text" v-if="openCommentEditing">
-                            <!-- <div class="users-comments__error users-comments__error_text"> -->
                                 <span v-if="!$v.changedComment.commentText.minLength" v-show="$v.changedComment.commentText.$invalid">
                                     Минимум символов в комментарии: {{ $v.changedComment.commentText.$params.minLength.min }}
                                 </span>
@@ -137,7 +136,7 @@
 <script >
     import { mapState, mapActions } from 'vuex';
 
-    import dataJSON_all from '../../db.json';
+    import likes from '../json/likes';
 
     import $axios from '../requests';
 
@@ -157,16 +156,16 @@
                 urlPhotos: baseStorageUrl+'/photos',
                 urlAvatars: baseStorageUrl+'/avatars',
 
-                likes: dataJSON_all.likes,
-
-                comments: [],
-
-                isActiveLike: this.cardObject.isLikedByMe,
-                activeLike: [],
+                // ----- лайки -----
+                likes: likes,
+                isActiveLike: false,
+                // isActiveLike: this.cardObject.isLikedByMe,
+                // activeLike: [],
                 // isActiveLike: false,
                 // nowlikes: this.cardObject.likes,
 
                 // ----- комментарии -----
+                comments: [],
                 isVisibleMyComment: true,
                 openCommentEditing: false,
 
@@ -299,38 +298,15 @@
 
             plusMyLike() {
                 this.isActiveLike = !this.isActiveLike;
-                if (this.isActiveLike) {
-                    this.cardObject.likeCount++;
-                    const myLikeObject = {
-                        "userId": this.loggedUserObject.id,
-                        "photoId": this.cardObject.id
-                    };
-                    const headers = {'Content-Type': 'application/json'};
-
-                    (async () => {
-                        try {
-                            const {data} = await $axios.post('http://localhost:3004/likes', myLikeObject,  {headers});
-                        }
-                        catch(error) { 
-                            throw new Error ( error.response.data.error || error.response.data.message ); 
-                        }
-                    })();
+                if (this.isActiveLike) { //лайк поставили
+                    this.cardObject.likeCount++; //!!!!!!!!!!!!!!!!!!!!!!!! нужно поле кол-во лайков в card?
+                    //!!!!!!!!!!!!!!!!!!!!!!!!!запрос на сервер
                 }
-                else if (!this.isActiveLike && this.activeLike) {
-                    this.cardObject.likes--;
-                    (async () => {                            
-                        try {
-                            const headers = {'Content-Type': 'application/json'};
-                            const {data} = await $axios.delete(`http://localhost:3004/likes/${this.activeLike.id}`,  {headers});
-                        }
-                        catch(error) { 
-                            throw new Error ( error.response.data.error || error.response.data.message ); 
-                        }
-                        finally {}
-                    })();
+                // else if (!this.isActiveLike && this.activeLike) { //лайк сняли
+                else { //лайк сняли
+                    this.cardObject.likeCount--;
+                    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!запрос на сервер
                 }
-
-
             },
 
 
@@ -366,9 +342,11 @@
             document.addEventListener('keydown', this.keyDownHandle);
         },
         mounted() {
-            this.activeLike= this.likes.find(like => (like.userId == this.loggedUserObject.id && like.photoId == this.cardObject.id));
+            let thisCardLikes = this.likes.filter(like => (like.photoId == this.cardObject.id));
+            this.cardObject.likeCount = thisCardLikes.length;
+            this.isActiveLike = thisCardLikes.find(like => (like.userId == this.loggedUserObject.id));
+            // console.log('this.isActiveLike = ',this.isActiveLike);
             this.splitDescriptionWithHashtags(this.cardObject.description);
-            // this.isActiveLike= !!this.activeLike;
         },
 
     }

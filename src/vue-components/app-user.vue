@@ -6,6 +6,15 @@
         <div class="wrapper__overlay wrapper__overlay_white" v-if="openEditHeader"
             @click="openEditHeader = false"
         ></div>
+        <div class="wrapper__preloader" v-if="isPreloader">
+        <!-- <div class="wrapper__preloader"> -->
+            <div class="preloader">
+                <div class="preloader__cube preloader__cube_1"></div>
+                <div class="preloader__cube preloader__cube_2"></div>
+                <div class="preloader__cube preloader__cube_4"></div>
+                <div class="preloader__cube preloader__cube_3"></div>
+            </div>
+        </div>
 
 		<header ref='header' class="header" :style="{ backgroundImage: `url(${currentAuthorObject.cover})` }">
 
@@ -523,6 +532,8 @@
                     userSocials: [],
                 },
 
+                isPreloader: false,
+
                 loadedUserCover: '',
                 renderedUserCover: '',
                 isUserCoverLoaded: false,
@@ -733,7 +744,9 @@
             },
 
             // ***** Сохранить изменения, внесенные в профиль пользователя *****
-            async submitEditUserHeaderHandler() {
+            async submitEditUserHeaderHandler() {                
+                this.isPreloader = true;
+
                 const formData = new FormData();
                     if (this.loadedUserAvatar.name) formData.append('avatar', this.loadedUserAvatar);
                     if (this.loadedUserCover.name) formData.append('cover', this.loadedUserCover);
@@ -742,8 +755,15 @@
 
                     let changedUserId = this.changedUser.id;
 
-                await this.changeUser( {changedUser: formData, changedUserId: changedUserId} );
-                await this.updateAlbums();
+                try {                    
+                    await this.changeUser( {changedUser: formData, changedUserId: changedUserId} );                
+                    await this.updateAlbums();  
+                } catch (error) {
+                    
+                } finally {
+                    this.isPreloader = false;
+                }
+                
 
                 this.openEditHeader=false;
             },
@@ -1054,6 +1074,7 @@
         border-radius: 15px;
         opacity: 0;
     }
+
 
     .header {
         background-image: linear-gradient(rgba(50, 50, 50, 0.5), rgba(50, 50, 50, 0.3)), url('/img/no_album_cover.jpg');
@@ -1409,12 +1430,12 @@
                     &::after {
                         content: '';
                         position: absolute;
-                        right: 0;
+                        right: 1px;
                         top: 0;
-                        width: 20px;
+                        width: 21px;
                         height: 100%;
                         border-radius: 0 20px 20px 0;
-                        background-color: rgba($color-white, 0.95);
+                        background-color: $color-white;
                         z-index: 50;                        
                     }
                 }
@@ -2196,6 +2217,68 @@
             }
         }
 
+    }
+
+
+    .preloader {
+        $cubeCount: 4;
+        $animationDuration: 2.4s;
+        $delayRange: 1.2s;
+
+        position: fixed;
+        top: 40vh;
+        left: 50%;
+        z-index: 20;
+        width: 100px;
+        height: 100px;
+        margin: auto;
+        transform: translateX(-50%) rotateZ(45deg);
+
+        &__cube {
+            float: left;
+            width: calc(50% - 10px);
+            height: calc(50% - 10px);
+            margin: 5px;
+            position: relative;
+            transform: scale(1.1);
+        }
+
+        &__cube:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba($color-blue, 0.5);
+            animation: folding-cube-angle $animationDuration infinite linear both;
+            transform-origin: 100% 100%;
+        }
+
+        // Rotation / angle
+        @for $i from 2 through $cubeCount {
+            &__cube_#{$i} {
+                transform: scale(1.1) rotateZ(calc(90deg * ($i - 1)));
+            }
+            &__cube_#{$i}:before {
+                animation-delay: calc($delayRange / $cubeCount * ($i - 1));
+            }
+        }
+
+        @keyframes folding-cube-angle {
+            0%, 10% {
+                transform: perspective(140px) rotateX(-180deg);
+                opacity: 0;
+            }
+            25%, 75% {
+                transform: perspective(140px) rotateX(0deg);
+                opacity: 1;
+            }
+            90%, 100% {
+                transform: perspective(140px) rotateY(180deg);
+                opacity: 0;
+            }
+        }
     }
 
 </style>
