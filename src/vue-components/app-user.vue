@@ -7,13 +7,17 @@
             @click="openEditHeader = false"
         ></div>
         <div class="wrapper__preloader" v-if="isPreloader">
-        <!-- <div class="wrapper__preloader"> -->
             <div class="preloader">
                 <div class="preloader__cube preloader__cube_1"></div>
                 <div class="preloader__cube preloader__cube_2"></div>
                 <div class="preloader__cube preloader__cube_4"></div>
                 <div class="preloader__cube preloader__cube_3"></div>
             </div>
+        </div>
+        <div class="wrapper__dropdownWarning" v-if="isDropdownWarning">
+            <div class="dropdown"
+                :class="{'dropdown_showed': isDropdownShowed}"
+            >Файл не был загружен: размер файла более 1024Кб</div>
         </div>
 
 		<header ref='header' class="header" :style="{ backgroundImage: `url(${currentAuthorObject.cover})` }">
@@ -200,6 +204,7 @@
                                     <label class="form-edit-header__label form-edit-header__label_view_scroll">
                                         <textarea class="form-edit-header__input form-edit-header__input_textarea" cols="20" rows="2" placeholder="Краткая информация о пользователе"
                                             v-model="changedUser.description"></textarea>
+                                        <div class="form-edit-header__decorelem"></div>
                                     </label>                                    
                                     <div class="form-edit-header__error form-edit-header__error_description">
                                         <span v-if="!$v.changedUser.description.minLength" v-show="$v.changedUser.description.$invalid">
@@ -266,10 +271,11 @@
                                 <div class="form-edit-header__load-cover">
 
                                     <label for="load-bgcover-header" class="form-edit-header__label form-edit-header__label_file-load">
-                                        <vue-dropzone id="dropzone-edit-cover" 
+                                        <vue-dropzone id="dropzone-edit-cover"
                                             :options="dropzoneOptions"></vue-dropzone>
                                         
                                         <input type="file" id="load-bgcover-header" class="form-edit-header__input-load"
+                                            :disabled="isDropdownShowed"
                                             @change="loadUserCover">
 
                                         <div class="form-edit-header__added-cover" v-if="isUserCoverLoaded"
@@ -533,6 +539,8 @@
                 },
 
                 isPreloader: false,
+                isDropdownWarning: false,
+                isDropdownShowed: false,
 
                 loadedUserCover: '',
                 renderedUserCover: '',
@@ -713,6 +721,7 @@
             },
 
 
+            // ***** Нажата кнопка выйти из профиля (разлогиниться) *****
             logoutUser() {
                 this.logout();
                 this.$router.push('/login');
@@ -736,12 +745,32 @@
 
             // ***** Обработка загрузки обложки для пользователя *****
             loadUserCover(e) {
-                this.loadedUserCover = e.target.files[0];
-                renderer(this.loadedUserCover).then(pic => {                 
-                    this.renderedUserCover = pic;
-                    this.isUserCoverLoaded = true;
-                });
+                if ((e.target.files[0].size/1024) < 1024) {
+                    if (this.isDropdownWarning) {
+                        this.isDropdownWarning = false;
+                        this.isDropdownShowed = false;
+                    }
+                    this.loadedUserCover = e.target.files[0];
+                    renderer(this.loadedUserCover).then(pic => {                 
+                        this.renderedUserCover = pic;
+                        this.isUserCoverLoaded = true;
+                    });
+                }
+                else {
+                    this.isDropdownWarning = true;
+                    setTimeout(() => {
+                        this.isDropdownShowed = true;
+                        setTimeout(() => {
+                            this.isDropdownShowed = false;
+                            this.isDropdownWarning = false;
+                            e.target.value='';
+                        }, 3000);
+                    }, 500);
+                    
+
+                }
             },
+
 
             // ***** Сохранить изменения, внесенные в профиль пользователя *****
             async submitEditUserHeaderHandler() {                
@@ -1409,7 +1438,7 @@
             object-fit: cover;
             width: 100%;
             height: 100%;
-        }
+        }        
 
         &__label {
             font-family: 'Proxima Nova Semibold';
@@ -1421,33 +1450,13 @@
 
                 @include tablets {
                     position: relative;
+                    z-index: 14;
 
-                    & textarea.form-edit-header__input_textarea:active,
-                    & textarea.form-edit-header__input_textarea:focus {
-                        border-right-color: transparent;
-                    }
-
-                    &::after {
-                        content: '';
-                        position: absolute;
-                        right: 1px;
-                        top: 0;
-                        width: 21px;
-                        height: 100%;
-                        border-radius: 0 20px 20px 0;
-                        background-color: $color-white;
-                        z-index: 50;                        
+                    &:active, &:focus {
+                        outline: none;
                     }
                 }
-                    &:active {
-                        .form-edit-header__label_view_scroll::after {
-                            background: red;
-                        }
-                    }
-                    /* &:focus &::after {
-                        border: 1px solid $color-blue;
-                         
-                    }*/
+
             }                
             
             &_file-load {
@@ -1479,18 +1488,33 @@
 
         &__input-load {
             cursor: pointer;
-            opacity: 0;    
+            opacity: 0;
             width: 100%;    
             height: 100%;    
             position: absolute;
             top: 0;
             left: 0;
             font-size: 0;
+
+            &:disabled {
+                cursor: wait;
+            }
+        }
+
+        &__decorelem {
+            position: absolute;
+            right: 1px;
+            top: 0;
+            box-sizing: border-box;
+            width: 21px;
+            height: 100%;
+            border-radius: 0 20px 20px 0;
+            background-color: $color-white;
+            /* z-index: 50; */
         }
 
         &__input {
             @include popup-input;
-            /* margin-top: 5px; */
 
             &_textarea {
                 resize: none;
@@ -1501,6 +1525,12 @@
                     border-radius: 20px 0 0 20px;
                     padding-right: 20px;
                     width: calc(100% - 20px);
+
+                    &:active ~ .form-edit-header__decorelem,
+                    &:focus ~ .form-edit-header__decorelem {
+                        border: 1px solid $color-blue;
+                        border-left: none;
+                    }
                 }
             }
         }
@@ -2279,6 +2309,39 @@
                 opacity: 0;
             }
         }
+    }
+
+    .dropdown {
+        background-color: rgba($color-white, 0.8);
+        color: rgba($color-text, 0.9);
+        padding: 10px 20px;
+        border-radius: 5px;
+
+        position: absolute;
+        top: -40px;
+        right: 50%;
+        transform: translateX(50%);
+        opacity: 0;
+        transition: top 0.2s ease-in;
+
+        &_showed {
+            z-index: 15;
+            opacity: 1;
+            top: 300px;
+
+            @include tablets {
+                top: 40px;                
+            }
+        }
+        
+        @include tablets {
+            right: 5%;
+            transform: translateX(0);
+        }        
+        @include desktopHd {
+            right: max(calc((100% - 1480px)/2),10%);
+        }
+        
     }
 
 </style>
