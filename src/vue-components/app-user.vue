@@ -4,7 +4,8 @@
             @click="openBigCardSlider = openChangeMyAlbum = false"
         ></div>
         <div class="wrapper__overlay wrapper__overlay_white" v-if="openEditHeader"
-            @click="openEditHeader = false"
+            @click="openEditHeader = false; 
+                    socEditCancel();"
         ></div>
         <div class="wrapper__preloader" v-if="isPreloader">
             <div class="preloader">
@@ -15,9 +16,12 @@
             </div>
         </div>
         <div class="wrapper__dropdownWarning" v-if="isDropdownWarning">
-            <div class="dropdown"
-                :class="{'dropdown_showed': isDropdownShowed}"
-            >Файл не был загружен: размер файла более 1024Кб</div>
+            <app-dropdown-warning
+                :textWarning="`Файл не был загружен: размер файла более 1024Кб`"
+                :isDropdownShowed="isDropdownShowed"
+                :styleObj="dropdownStyles"
+            ></app-dropdown-warning>
+
         </div>
 
 		<header ref='header' class="header" :style="{ backgroundImage: `url(${currentAuthorObject.cover})` }">
@@ -219,19 +223,18 @@
                                     </div>
 
                                     <div class="form-edit-header__socials">
-                                       <div class="socials"> 
+                                       <div class="socials">                                           
 
                                             <ul class="socials__list">
-                                                <!-- <li v-for="social in currentAuthorObject.userSocials" :key="social.id" class="socials__item">  -->
-                                                <li v-for="social in socialsFromBase" :key="social.id" class="socials__item"> 
+                                                <li v-for="social in socialsFromBase" :key="social.id" class="socials__item">
                                                     <a
                                                         @mouseenter="socialMouseHandler(social.id, $event)" 
                                                         @mouseleave="socialMouseHandler(social.id, $event)" 
                                                         @click.prevent="socialClickHandler(social.id)" 
-                                                        :class="[`socials__link socials__link_${social.name}`,//id было
+                                                        :class="[`socials__link socials__link_${social.name}`,
                                                                 {'socials__link_active': social.isActive}]"
                                                         :title="social.name"
-                                                    >{{social.name}}<!-- //text было -->
+                                                    >{{social.name}}
                                                         <svg class="socials__icon">
                                                             <use :xlink:href="urlInlineSvgSprite+'#'+`${social.icon}`.slice(0,-4)"></use>
                                                         </svg>
@@ -239,10 +242,10 @@
                                                 </li>
                                             </ul>
 
-                                            <div class="soc-edit"
-                                                ref="soc-edit"
+                                            <div class="soc-edit" ref="soc-edit"
                                                 :class="{'soc-edit_showed' : isActiveSocial}" 
                                                 @mouseleave="socEditMouseLeaveHandler">
+
                                                 <div class="soc-edit__card">
 
                                                     <form class="soc-edit__form"
@@ -476,6 +479,8 @@
     import appBigCard from '../vue-components/app-big-card.vue'
     import appMyAlbum from '../vue-components/app-my-album.vue'
     import appChangeAlbum from '../vue-components/app-change-album.vue'
+    import appDropdownWarning from '../vue-components/app-dropdown-warning.vue'
+    
 
     import { baseStorageUrl } from '../requests.js'; 
 
@@ -495,6 +500,7 @@
 
         components: {
             appCard, appBigCard, appMyAlbum, appChangeAlbum,
+            appDropdownWarning,
             Flickity,            
             vueDropzone: vue2Dropzone,
         },
@@ -511,9 +517,11 @@
 
                 isActiveSocial: false,            
                 currentSocialId: '',
-                windowWidth: 0,
+                socialsFromBase: Array,//!!!!!!!!!!!! это потом тут останется?
                 activeSocialLink: '',
-                socialsFromBase: [],//!!!!!!!!!!!! это потом тут останется?
+
+
+                windowWidth: 0,                
 
                 albumChangeMode: '',
                 toDisabledSubmit: false,
@@ -541,6 +549,19 @@
                 isPreloader: false,
                 isDropdownWarning: false,
                 isDropdownShowed: false,
+
+                dropdownStyles: Object,
+
+                dropdownCoverStyles: {
+                    base: {
+                        right: '50%',
+                        transform: 'translateX(50%)',
+                    },
+                    showed: {
+                        top: '295px',
+                        width: '90%',
+                    },
+                },
 
                 loadedUserCover: '',
                 renderedUserCover: '',
@@ -758,6 +779,7 @@
                 }
                 else {
                     this.isDropdownWarning = true;
+                    this.dropdownStyles = this.dropdownCoverStyles;
                     setTimeout(() => {
                         this.isDropdownShowed = true;
                         setTimeout(() => {
@@ -765,12 +787,10 @@
                             this.isDropdownWarning = false;
                             e.target.value='';
                         }, 3000);
-                    }, 500);
-                    
+                    }, 500);                    
 
                 }
             },
-
 
             // ***** Сохранить изменения, внесенные в профиль пользователя *****
             async submitEditUserHeaderHandler() {                
@@ -792,7 +812,6 @@
                 } finally {
                     this.isPreloader = false;
                 }
-                
 
                 this.openEditHeader=false;
             },
@@ -807,9 +826,10 @@
             },
 
 
+
             // ***** Сохранить изменения адреса соц.сети *****
             submitEditSocialHandler() {
-                console.log(`новая ссылка ${this.activeSocialLink} для социалки ${this.currentSocialId}`);
+                console.log(`новая ссылка ${this.activeSocialLink} для социалки с id ${this.currentSocialId} юзера ${this.currentAuthorObject.name}`);
             },
 
             socEditMouseLeaveHandler() {
@@ -817,37 +837,35 @@
                     this.isActiveSocial = false;
 
                     // this.currentAuthorObject.userSocials.map(social => { 
-                    this.socialsFromBase.map(social => { 
+                    this.socialsFromBase.forEach(social => { 
                         social.isActive = false;
                     });
                 }
             },
 
+            // ***** Кликнули по иконке соц.сети (на мобильном разрешении) *****
             socialClickHandler(socialId) {
                 
                 if (this.windowWidth <= 480) {
                     
                     this.currentSocialId = socialId;
 
-                    // this.currentAuthorObject.userSocials.map(social => { 
-                    this.socialsFromBase.map(social => { 
-                            if (this.currentSocialId) {
-                                if (social.id !== this.currentSocialId) {
-                                    social.isActive = false;
-                                }
-                                else {
-                                    social.isActive = !social.isActive;
-                                    this.isActiveSocial = social.isActive;
-                                    this.activeSocialLink = social.link;
-                                }
-                            }                        
+                    // if (this.currentSocialId) { 
+                    this.socialsFromBase.forEach(social => { 
+                        if (social.id !== this.currentSocialId) {
+                            social.isActive = false;
                         }
-                    );
-
-                }
-            
+                        else {
+                            social.isActive = !social.isActive;
+                            this.isActiveSocial = social.isActive;
+                            this.activeSocialLink = social.link || "https://";
+                        }                     
+                    });
+                    // }
+                }            
             },
 
+            // ***** Обработка событий мыши у иконок соцсетей *****
             socialMouseHandler(socialId, e) { 
 
                 if (this.windowWidth > 480) {
@@ -893,8 +911,11 @@
                 }
             },
 
+            // ***** Закрыть форму редактирования адреса соцсети (без сохранения данных), сделать все иконки не нажатыми *****
             socEditCancel() {
-                //метод по нажатию отмена при редактировании адреса соцсети
+                this.socialsFromBase.forEach(social => social.isActive=false);
+                this.isActiveSocial=false;
+                this.activeSocialLink='';
             },
 
 
@@ -914,35 +935,51 @@
 
             checkWidth() {
 
-                if (this.currentAuthorObject) {
+                // if (this.currentAuthorObject) {
 
                     this.windowWidth = window.innerWidth;
-    
+                    this.isMobile = this.windowWidth < 768;
+
                     if (this.windowWidth > 480) {
-                        if (this.windowWidth < 768) this.isMobile=true;
-                        else this.isMobile=false;
-
                         this.isActiveSocial = false;
-
-                        // if (this.currentAuthorObject.userSocials) this.currentAuthorObject.userSocials.map(social => 
                         if (this.socialsFromBase) this.socialsFromBase.map(social => 
-                            {
-                                social.isActive = false;
-                            }
+                            { social.isActive = false; }
                         );
                     }
-                    else {
-                        this.isMobile=true;
-                    }
-    
-                    if (this.amountLoadedPhotos === 0) {
-                           if (this.amountLoadedPhotos !== 6 && this.windowWidth <= 768) this.amountLoadedPhotos = 6;
-                            else if (this.amountLoadedPhotos !== 4 && this.windowWidth <= 1200) this.amountLoadedPhotos = 4;
-                            else if (this.amountLoadedPhotos !== 6 && this.windowWidth <= 1600) this.amountLoadedPhotos = 6;
-                            else if (this.amountLoadedPhotos !== 8 && this.windowWidth > 1600) this.amountLoadedPhotos = 8;
-                    }
+                    // else {
+                    //     this.isMobile=true;
+                    // }
+                    
+                    // if (this.amountLoadedPhotos === 0) {
 
-                }
+                    switch(true) {
+                        case 'this.windowWidth <= 768': 
+                            if (!this.amountLoadedPhotos) this.amountLoadedPhotos = 6; // устанавливаем кол-во загружаемых фотографий по нажатию кнопки "загрузить еще" (если еще не установлено)
+                            break;
+                        case 'this.windowWidth <= 1200':  
+                            if (!this.amountLoadedPhotos) this.amountLoadedPhotos = 4;
+                            break;
+                        case 'this.windowWidth <= 1600':  
+                            if (!this.amountLoadedPhotos) this.amountLoadedPhotos = 6;
+                            break;
+                        case 'this.windowWidth > 1600':  
+                            if (!this.amountLoadedPhotos) this.amountLoadedPhotos = 8;
+                            break;
+
+                        default:
+                            if (!this.amountLoadedPhotos) this.amountLoadedPhotos = 6;
+                            break;
+                        }
+                    // }
+    
+                    // if (this.amountLoadedPhotos === 0) {
+                        //    if (this.amountLoadedPhotos !== 6 && this.windowWidth <= 768) this.amountLoadedPhotos = 6;
+                        //     else if (this.amountLoadedPhotos !== 4 && this.windowWidth <= 1200) this.amountLoadedPhotos = 4;
+                        //     else if (this.amountLoadedPhotos !== 6 && this.windowWidth <= 1600) this.amountLoadedPhotos = 6;
+                        //     else if (this.amountLoadedPhotos !== 8 && this.windowWidth > 1600) this.amountLoadedPhotos = 8;
+                    // }
+
+                // }
             },
             
             scrollToTop() {
@@ -1053,9 +1090,8 @@
             await this.updateLoggedUser();
             const { data } = await $axios.get(`/v1/socials`);
             this.socialsFromBase = data.socials;
-            this.socialsFromBase.forEach(social => social.isActive = false);
-
-            // console.log('socialsFromBase = ',this.socialsFromBase[1]);
+            this.socialsFromBase.forEach(social => 
+                this.$set(social, 'isActive', false));
 
             this.loadedCardsPush(this.startPhotoLoadingPos);
             window.addEventListener('resize', this.checkWidth);    
@@ -1293,6 +1329,7 @@
 
             @include tablets {
                 width: 60%;
+                max-width: 1200px;
                 padding: 30px 10px 10px 30px;
             }
         }
@@ -1448,15 +1485,12 @@
 
             &_view_scroll {
 
-                @include tablets {
-                    position: relative;
-                    z-index: 14;
+                position: relative;
+                z-index: 14;
 
-                    &:active, &:focus {
-                        outline: none;
-                    }
+                &:active, &:focus {
+                    outline: none;
                 }
-
             }                
             
             &_file-load {
@@ -1502,6 +1536,7 @@
         }
 
         &__decorelem {
+            display: block;
             position: absolute;
             right: 1px;
             top: 0;
@@ -1510,7 +1545,6 @@
             height: 100%;
             border-radius: 0 20px 20px 0;
             background-color: $color-white;
-            /* z-index: 50; */
         }
 
         &__input {
@@ -1518,19 +1552,19 @@
 
             &_textarea {
                 resize: none;
-                height: 84px;                
+                height: 84px;
+                
+                border-radius: 20px 0 0 20px;
+                padding-right: 20px;
+                width: calc(100% - 20px);
 
+                &:active ~ .form-edit-header__decorelem,
+                &:focus ~ .form-edit-header__decorelem {
+                    border: 1px solid $color-blue;
+                    border-left: none;
+                }
                 @include tablets {
                     height: unset;
-                    border-radius: 20px 0 0 20px;
-                    padding-right: 20px;
-                    width: calc(100% - 20px);
-
-                    &:active ~ .form-edit-header__decorelem,
-                    &:focus ~ .form-edit-header__decorelem {
-                        border: 1px solid $color-blue;
-                        border-left: none;
-                    }
                 }
             }
         }
@@ -1692,24 +1726,12 @@
             width: 22px;
             height: 22px;
             border-radius: 5px;
-            margin-right: 5px;
+            margin-right: 15px;
             margin-bottom: 10px;
-
-            /* background-repeat: no-repeat;
-            background-size: 20px;
-            background-position: 50%; */
 
             @include tablets {
                 margin-right: 10px;
             }
-
-            /* 
-            &_vk {		
-                background-image: svg-load('soc_vk.svg', fill=rgba(#{$color-white}, 0.8));
-                    &:hover, &:active, &:focus {
-                        background-image: svg-load('soc_vk.svg', fill=rgba(#{$color-white}, 0.95));
-                    }
-            } */
             
             &_active {
                 position: relative;
@@ -1753,15 +1775,6 @@
                     fill: rgba(#{$color-white}, 0.95);
                 }
             }
-            /* &:hover {
-                box-sizing: content-box;
-                border-bottom: 10px solid transparent;
-                margin-bottom: 0px;
-                z-index: 20;
-            }
-            &:hover, &:active, &:focus {
-                background-size: 22px;
-            } */
 
         }
 
@@ -2311,10 +2324,10 @@
         }
     }
 
-    .dropdown {
+    /* .dropdown {
         background-color: rgba($color-white, 0.8);
         color: rgba($color-text, 0.9);
-        padding: 10px 20px;
+        padding: 10px 15px;
         border-radius: 5px;
 
         position: absolute;
@@ -2323,14 +2336,17 @@
         transform: translateX(50%);
         opacity: 0;
         transition: top 0.2s ease-in;
+        
 
         &_showed {
             z-index: 15;
             opacity: 1;
-            top: 300px;
+            top: 295px;
+            width: 90%;
 
             @include tablets {
-                top: 40px;                
+                top: 40px;
+                width: unset;
             }
         }
         
@@ -2342,6 +2358,6 @@
             right: max(calc((100% - 1480px)/2),10%);
         }
         
-    }
+    } */
 
 </style>
