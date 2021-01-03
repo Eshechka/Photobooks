@@ -30,7 +30,7 @@
 
 
 <script >
-	import axios from '../requests.js';
+	// import axios from '../requests.js';
 	import { baseStorageUrl } from '../requests.js';	
     export default {
         props: {

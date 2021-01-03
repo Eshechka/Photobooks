@@ -33,14 +33,14 @@
                 </div>
 
 
-                <div class="header__user" :class="{header__user_scrolled : isScrolledHeader}" v-if="!openBigMyPhoto">
+                <div class="header__user" :class="{header__user_scrolled : isScrolledHeader}">
                     <div class="header__avatar">
                         <div class="avatar">
                             <img class="avatar__img" :src='currentAlbumObject.author.avatar ? `${urlAvatars}/${currentAlbumObject.author.avatar}` : require("../img/no_avatar.png").default' alt="avatar">
                         </div>
                     </div>
-                    <h1 class="header__title" v-if="isScrolledHeader"> {{currentAlbumObject.title}} </h1>
-                    
+
+                    <h1 class="header__title" v-if="isScrolledHeader"> {{currentAlbumObject.title}} </h1>                    
                     <h1 class="header__title" v-else> {{currentAlbumObject.author.name}} </h1>
 
                 </div>
@@ -55,9 +55,8 @@
             <div class="header__album-info">
                 <div class="header__album-info-wrapper">					
                     <div class="header__info-button header__info-button_photos"> {{+thisAlbumPhotos.length}} </div>
-                    <div class="header__info-button header__info-button_likes"> {{+thisAlbumPhotos.reduce((sum, myPhoto) => sum + myPhoto.likeCount, 0)}} </div>
-                    <!-- !!!! раскомментить как будут готовы лайки <div class="header__info-button header__info-button_likes"> {{+thisAlbumPhotos.reduce((sum, myPhoto) => sum + myPhoto.likes.length, 0)}} </div> -->
-                    <div class="header__info-button header__info-button_comments"> {{commentCount}} </div>
+                    <div class="header__info-button header__info-button_comments"> {{albumLikeCount}} </div>
+                    <div class="header__info-button header__info-button_comments"> {{albumCommentCount}} </div>
                 </div>
             </div>
             
@@ -333,11 +332,17 @@
                                             </div>
 
                                             <div class="form-addPhoto__error form-addPhoto__error_validphotos">
-                                                <span v-show="!isAllPhotosValid">
+                                                <!-- <span v-show="!isAllPhotosValid && renderedPhotos.length">
                                                     Необходимо действие: Добавьте название и описание для загружаемых фотографий.
                                                 </span>
                                                 <span v-show="isAllPhotosValid && !renderedPhotos.length">
                                                     Можно загрузить максимум 5 фотографий, размером не более 1024 Кб каждая.
+                                                </span>
+                                                <span v-show="!isAllPhotosValid && !renderedPhotos.length">
+                                                    Не удалось загрузить файл(ы). Размер загружаемого файла не более 1024 Кб.
+                                                </span> -->
+                                                <span v-show="!isAllPhotosValid || !renderedPhotos.length">
+                                                    {{addPhotoWarningText}}
                                                 </span>
                                             </div>
                                     
@@ -377,7 +382,7 @@
                         </flickity>
 
                             <button title="Закрыть слайдер" class="big-card-slider__control big-card-slider__control_close" type="button"
-                                @click="clickCloseSlider"
+                                @click="openBigMyPhoto=false"
                             ></button>
 
                         <button type="button" class="big-card-slider__control big-card-slider__control_prev"
@@ -432,7 +437,7 @@
 
     import renderer from '../renderer.js';
 
-    import axios from '../requests.js';
+    // import axios from '../requests.js';
 
     import { baseStorageUrl } from '../requests.js';
 
@@ -517,13 +522,16 @@
                 addedPhotos: [],
 
                 titleDisabledBtnAddPhoto: 'Необходимо добавить фотографии',
+                addPhotoWarningText: 'Можно загрузить максимум 5 фотографий, размером не более 1024 Кб каждая.',
 
+                // ----- изменения высоты страницы и значения прокрутки для корректного отображения слайдера
                 heightHeaderFooterMobile: 0,
-                
                 heightSectionForSlider: `unset`,
                 scrolledWhenSliderOpened: 0,
-                // ----- сумма комментариев во всех фотографиях этого альбома
-                commentCount: Number,
+
+                // ----- сумма комментариев/лайков во всех фотографиях этого альбома
+                albumCommentCount: Number,
+                albumLikeCount: Number,
 
                 dropzoneOptions: {
                     url: 'https://httpbin.org/post',
@@ -565,7 +573,7 @@
                 return this.$route.params.albumid;
             },            
 
-            isMoile() {
+            isMobile() {
                 return window.innerWidth < 768;
             }
             
@@ -603,6 +611,11 @@
             currentAlbum(value) {
                 this.currentAlbumObject = {...value};
             },
+            idCurrentAlbum() {
+                this.refreshAlbumCards(this.idCurrentAlbum);
+                this.refreshThisAlbum(this.idCurrentAlbum);
+                this.openEditPhoto=this.openAddPhoto=this.openEditHeader=this.openBigMyPhoto=this.openConfirmDeletePhoto=false;
+            },
             async openBigMyPhoto(value) {
                 if (value) {
                     this.heightSectionForSlider = `calc(100vh + 160px + 510px - ${this.heightHeaderFooterMobile}px)`;
@@ -614,7 +627,22 @@
                     while (window.pageYOffset!==this.scrolledWhenSliderOpened) {
                         await window.scrollTo({ top: `${this.scrolledWhenSliderOpened}` });                      
                     }
-                    this.commentCount = +this.thisAlbumPhotos.reduce((sum, photo) => sum + photo.comments.length, 0);//!!!!!!! тут потом также должны добавиться лайки
+                    this.albumCommentCount = +this.thisAlbumPhotos.reduce((sum, photo) => sum + photo.comments.length, 0);
+                    this.albumLikeCount = +this.thisAlbumPhotos.reduce((sum, photo) => sum + photo.likes.length, 0);
+                    await this.clickCloseSlider();
+                }
+            },
+
+            openAddPhoto(value) {
+                if (!value) {
+                    this.renderedPhotos = [];
+                    this.loadedPhotos = [];
+                    this.isNewPhotosEditing = false;
+                    this.titleDisabledBtnAddPhoto = 'Необходимо добавить фотографии';
+                    this.addPhotoWarningText = 'Можно загрузить максимум 5 фотографий, размером не более 1024 Кб каждая.';
+
+                    this.isPhotosLoaded = false;
+                    this.isAllPhotosValid = true;
                 }
             },
 
@@ -644,25 +672,33 @@
                     else {
                         notLoadedFiles++;
                     }
-
                 }
 
-                this.loadedPhotos.forEach(photo => {
-
-                    renderer(photo).then(pic => {
+                if (this.loadedPhotos.length === 0) {
+                    this.titleDisabledBtnAddPhoto = 'Не удалось загрузить файл(ы). Максимальный размер загружаемого файла 1024Кб';
+                    this.addPhotoWarningText = `Максимальный размер загружаемого файла 1024Кб. Количество не загруженных файлов: ${notLoadedFiles}`;
+                } else {
+                    this.loadedPhotos.forEach(photo => {
                         
-                        this.renderedPhotos[id].pic = pic;
-                        photo.title='';
-                        photo.id=id;
-                        photo.description='';
-                        id++;
-                    
-                        if (id === loadedPhotosIndex) this.isPhotosLoaded = !this.isPhotosLoaded;
-                        // if (id === photosAmount) this.isPhotosLoaded = !this.isPhotosLoaded;
-                    })                    
-                });
-                this.isAllPhotosValid = false;
-                this.titleDisabledBtnAddPhoto = 'Для отправки необходимо добавить названия и описания для всех фотографий';
+                        renderer(photo).then(pic => {
+                            
+                            this.renderedPhotos[id].pic = pic;
+                            photo.title='';
+                            photo.id=id;
+                            photo.description='';
+                            id++;
+                        
+                            if (id === loadedPhotosIndex) this.isPhotosLoaded = !this.isPhotosLoaded;
+                        })                    
+                    });
+                    this.titleDisabledBtnAddPhoto = 'Для отправки необходимо добавить названия и описания для всех фотографий';
+                    this.addPhotoWarningText = notLoadedFiles 
+                                ? `Необходимо добавить названия и описания для загруженных фотографий. Количество не загруженных файлов: ${notLoadedFiles}. Можно загрузить максимум 5 фотографий, размером не более 1024 Кб каждая.`
+                                : `Необходимо добавить названия и описания для всех фотографий.`;
+                    this.isAllPhotosValid = false;
+                }
+
+                
             },
 
             // ***** Редактирование фото по клику иконки edit ******
@@ -686,7 +722,8 @@
                     if (this.renderedPhotos.length == 0) {
                         this.isPhotosLoaded = !this.isPhotosLoaded;
                         this.isAllPhotosValid = true;
-                        this.titleDisabledBtnAddPhoto = '';
+                        this.titleDisabledBtnAddPhoto = 'Необходимо добавить фотографии';
+                        this.addPhotoWarningText = 'Можно загрузить максимум 5 фотографий, размером не более 1024 Кб каждая.';          
                     }
             },
 
@@ -706,13 +743,7 @@
 
             // ***** Закрыть форму добавления фото по клику иконки close или кнопки "отменить" ******
             closeAddedPhotosHandler() {
-                this.renderedPhotos = [];
-                this.loadedPhotos = [];
-                this.isPhotosLoaded = false;
-                this.openAddPhoto = false;
-                this.isNewPhotosEditing = false;
-                this.isAllPhotosValid = true;
-                this.titleDisabledBtnAddPhoto = '';
+                this.openAddPhoto = false;                
             },
 
             // ***** Сохранение всех фото по клику "сохранить" ******
@@ -728,9 +759,6 @@
                             formData.append('photo', photo);
                             formData.append('title', photo.title);
                             formData.append('description', photo.description);
-                            formData.append('commentCount', 0);//!!!!! потом поменяй поля, оставь только те, которые останутся в итоге в фотке
-                            formData.append('likeCount', 0);//!!!!! потом поменяй поля, оставь только те, которые останутся в итоге в фотке
-                            formData.append('isLikedByMe', 0);
                             formData.append('authorId', this.currentAlbumObject.author.id);
                             formData.append('albumId', this.currentAlbumObject.id);
 
@@ -739,10 +767,7 @@
                             this.isPhotosLoaded = false;
                         });
 
-                    this.isNewPhotosEditing = false;
-                    this.renderedPhotos = [];
-                    this.loadedPhotos = [];
-                    this.openAddPhoto=false;
+                    this.openAddPhoto = false;
                     
                     }
                     else {
@@ -813,7 +838,8 @@
 
             // ***** Открыть фотографию в слайдере по клику *****
             clickMyPhotoHandler(myPhotoObject) {
-                if (!this.isMoile) this.bigCardSliderTop = window.pageYOffset + 50;
+                if (!this.isMobile) this.bigCardSliderTop = 150;
+                // if (!this.isMobile) this.bigCardSliderTop = window.pageYOffset + 50;
                 let photoIndex = 0;
                 
                 this.thisAlbumPhotos.find(photo => {
@@ -919,7 +945,6 @@
             async clickCloseSlider() {
                 await this.refreshAlbumCards(this.idCurrentAlbum);
                 await this.refreshThisAlbum(this.idCurrentAlbum);
-                this.openBigMyPhoto=false;
             },
 
             next() {
@@ -931,13 +956,6 @@
             }
         },
 
-        watch: {
-            idCurrentAlbum() {
-                this.refreshAlbumCards(this.idCurrentAlbum);
-                this.refreshThisAlbum(this.idCurrentAlbum);
-                this.openEditPhoto=this.openAddPhoto=this.openEditHeader=this.openBigMyPhoto=this.openConfirmDeletePhoto=false;
-            },
-        },
 
         async created () {
             await this.updateLoggedUser();
@@ -946,6 +964,8 @@
             this.currentAlbumObject = {...this.currentAlbum};
             this.currentAlbumObject.preview = this.currentAlbumObject.preview ? this.currentAlbumObject.preview : '../img/no_album_cover.jpg';
             this.changedAlbum = {...this.currentAlbumObject};
+            this.albumCommentCount = +this.thisAlbumPhotos.reduce((sum, photo) => sum + photo.comments.length, 0);
+            this.albumLikeCount = +this.thisAlbumPhotos.reduce((sum, photo) => sum + photo.likes.length, 0);
         },
 
         mounted() {
@@ -953,8 +973,7 @@
             this.loggedUserObject.id = localStorage.getItem('userId');
             if (this.header && this.footer) { 
                 this.heightHeaderFooterMobile = parseFloat(getComputedStyle(this.header).height) + parseFloat(getComputedStyle(this.footer).height);
-            };
-            this.commentCount = +this.thisAlbumPhotos.reduce((sum, photo) => sum + photo.comments.length, 0);
+            };            
         },
 
     }

@@ -285,8 +285,21 @@ $icons-changing: (home, edit, logout);
 		color: $color-white;
 
 		&.disabled, &:disabled {
-			background-color: rgba($color-text, 0.3);
-			border: 2px solid rgba($color-blue, 0.3);
+			background-color: rgba($color-carrot, 0.8);
+			color: rgba($color-white, 0.5);
+			cursor: wait;
+
+			& .button__icon {
+				@each $icon in $icons {
+					&_#{$icon} {
+						background-image: svg-load('#{$icon}.svg', fill=rgba(#{$color-white}, 0.5), height='20px')
+					}
+				}
+
+				&_heart {
+					background-image: svg-load('heart.svg', viewBox='53 56 22 17', height='18px', fill=rgb(238, 70, 52), stroke-width=2px, stroke=rgba(#{$color-white}, 0.5));
+				}
+			}
 		}
 		&:not(:disabled):hover,
 		&:not(:disabled):active,

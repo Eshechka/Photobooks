@@ -22,9 +22,8 @@
                 <div class="card__desc-title"> {{cardObject.title}} </div>
 
                 <div class="card__signs-wrapper">
-                    <div class="card__signs card__signs_comments card__signs_mini">{{cardObject.comments.length}}</div>
-                    <div class="card__signs card__signs_likes card__signs_mini">{{cardObject.likeCount}}</div>
-                    <!--!!!!!!! это расскомментить, как будут готовы лайки <div class="card__signs card__signs_likes card__signs_mini">{{cardObject.likes.length}}</div> -->
+                    <div class="card__signs card__signs_comments card__signs_mini">{{cardObject.commentsCount}}</div>
+                    <div class="card__signs card__signs_likes card__signs_mini">{{cardObject.likesCount}}</div>
                 </div>
 
             </div>

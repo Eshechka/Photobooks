@@ -75,88 +75,6 @@
                 </div>
             </div>
 
-            <!-- <div class="header__edit-profile" v-if="openEditProfile">
-
-                <div class="edit-profile">{{edit-profile}}
-
-                    <div class="edit-profile__card">
-
-                        <div class="edit-profile__topgroup">
-                            <h4 class="edit-profile__title">Редактировать профиль</h4>
-                            <button type="button" class="edit-profile__button edit-profile__button_close"></button>
-                        </div>
-                        
-                        <div class="edit-profile__form">
-                            
-                            <form class="form-edit-profile">
-
-                                <label class="form-edit-profile__label">Имя
-                                    <input class="form-edit-profile__input" type="text" placeholder="Антон">
-                                </label>
-
-                                <label class="form-edit-profile__label">О себе
-                                    <textarea class="form-edit-profile__input form-edit-profile__input_textarea" cols="20" rows="5" placeholder="Описание альбома"></textarea>
-                                </label>                        
-
-                                <div class="form-edit-profile__load-image">
-
-                                    <div class="form-edit-profile__img-wrapper">
-                                        <img class="form-edit-profile__img" :src="`${urlAvatars}/${currentAuthorObject.avatar}`" alt="avatar image">
-                                    </div>
-
-                                    <div class="form-edit-profile__button">
-                                        <button title="Загрузить фотографию" class="button button_icon button_size_m button_theme_light" type="button">Загрузить фотографию</button>
-                                         <div class="form-edit-profile__notice-size">(файл должен быть размером не более 512 КБ)</div>
-                                    </div>
-
-                                </div>                        
-
-                                <div class="form-edit-profile__load-image">
-
-                                    <div class="form-edit-profile__img-wrapper">
-                                        <img class="form-edit-profile__img" :src='currentAuthorObject.cover' alt="background cover image">
-                                    </div>
-
-                                    <div class="form-edit-profile__button">
-                                        <button title="Загрузить фон" class="button button_icon button_size_m button_theme_light" type="button">Загрузить фон</button>
-                                        <div class="form-edit-profile__notice-size">(файл должен быть размером не более 1024 КБ)</div>
-                                    </div>
-
-                                </div>
-
-                                <div class="form-edit-profile__socials">
-
-                                    <label class="form-edit-profile__label">Вконтакте
-                                        <input class="form-edit-profile__input" type="text">
-                                    </label>
-                                    <label class="form-edit-profile__label">Facebook
-                                        <input class="form-edit-profile__input" type="text">
-                                    </label>
-                                    <label class="form-edit-profile__label">Email
-                                        <input class="form-edit-profile__input" type="text">
-                                    </label>
-                                    <label class="form-edit-profile__label">Twitter
-                                        <input class="form-edit-profile__input" type="text">
-                                    </label>
-
-                                </div>
-                                
-                                <div class="form-edit-profile__buttons">
-                                    <button class="button button_size_m" type="submit">Сохранить</button>
-                                    <button class="button button_size_m button_theme_minimalizm" type="button"
-                                        @click="cancelChangeProfile"
-                                    >Отменить</button>
-                                </div>
-
-                            </form>
-                        </div>      
-
-                    </div>
-
-                </div>
-
-            </div> -->
-
             <div class="header__edit-header" v-if="openEditHeader">
 
                 <div class="edit-header">
@@ -517,7 +435,7 @@
 
                 isActiveSocial: false,            
                 currentSocialId: '',
-                socialsFromBase: Array,//!!!!!!!!!!!! это потом тут останется?
+                socialsFromBase: [],
                 activeSocialLink: '',
 
 
@@ -591,8 +509,11 @@
                     name: '',
                     description: '',                    
                 },
+
+                // ----- изменения высоты страницы и значения прокрутки для корректного отображения слайдера
                 heightHeaderFooterMobile: 0,
                 heightSectionForSlider: `unset`,
+                scrolledWhenSliderOpened: 0,
 
                 searched: '',
                 emptySearch: false,
@@ -674,10 +595,8 @@
                     case 'Escape':
                         if (this.openEditHeader) this.cancelEditHeaderHandler();
                         if (this.openChangeMyAlbum) this.cancelChangeMyAlbum();
-                        // if (this.openEditProfile) this.cancelChangeProfile();
                         break;
                 }
-                    // console.log('e =',e);
             },
 
             // ***** Нажата кнопка добавить новый альбом *****
@@ -697,11 +616,6 @@
             cancelChangeMyAlbum() {
                 this.openChangeMyAlbum=false;
             },
-
-            // ***** Закрыть форму редактирования без сохранения изменений *****
-            // cancelChangeProfile() {
-            //     this.openEditProfile=false;
-            // },
 
             // ***** Нажата кнопка сохранить изменения (2 режима: добавить новый альбом / редактировать альбом) *****
             async submitChangeMyAlbum(data, mode) {
@@ -747,7 +661,6 @@
                 this.logout();
                 this.$router.push('/login');
             },
-
 
             // ***** Нажата кнопка редактирования профиля пользователя *****
             editUserHeaderHandler() {
@@ -826,24 +739,23 @@
             },
 
 
-
             // ***** Сохранить изменения адреса соц.сети *****
             submitEditSocialHandler() {
                 console.log(`новая ссылка ${this.activeSocialLink} для социалки с id ${this.currentSocialId} юзера ${this.currentAuthorObject.name}`);
             },
 
+            // ***** Обработка события ухода мыши с формы редактирования соцсетей *****
             socEditMouseLeaveHandler() {
                 if (this.windowWidth > 480) {
                     this.isActiveSocial = false;
 
-                    // this.currentAuthorObject.userSocials.map(social => { 
                     this.socialsFromBase.forEach(social => { 
                         social.isActive = false;
                     });
                 }
             },
 
-            // ***** Кликнули по иконке соц.сети (на мобильном разрешении) *****
+            // ***** Клик по иконке соц.сети (на мобильном разрешении) *****
             socialClickHandler(socialId) {
                 
                 if (this.windowWidth <= 480) {
@@ -899,11 +811,11 @@
                         }
                         
                         if (elem !== this.socEdit) {
-                            // this.currentAuthorObject.userSocials.map(social => { 
-                            this.socialsFromBase.map(social => { 
-                                social.isActive = false;
-                            });
-                            this.isActiveSocial = false;
+                            this.socEditCancel();
+                            // this.socialsFromBase.forEach(social => { 
+                            //     social.isActive = false;
+                            // });
+                            // this.isActiveSocial = false;
                         }
 
                     }
@@ -920,7 +832,8 @@
 
 
             // ***** Клик по фотографии (открытие слайдера) *****
-            cardClickHandler(cardId) {
+            async cardClickHandler(cardId) {
+                // await this.updateCards();
 
                 let photoIndex = 0;
 
@@ -935,8 +848,6 @@
 
             checkWidth() {
 
-                // if (this.currentAuthorObject) {
-
                     this.windowWidth = window.innerWidth;
                     this.isMobile = this.windowWidth < 768;
 
@@ -946,11 +857,6 @@
                             { social.isActive = false; }
                         );
                     }
-                    // else {
-                    //     this.isMobile=true;
-                    // }
-                    
-                    // if (this.amountLoadedPhotos === 0) {
 
                     switch(true) {
                         case 'this.windowWidth <= 768': 
@@ -970,16 +876,6 @@
                             if (!this.amountLoadedPhotos) this.amountLoadedPhotos = 6;
                             break;
                         }
-                    // }
-    
-                    // if (this.amountLoadedPhotos === 0) {
-                        //    if (this.amountLoadedPhotos !== 6 && this.windowWidth <= 768) this.amountLoadedPhotos = 6;
-                        //     else if (this.amountLoadedPhotos !== 4 && this.windowWidth <= 1200) this.amountLoadedPhotos = 4;
-                        //     else if (this.amountLoadedPhotos !== 6 && this.windowWidth <= 1600) this.amountLoadedPhotos = 6;
-                        //     else if (this.amountLoadedPhotos !== 8 && this.windowWidth > 1600) this.amountLoadedPhotos = 8;
-                    // }
-
-                // }
             },
             
             scrollToTop() {
@@ -1070,14 +966,25 @@
                 this.updateAlbums();
                 this.openBigCardSlider=this.openEditHeader=this.openChangeMyAlbum=false;
             },
-            openBigCardSlider(value) {
+            async openBigCardSlider(value) {
                 if (value) {
                     this.heightSectionForSlider = `calc(100vh + 160px + 510px - ${this.heightHeaderFooterMobile}px)`;
+                    this.scrolledWhenSliderOpened = window.pageYOffset;
+                    window.scrollTo({ top: 0 });
                 }
                 else {
                     this.heightSectionForSlider = `unset`;
+                    while (window.pageYOffset!==this.scrolledWhenSliderOpened) {
+                        await window.scrollTo({ top: `${this.scrolledWhenSliderOpened}` });                      
+                    }
+                    await this.updateCards();
+                    for (let i=0; i<this.startPhotoLoadingPos; i++) {
+                        this.loadedCards[i] = this.cards[i];
+                    }
+
                 }
             },
+
             isMobile(value) {
                 if (value) this.bigCardSliderTop = 0;
                 else this.bigCardSliderTop = window.pageYOffset + 40;

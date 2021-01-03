@@ -17,9 +17,10 @@
 
                 <div class="big-card__likes">
                     <button type="button" class="button button_icon button_size_m button_theme_carrot big-card__button-likes"
-                        @click.prevent="plusMyLike"
+                        @click.prevent="toggleMyLike"
+                        :disabled="isDisabledLike"
                         :class="{'big-card__button-likes_active' : isActiveLike}">
-                        <span class="button__text">{{cardObject.likeCount}}</span>
+                        <span class="button__text">{{cardObject.likesCount}}</span>
                         <span class="button__icon button__icon_heart"></span>
                     </button>
                 </div>
@@ -76,7 +77,8 @@
                         </div>
                 </div>
 
-                <div class="big-card__users-comments">
+                <div class="big-card__users-comments"
+                    :style="{height: heightUsersComments}">
 
                     <ul class="users-comments">
                         <li v-for="comment in comments" :key="comment.id" class="users-comments__item">
@@ -136,8 +138,6 @@
 <script >
     import { mapState, mapActions } from 'vuex';
 
-    import likes from '../json/likes';
-
     import $axios from '../requests';
 
     import { required, minLength, maxLength } from 'vuelidate/lib/validators';
@@ -157,14 +157,11 @@
                 urlAvatars: baseStorageUrl+'/avatars',
 
                 // ----- лайки -----
-                likes: likes,
                 isActiveLike: false,
-                // isActiveLike: this.cardObject.isLikedByMe,
-                // activeLike: [],
-                // isActiveLike: false,
-                // nowlikes: this.cardObject.likes,
+                isDisabledLike: false,
 
                 // ----- комментарии -----
+                heightUsersComments: '200px',
                 comments: [],
                 isVisibleMyComment: true,
                 openCommentEditing: false,
@@ -288,25 +285,34 @@
             // ***** Скрыть/отобразить форму добавления комментария *****
             myCommentVisibleHandle() {
                 this.isVisibleMyComment=!this.isVisibleMyComment;
-                if (this.isVisibleMyComment)
+                if (this.isVisibleMyComment) {
                     this.myCommentToggler.style.transform = 'rotate(90deg)';
-                else
+                    this.heightUsersComments = '200px';
+                }
+                else {
                     this.myCommentToggler.style.transform = 'rotate(270deg)';
+                    this.heightUsersComments = '360px';
+                }
             },
 
 
 
-            plusMyLike() {
+            async toggleMyLike() {
+                this.isDisabledLike = true;
                 this.isActiveLike = !this.isActiveLike;
-                if (this.isActiveLike) { //лайк поставили
-                    this.cardObject.likeCount++; //!!!!!!!!!!!!!!!!!!!!!!!! нужно поле кол-во лайков в card?
-                    //!!!!!!!!!!!!!!!!!!!!!!!!!запрос на сервер
-                }
-                // else if (!this.isActiveLike && this.activeLike) { //лайк сняли
-                else { //лайк сняли
-                    this.cardObject.likeCount--;
-                    //!!!!!!!!!!!!!!!!!!!!!!!!!!!!запрос на сервер
-                }
+                try {
+                    await $axios.post(`/v1/photos/${this.cardObject.id}/likes`);
+                    if (this.isActiveLike) { //лайк поставили
+                        this.cardObject.likesCount++;
+                    }
+                    else { //лайк сняли
+                        this.cardObject.likesCount--;
+                    }
+                } catch {
+                    console.log('Error');
+                } finally {
+                    this.isDisabledLike = false;
+                }                
             },
 
 
@@ -337,15 +343,14 @@
         },
 
         async created() {
-            await this.updatePhotoComments(this.cardObject.id);            
+            await this.updatePhotoComments(this.cardObject.id);
             this.comments = this.commentsCurrentPhoto;
             document.addEventListener('keydown', this.keyDownHandle);
         },
-        mounted() {
-            let thisCardLikes = this.likes.filter(like => (like.photoId == this.cardObject.id));
-            this.cardObject.likeCount = thisCardLikes.length;
-            this.isActiveLike = thisCardLikes.find(like => (like.userId == this.loggedUserObject.id));
-            // console.log('this.isActiveLike = ',this.isActiveLike);
+        async mounted() {
+            let thisCardLikes = this.cardObject.likes || [];
+            console.log('thisCardLikes = ',thisCardLikes);
+            this.isActiveLike = thisCardLikes.find(like => like == this.loggedUserObject.id);
             this.splitDescriptionWithHashtags(this.cardObject.description);
         },
 
@@ -371,7 +376,6 @@
             display: flex;
             flex-direction: column;
             background-color: transparent;
-            /* height: 100vh; */
 
             @include tablets {
                 height: unset;
@@ -472,11 +476,21 @@
                 & .button__icon {
                     background-image: svg-load('heart.svg', viewBox='53 56 22 17', height='18px', fill=rgba(#{$color-white}, 0.95), stroke-width=2px, stroke=rgb(238, 70, 52));
                 }
+                &:disabled {
+                    cursor: wait;
+                    background-color: rgba(#{$color-carrot}, 0.8);
+                    color: rgba(#{$color-white}, 0.5);
+
+                    .button__icon {
+                        background-image: svg-load('heart.svg', viewBox='53 56 22 17', height='18px', fill=rgba(#{$color-white}, 0.5), stroke-width=2px, stroke=rgb(238, 70, 52));
+                    }  
+                }
             }
 
             &:active, &:focus {
                 outline: none;
             }
+            
         }
 
         &__desc {

@@ -8,14 +8,12 @@
             ></div>
 		
 			<div class="my-photo__comments-likes-wrapper">					
-				<div class="my-photo__info-button my-photo__info-button_comments">{{myPhotoObject.comments.length}}</div>
-				<div class="my-photo__info-button my-photo__info-button_likes">{{myPhotoObject.likeCount}}</div>
-				<!--!!!!!!! это расскомментить, как будут готовы лайки <div class="my-photo__info-button my-photo__info-button_likes">{{myPhotoObject.likes.length}}</div> -->
+				<div class="my-photo__info-button my-photo__info-button_comments">{{myPhotoObject.commentsCount}}</div>
+				<div class="my-photo__info-button my-photo__info-button_likes">{{myPhotoObject.likesCount}}</div>
 			</div>
 		</div>
 
 		<div class="my-photo__name-wrapper">
-			<!-- <button title="Редактировать фотографию" type="button" class="my-photo__button my-photo__button_edit" v-if="myPhotoObject.author.id==loggedUserObject.id" -->
 			<button title="Редактировать фотографию" type="button" class="button button_icon button_size_s button_theme_controls" v-if="myPhotoObject.author.id==loggedUserObject.id"
                 @click="$emit('click-edit-my-photo', myPhotoObject)">
                 <span class="button__icon button__icon_edit"></span>
