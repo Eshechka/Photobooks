@@ -16,7 +16,7 @@ export default {
         async refreshAuthor(store, authorId) {
             try {               
                 const { data } = await $axios.get(`/v1/authors/${authorId}`,
-                    { params: {'include':`albums`} },
+                    { params: {'include':`albums,socials`} },
                     {'Content-Type': 'application/json'}
                 );
                 if (data.author) store.commit('SET_AUTHOR', data.author);

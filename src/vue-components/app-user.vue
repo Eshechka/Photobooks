@@ -49,7 +49,7 @@
                         <span class="button__icon button__icon_home"></span>
                     </router-link>
                 </div>
-
+                
                 <div class="header__avatar">
                     <img class="header__avatar-img" :src='currentAuthorObject.avatar ? `${urlAvatars}/${currentAuthorObject.avatar}` : require("../img/no_avatar.png").default' alt="avatar">
                 </div>
@@ -61,16 +61,23 @@
                     </div>
 
                     <div class="header__socials">
-                        <ul class="socials__list">
-                            <li class="socials__item"
-                                v-for="social in currentAuthorObject.userSocials" :key="social.id">
-                                <a class="socials__link" target="blank"
-                                    :class="`socials__link_${social.name}`"
-                                    :href="social.link"                                
-                                >{{social.text}}</a>
-                            </li>
-                        </ul>
-
+                        <div class="socials socials_no_edit">
+                            <ul class="socials__list">
+                                <li class="socials__item"
+                                    v-for="social in currentAuthorObject.socials" :key="social.id">
+                                    <a class="socials__link" 
+                                        :target="socialsFromBase.find(soc => soc.id === social.social_id).name==='Email' ? `` : `blank`"
+                                        :class="'socials__link_'+socialsFromBase.find(soc => soc.id === social.social_id).name"
+                                        :href="socialsFromBase.find(soc => soc.id === social.social_id).name==='Email' ? `mailto:${social.link}` : social.link"
+                                    >{{socialsFromBase.find(soc => soc.id === social.social_id).name}}
+                                        <!-- :href="social.name==`Email` ? `mailto:${social.link}` : social.link" -->
+                                            <svg class="socials__icon">
+                                                <use :xlink:href="urlInlineSvgSprite+'#'+`${socialsFromBase.find(soc => soc.id === social.social_id).icon}`.slice(0,-4)"></use>
+                                            </svg>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -145,9 +152,9 @@
 
                                             <ul class="socials__list">
                                                 <li v-for="social in socialsFromBase" :key="social.id" class="socials__item">
-                                                    <a
+                                                    <a  
                                                         @mouseenter="socialMouseHandler(social.id, $event)" 
-                                                        @mouseleave="socialMouseHandler(social.id, $event)" 
+                                                        @mouseleave="socialMouseHandler(social.id, $event)"                                                       
                                                         @click.prevent="socialClickHandler(social.id)" 
                                                         :class="[`socials__link socials__link_${social.name}`,
                                                                 {'socials__link_active': social.isActive}]"
@@ -160,7 +167,7 @@
                                                 </li>
                                             </ul>
 
-                                            <div class="soc-edit" ref="soc-edit"
+                                            <div class="soc-edit" ref="socedit"
                                                 :class="{'soc-edit_showed' : isActiveSocial}" 
                                                 @mouseleave="socEditMouseLeaveHandler">
 
@@ -169,11 +176,25 @@
                                                     <form class="soc-edit__form"
                                                         @submit.prevent="submitEditSocialHandler">
                                                         
-                                                        <input  type="text" class="soc-edit__input"
+                                                        <input type="text" class="soc-edit__input"
+                                                            :title="activeSocialLink ? `Для удаления соц.сети очистите поле и нажмите сохранить` : ''"
                                                             v-model="activeSocialLink">
+                                                        <div class="soc-edit__error soc-edit__error_link">
+                                                            <span v-if="!$v.activeSocialLink.minLength" v-show="$v.activeSocialLink.$invalid">
+                                                                Минимум символов в адресе ссылки: {{ $v.activeSocialLink.$params.minLength.min }}
+                                                            </span>                                                                
+                                                            <span v-else-if="!$v.activeSocialLink.maxLength" v-show="$v.activeSocialLink.$invalid">
+                                                                Максимум символов в адресе ссылки: {{ $v.activeSocialLink.$params.maxLength.max }}
+                                                            </span>
+                                                            <span v-else v-show="($v.activeSocialLink.$invalid && currentSocial.link) || invalidSocEdit">
+                                                                Заполните поле, чтобы добавить соц.сеть
+                                                            </span>
+                                                        </div>
 
                                                         <div class="soc-edit__buttons">
-                                                            <button type="submit" class="button button_size_m">Сохранить</button>
+                                                            <button type="submit" class="button button_size_m"
+                                                                :disabled="$v.activeSocialLink.$invalid && !(currentSocial.link && !activeSocialLink)"
+                                                            >Сохранить</button>
                                                             <button type="button" class="button button_size_m button_theme_minimalizm"
                                                                 @click="socEditCancel"
                                                             >Отменить</button>
@@ -433,11 +454,16 @@
                 urlAvatars: baseStorageUrl+'/avatars',
                 urlInlineSvgSprite: require('../img/spriteIcons.svg').default,
 
-                isActiveSocial: false,            
-                currentSocialId: '',
+                isActiveSocial: false,
+                currentSocial: {
+                    social_id: Number,
+                    link: ''
+                },
+                
                 socialsFromBase: [],
                 activeSocialLink: '',
-
+                socEdit: '',
+                invalidSocEdit: false,
 
                 windowWidth: 0,                
 
@@ -450,7 +476,7 @@
 
                 currentAuthorObject: {
                     albums: [],
-                    userSocials: [],
+                    socials: [],
                 },
 
                 myAlbums: [],
@@ -461,7 +487,7 @@
 
                 loggedUserObject: {
                     id: Number,
-                    userSocials: [],
+                    socials: [],
                 },
 
                 isPreloader: false,
@@ -544,6 +570,11 @@
                     required
                 },
             },
+            activeSocialLink: {
+                minLength: minLength(8),
+                maxLength: maxLength(100),
+                required
+            },
         },
 
         computed: {
@@ -563,13 +594,9 @@
             footer() {
                 return this.$refs['footer'];
             },
-
-            socEdit() {
-                return this.$refs['soc-edit'];
-                },
             idCurrentAuthor() {
                 return this.$route.params.id;
-                },
+            },
         },
 
 
@@ -577,7 +604,8 @@
             ...mapActions('cards', ['updateAllCards', 'setSearchedWord']),
             ...mapActions('authors', ['refreshAuthor']),
             ...mapActions('albums', ['addAlbum', 'deleteAlbum', 'changeAlbum']),
-            ...mapActions('user', ['logout', 'changeUser', 'getUserWithSocials']),
+            ...mapActions('user', ['logout', 'changeUser']),
+            // ...mapActions('user', ['logout', 'changeUser', 'getUserWithSocials']),
 
             clickSubmitSearch() {
                 if (this.searched) {
@@ -618,8 +646,7 @@
             },
 
             // ***** Нажата кнопка сохранить изменения (2 режима: добавить новый альбом / редактировать альбом) *****
-            async submitChangeMyAlbum(data, mode) {
-                
+            async submitChangeMyAlbum(data, mode) {                
                 if (mode === "add") {
                     try {
                         await this.addAlbum(data);
@@ -740,8 +767,41 @@
 
 
             // ***** Сохранить изменения адреса соц.сети *****
-            submitEditSocialHandler() {
-                console.log(`новая ссылка ${this.activeSocialLink} для социалки с id ${this.currentSocialId} юзера ${this.currentAuthorObject.name}`);
+            async submitEditSocialHandler() {
+                this.isPreloader = true;
+                
+                let newSocial = {
+                    social_id: this.currentSocial.social_id,                    
+                    link: this.activeSocialLink,
+                }
+                
+                try {
+                    if (!this.activeSocialLink) {
+                        if (this.currentSocial.link) {
+                            await $axios.post(`/v1/socials/${this.currentSocial.social_id}/delete`, newSocial);
+                        }
+                        else {
+                            this.invalidSocEdit = true;
+                        }
+                    } else {
+                        if (newSocial.link !== this.currentSocial.link) {
+                                if (!this.currentSocial.link) await $axios.post(`/v1/socials/add`, newSocial);
+                                else await $axios.post(`/v1/socials/${this.currentSocial.social_id}/update`, newSocial);
+                        }
+                    }
+                }
+                catch(error) { 
+                    throw new Error ( error.response.data.error || error.response.data.message ); 
+                }
+                finally {
+                    if (!this.invalidSocEdit) {
+                        this.socEditCancel();
+                        await this.refreshAuthor(this.idCurrentAuthor);
+                        this.currentAuthorObject.socials = this.thisAuthor.socials;
+                    }
+                        this.isPreloader = false;
+                }
+
             },
 
             // ***** Обработка события ухода мыши с формы редактирования соцсетей *****
@@ -764,13 +824,14 @@
 
                     // if (this.currentSocialId) { 
                     this.socialsFromBase.forEach(social => { 
-                        if (social.id !== this.currentSocialId) {
+                        // if (social.id !== this.currentSocialId) {
+                        if (social.id !== this.currentSocial.id) {
                             social.isActive = false;
                         }
                         else {
                             social.isActive = !social.isActive;
                             this.isActiveSocial = social.isActive;
-                            this.activeSocialLink = social.link || "https://";
+                            this.activeSocialLink = social.link || "";
                         }                     
                     });
                     // }
@@ -783,43 +844,33 @@
                 if (this.windowWidth > 480) {
                     
                     if (e.type=='mouseenter') {
+                        this.currentSocial = this.currentAuthorObject.socials.find(social => social.social_id === socialId) || {social_id: socialId, link: '', isActive: false};
 
-                    this.currentSocialId = socialId; 
-
-                    // this.currentAuthorObject.userSocials.map(social => { 
-                    this.socialsFromBase.map(social => { 
-                            if (this.currentSocialId) {
-
-                                if (social.id !== this.currentSocialId) {
+                        this.socialsFromBase.forEach(social => {
+                                if (social.id !== this.currentSocial.social_id) {
                                     social.isActive = false;
                                 }
                                 else {
                                     social.isActive = !social.isActive;
                                     this.isActiveSocial = social.isActive;
-                                    this.activeSocialLink = social.link;
+                                    this.activeSocialLink = ( this.currentSocial.link) ? this.currentSocial.link : '';
                                 }
-                            }
-                            
                         });
 
                     } else if (e.type=='mouseleave') {
-                        
-                        let elem = e.relatedTarget;
+                        this.socEdit = this.$refs['socedit'];
 
+                        let elem = e.relatedTarget;
+                       
                         while(elem && elem != this.socEdit) {
                             elem = elem.parentElement;
                         }
                         
                         if (elem !== this.socEdit) {
                             this.socEditCancel();
-                            // this.socialsFromBase.forEach(social => { 
-                            //     social.isActive = false;
-                            // });
-                            // this.isActiveSocial = false;
                         }
 
                     }
-
                 }
             },
 
@@ -832,9 +883,7 @@
 
 
             // ***** Клик по фотографии (открытие слайдера) *****
-            async cardClickHandler(cardId) {
-                // await this.updateCards();
-
+            cardClickHandler(cardId) {
                 let photoIndex = 0;
 
                 this.cards.find(card => {
@@ -853,9 +902,7 @@
 
                     if (this.windowWidth > 480) {
                         this.isActiveSocial = false;
-                        if (this.socialsFromBase) this.socialsFromBase.map(social => 
-                            { social.isActive = false; }
-                        );
+                        if (this.socialsFromBase) this.socialsFromBase.forEach(social => social.isActive = false );
                     }
 
                     switch(true) {
@@ -885,6 +932,7 @@
                 });
             },
 
+            // ***** Загрузка порции фотографий (по клику на кнопку загрузить еще) *****
             loadedCardsPush(startPos) {
 
                 this.checkWidth();
@@ -917,35 +965,6 @@
             async updateAlbums() {
                 await this.refreshAuthor(this.idCurrentAuthor);
                 this.currentAuthorObject = {...this.thisAuthor};
-                // this.currentAuthorObject.userSocials = await this.getUserWithSocials(currentAuthorObject.id);
-                    this.currentAuthorObject.userSocials = [//!!!!!!!!!!!!!!!! это потом придет из базы
-                        {   "id": "vk", 
-                            "icon": "../icons/soc_vk.svg", 
-                            "text": "vk", "isActive": false, 
-                            "link": "https://vk.com/" 
-                        },
-                        {   "id": "fb", 
-                            "icon": "../icons/soc_fb.svg", 
-                            "text": "fb", "isActive": false, 
-                            "link": "https://fb.com/" 
-                        },
-                        {   "id": "tw", 
-                            "icon": "../icons/soc_twitter.svg", 
-                            "text": "tw", "isActive": false, 
-                            "link": "https://twitter.com/" 
-                        },
-                        {   "id": "google", 
-                            "icon": "../icons/social_google.svg", 
-                            "text": "google", "isActive": false, 
-                            "link": "https://vk.com/" 
-                        },
-                        {   "id": "email", 
-                            "icon": "../icons/soc_email.svg", 
-                            "text": "email", "isActive": false, 
-                            "link": "https://vk.com/" 
-                        }
-                    ];
-
                 this.currentAuthorObject.cover = this.currentAuthorObject.cover ? `${this.urlPhotos}/${this.currentAuthorObject.cover}` : "../img/no_album_cover.jpg";
                 this.myAlbums = this.thisAuthor.albums;
             },
@@ -985,6 +1004,13 @@
                 }
             },
 
+            activeSocialLink(value) {
+                if (this.invalidSocEdit && value) {
+                    this.invalidSocEdit = false;
+                    console.log('invalidSocEdit = false!!!!!!');
+                }
+            },
+
             isMobile(value) {
                 if (value) this.bigCardSliderTop = 0;
                 else this.bigCardSliderTop = window.pageYOffset + 40;
@@ -992,13 +1018,14 @@
         },
 
         async created() {
-            await this.updateCards();
-            await this.updateAlbums();
-            await this.updateLoggedUser();
             const { data } = await $axios.get(`/v1/socials`);
             this.socialsFromBase = data.socials;
             this.socialsFromBase.forEach(social => 
                 this.$set(social, 'isActive', false));
+
+            await this.updateCards();
+            await this.updateAlbums();
+            await this.updateLoggedUser();
 
             this.loadedCardsPush(this.startPhotoLoadingPos);
             window.addEventListener('resize', this.checkWidth);    
@@ -1478,7 +1505,7 @@
 
         &__socials {
             margin-top: 5px;
-            margin-bottom: 30px;
+            margin-bottom: 50px;
             width: 88%;
         }
 
@@ -1617,14 +1644,31 @@
 
     .socials {
         display: flex;
-        flex-direction: column;
+        flex-direction: column; 
         align-items: center;
         position: relative;
         padding: 10px;
+        
+
+        &_no_edit {
+            padding-bottom: 0;
+            border-radius: 5px;
+            background-color: rgba($color-text, 0.2);
+        }
 
         &__list {
             display: flex;
             justify-content: center;
+        }
+
+        &__item {
+            margin-right: 8px;
+            margin-left: 8px;
+
+            @include tablets {
+                margin-right: 5px;
+                margin-left: 5px;
+            }
         }
 
         &__link {
@@ -1633,13 +1677,8 @@
             width: 22px;
             height: 22px;
             border-radius: 5px;
-            margin-right: 15px;
             margin-bottom: 10px;
 
-            @include tablets {
-                margin-right: 10px;
-            }
-            
             &_active {
                 position: relative;
                 box-sizing: content-box;
@@ -1648,6 +1687,7 @@
 
                 &::after {
                     content: '';
+                    /* z-index: 2; */
                     position: absolute;
                     bottom: -10px;
                     left: 50%;
@@ -1672,7 +1712,8 @@
                 box-sizing: content-box;
                 border-bottom: 10px solid transparent;
                 margin-bottom: 0px;
-                z-index: 20;
+                /* z-index: 20; */
+                outline: none;
 
                 .socials__icon {
                     width: 22px;
@@ -1963,11 +2004,10 @@
 
         display: none;
         min-width: calc(320px * 0.88);
-        background-color: $color-white;
+        background-color: rgba($color-white, 0.7);
         position: absolute;
         top: calc(100% - 12px);
-        z-index: 13;
-        /* overflow: unset; */
+
 
         @include tablets {
             min-width: unset;
@@ -1976,23 +2016,19 @@
 
         &::before {
             content: '';
-            display: block;
             position: absolute;
             top: -10px;
             width: 100%;
             height: 10px;
-            background-color: transparent;
+            background-color: red;
         }
 
         &_showed {
             display: block;
         }
-        /* &:hover {
-            display: block;
-        } */
 
         &__card {
-            background-color: #fff;
+            background-color: rgba($color-white, 0.5);
             display: flex;
             flex-direction: column;
             padding: 10px;
@@ -2001,6 +2037,21 @@
         &__input {
             @include popup-input();
             min-width: unset;
+        }
+
+        &__error {
+            @include error;
+            min-height: 20px;
+
+            @include tablets {
+                align-self: flex-start;
+                margin-left: 10px;
+                margin-right: 10px;
+                & span {
+                    line-height: 12px;
+                    font-size: 12px;
+                }
+            }
         }
 
         &__buttons {

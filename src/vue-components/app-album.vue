@@ -55,7 +55,7 @@
             <div class="header__album-info">
                 <div class="header__album-info-wrapper">					
                     <div class="header__info-button header__info-button_photos"> {{+thisAlbumPhotos.length}} </div>
-                    <div class="header__info-button header__info-button_comments"> {{albumLikeCount}} </div>
+                    <div class="header__info-button header__info-button_likes"> {{albumLikeCount}} </div>
                     <div class="header__info-button header__info-button_comments"> {{albumCommentCount}} </div>
                 </div>
             </div>
@@ -627,9 +627,10 @@
                     while (window.pageYOffset!==this.scrolledWhenSliderOpened) {
                         await window.scrollTo({ top: `${this.scrolledWhenSliderOpened}` });                      
                     }
+
+                    await this.clickCloseSlider();
                     this.albumCommentCount = +this.thisAlbumPhotos.reduce((sum, photo) => sum + photo.comments.length, 0);
                     this.albumLikeCount = +this.thisAlbumPhotos.reduce((sum, photo) => sum + photo.likes.length, 0);
-                    await this.clickCloseSlider();
                 }
             },
 
@@ -839,7 +840,6 @@
             // ***** Открыть фотографию в слайдере по клику *****
             clickMyPhotoHandler(myPhotoObject) {
                 if (!this.isMobile) this.bigCardSliderTop = 150;
-                // if (!this.isMobile) this.bigCardSliderTop = window.pageYOffset + 50;
                 let photoIndex = 0;
                 
                 this.thisAlbumPhotos.find(photo => {
@@ -848,8 +848,6 @@
                 });                
                 this.flickityOptions.initialIndex = this.idCurrentClickedPhoto;
                 this.openBigMyPhoto = true;
-                
-                // window.scrollTo({ top: 0 });
             },
 
             // ***** Сохранение фото после изменений (2 вида: редактирование по клику на существующей фото и при добавлении новых фото заполнение полей) ******

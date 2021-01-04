@@ -49,19 +49,19 @@ export default {
                 throw new Error ( error.response.data.error || error.response.data.message ); 
             }
         },
-        async getUserWithSocials(store, userId) {
-            try {
-                const { data } = await $axios.get(`/v1/authors/${userId}`, 
-                                    { params: {'include':'socials', 'sort':'createdAt:name'} },//!!!!!!!!!!!!!!!сортировка по имени социалки
-                                    {'Content-Type': 'application/json'}
-                );
+        // async getUserWithSocials(store, userId) {
+        //     try {
+        //         const { data } = await $axios.get(`/v1/authors/${userId}`, 
+        //                             { params: {'include':'socials', 'sort':'createdAt:name'} },//!!!!!!!!!!!!!!!сортировка по имени социалки
+        //                             {'Content-Type': 'application/json'}
+        //         );
 
-                store.commit('SET_USER', data.user);
-            }
-            catch(error) { 
-                throw new Error ( error.response.data.error || error.response.data.message ); 
-            }
-        },
+        //         store.commit('SET_USER', data.user);
+        //     }
+        //     catch(error) { 
+        //         throw new Error ( error.response.data.error || error.response.data.message ); 
+        //     }
+        // },
         async getSocials(store) {
             try {
                 const { data } = await $axios.get(`/v1/socials`, {'Content-Type': 'application/json'} );

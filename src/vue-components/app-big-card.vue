@@ -20,7 +20,7 @@
                         @click.prevent="toggleMyLike"
                         :disabled="isDisabledLike"
                         :class="{'big-card__button-likes_active' : isActiveLike}">
-                        <span class="button__text">{{cardObject.likesCount}}</span>
+                        <span class="button__text">{{cardObject.likesCount || cardObject.likes.length}}</span>
                         <span class="button__icon button__icon_heart"></span>
                     </button>
                 </div>
@@ -349,7 +349,6 @@
         },
         async mounted() {
             let thisCardLikes = this.cardObject.likes || [];
-            console.log('thisCardLikes = ',thisCardLikes);
             this.isActiveLike = thisCardLikes.find(like => like == this.loggedUserObject.id);
             this.splitDescriptionWithHashtags(this.cardObject.description);
         },

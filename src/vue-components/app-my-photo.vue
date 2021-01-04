@@ -8,8 +8,8 @@
             ></div>
 		
 			<div class="my-photo__comments-likes-wrapper">					
-				<div class="my-photo__info-button my-photo__info-button_comments">{{myPhotoObject.commentsCount}}</div>
-				<div class="my-photo__info-button my-photo__info-button_likes">{{myPhotoObject.likesCount}}</div>
+				<div class="my-photo__info-button my-photo__info-button_comments">{{myPhotoObject.commentsCount || myPhotoObject.comments.length}}</div>
+				<div class="my-photo__info-button my-photo__info-button_likes">{{myPhotoObject.likesCount || myPhotoObject.likes.length}}</div>
 			</div>
 		</div>
 

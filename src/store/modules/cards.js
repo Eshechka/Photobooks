@@ -58,6 +58,7 @@ export default {
                                                 { params: {'include':'author,comments,likes'} },
                                                 {'Content-Type': 'application/json'}
                     );
+
                 store.commit('CHANGE_ALBUM_CARD', response.data.card);
             }
             catch(error) { throw new Error ( error.response.data.error || error.response.data.message ); }

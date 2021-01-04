@@ -60,9 +60,7 @@
         },
 
         methods: {
-            mounted() {
-                console.log('this.cardObject', this.cardObject);
-            }
+            
         },
     }
 </script>
