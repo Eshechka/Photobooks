@@ -41,6 +41,18 @@
                             <input class="registration__input registration__input_name" type="text" placeholder="Имя" v-model="registerUser.name">
 
                         </label>
+						<div class="registration__error registration__error_name">
+							<span v-if="!$v.registerUser.name.minLength" v-show="$v.registerUser.name.$invalid">
+								Минимум символов в имени: {{ $v.registerUser.name.$params.minLength.min }}
+							</span>
+							<span v-else-if="!$v.registerUser.name.maxLength" v-show="$v.registerUser.name.$invalid">
+								Максимум символов в имени: {{ $v.registerUser.name.$params.maxLength.max }}
+							</span>
+							<span v-else v-show="$v.registerUser.name.$invalid">
+								Обязательно для заполнения
+							</span>
+						</div>
+
                         <label class="registration__label registration__label_email">					
                             
                             <svg class="registration__icon registration__icon_email">
@@ -49,27 +61,60 @@
                             <input class="registration__input registration__input_email" type="text" placeholder="Электронная почта" v-model="registerUser.email">
 
                         </label>
+						<div class="registration__error registration__error_email">
+							<span v-if="!$v.registerUser.email.minLength" v-show="$v.registerUser.email.$invalid">
+								Минимум символов в email: {{ $v.registerUser.email.$params.minLength.min }}
+							</span>
+							<span v-else-if="!$v.registerUser.email.maxLength" v-show="$v.registerUser.email.$invalid">
+								Максимум символов в email: {{ $v.registerUser.email.$params.maxLength.max }}
+							</span>
+							<span v-else v-show="$v.registerUser.email.$invalid">
+								Обязательно для заполнения
+							</span>
+						</div>
+
                         <label class="registration__label registration__label_password">					
                             
                             <svg class="registration__icon registration__icon_password">
                                 <use :xlink:href="urlInlineSvgSprite+'#password'"></use>
                             </svg>
                             <input class="registration__input registration__input_password" type="password" placeholder="Пароль" v-model="registerUser.password">
+
                         </label>
+						<div class="registration__error registration__error_password">
+							<span v-if="!$v.registerUser.password.minLength" v-show="$v.registerUser.password.$invalid">
+								Минимум символов в пароле: {{ $v.registerUser.password.$params.minLength.min }}
+							</span>
+							<span v-else-if="!$v.registerUser.password.maxLength" v-show="$v.registerUser.password.$invalid">
+								Максимум символов в paпаролеssword: {{ $v.registerUser.password.$params.maxLength.max }}
+							</span>
+							<span v-else v-show="$v.registerUser.password.$invalid">
+								Обязательно для заполнения
+							</span>
+						</div>
+
                         <label class="registration__label registration__label_password">					
                             
                             <svg class="registration__icon registration__icon_password">
                                 <use :xlink:href="urlInlineSvgSprite+'#password'"></use>
                             </svg>
-                            <input class="registration__input registration__input_password" type="password" placeholder="Подтвердите пароль" v-model="registerUser.password_confirmation">
+                            <input class="registration__input registration__input_password" type="password" placeholder="Подтвердите пароль" v-model="registerUser.passwordConfirm">
                         </label>
+						<div class="registration__error registration__error_password">
+							<span v-show="registerUser.passwordConfirm !== registerUser.password">
+								Пароли не совпадают
+							</span>
+						</div>
 
                         <div class="registration__wrapper">
                             
                             <p class="registration__text">Ваши данные остаются строго конфиденциальны</p>
 
                             <div class="registration__submit">
-								<button class="button button_size_l" type="submit">Создать аккаунт</button>
+								<button class="button button_size_l" type="submit"
+									:disabled="$v.registerUser.$invalid || registerUser.passwordConfirm !== registerUser.password"
+									:title="$v.registerUser.$invalid ? 'Необходимо корректно заполнить все поля' : 'Нажмите для регистрации нового пользователя'" 
+								>Создать аккаунт</button>
                             </div>
                             <div class="registration__toenter">
                                 <p class="registration__text">Уже зарегистрированы?</p>
@@ -191,8 +236,9 @@
 	import { mapState, mapActions } from 'vuex';
 	import axios from '../requests';
 
-    import appUI from '../vue-components/app-UI.vue';    
-
+	import { required, minLength, maxLength } from 'vuelidate/lib/validators';
+	
+	import appUI from '../vue-components/app-UI.vue';
 
   export default { 
 	  
@@ -207,8 +253,7 @@
 			stateForgotPassword: !!false,
 			
 			loginError: false,
-			regError: false,
-			
+			regError: false,			
             
             urlInlineSvgSprite: require('../img/spriteIcons.svg').default,
 
@@ -221,16 +266,36 @@
 				name: '',
 				email: '',
 				password: '',
-				password_confirmation: ''
+				passwordConfirm: ''
 			},
 			loginUser: {
 				email: '',
 				password: '',
 			},
            
-        }
+		}		
     },
 
+	validations: {
+
+		registerUser: {
+			name: {
+				required,
+				minLength: minLength(2),
+				maxLength: maxLength(30)
+			},
+			email: {
+				minLength: minLength(8),
+				maxLength: maxLength(50),
+				required
+			},
+			password: {
+				required,
+				minLength: minLength(8),
+				maxLength: maxLength(30)
+			},
+		},
+	},
 
     methods: {  
 		...mapActions('user', ['login']),
@@ -667,6 +732,17 @@
         @include tablets {
             align-self: auto;
         }
+	}
+
+	&__error {
+		@include error;
+		min-height: 18px;
+		margin-left: 20px;
+		margin-right: 20px;
+
+		@include tablets {
+			align-self: flex-start;
+		}
 	}
 
 }
