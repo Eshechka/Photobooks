@@ -8,8 +8,6 @@ import Vue from 'vue';
 
 import appIndex from './vue-pages/app-index.vue';
 
-export const eventBus = new Vue();
-
 import { store } from './store/index';
 import $axios from './requests';
 store.$axios = $axios;

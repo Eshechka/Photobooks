@@ -605,7 +605,6 @@
             ...mapActions('authors', ['refreshAuthor']),
             ...mapActions('albums', ['addAlbum', 'deleteAlbum', 'changeAlbum']),
             ...mapActions('user', ['logout', 'changeUser']),
-            // ...mapActions('user', ['logout', 'changeUser', 'getUserWithSocials']),
 
             clickSubmitSearch() {
                 if (this.searched) {
@@ -980,7 +979,7 @@
         },
 
         watch: {
-            idCurrentAuthor() {
+            idCurrentAuthor(value) {
                 this.updateCards();
                 this.updateAlbums();
                 this.openBigCardSlider=this.openEditHeader=this.openChangeMyAlbum=false;
@@ -1035,7 +1034,10 @@
         mounted() {
             this.windowWidth = window.innerWidth;
             this.bigCardSliderTop = this.isMobile ? 0 : window.pageYOffset + 40;
+
+            // this.loggedUserObject.id = store.getters['user/loggedUser'].id;
             this.loggedUserObject.id = localStorage.getItem('userId');
+
             this.editedAlbum.author = this.loggedUserObject.id;
             if (this.header && this.footer) { 
                 this.heightHeaderFooterMobile = parseFloat(getComputedStyle(this.header).height) + parseFloat(getComputedStyle(this.footer).height);

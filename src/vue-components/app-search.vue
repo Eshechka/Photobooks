@@ -390,7 +390,9 @@
         },
 
         async mounted() {
+            // this.loggedUserObject.id = store.getters['user/loggedUser'].id;
             this.loggedUserObject.id = localStorage.getItem('userId');
+
             this.bigCardSliderTop = this.isMobile ? 0 : window.pageYOffset + 40;
             this.showMode = this.mode;
             this.searchedStr = this.searchedWord;

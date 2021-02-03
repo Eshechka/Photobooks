@@ -60,7 +60,6 @@ export default {
         async changeAlbumWithFiles(store, {changedAlbum, changedAlbumId}) {
             try {
                 const { data } = await this.$axios.post(`/v1/albums/${changedAlbumId}`, changedAlbum, {headers: {'Content-Type': 'multipart/form-data'}});
-                console.log('changeAlbum DATA:',data);
                 store.commit('CHANGE_ALBUM', data.album);
             }
             catch(error) { 

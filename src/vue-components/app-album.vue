@@ -437,8 +437,6 @@
 
     import renderer from '../renderer.js';
 
-    // import axios from '../requests.js';
-
     import { baseStorageUrl } from '../requests.js';
 
     import vue2Dropzone from 'vue2-dropzone';
@@ -968,7 +966,10 @@
 
         mounted() {
             window.addEventListener('scroll', this.scrollHandle);
+            
             this.loggedUserObject.id = localStorage.getItem('userId');
+            // this.loggedUserObject.id = this.loggeduser.id;
+            
             if (this.header && this.footer) { 
                 this.heightHeaderFooterMobile = parseFloat(getComputedStyle(this.header).height) + parseFloat(getComputedStyle(this.footer).height);
             };            

@@ -237,12 +237,14 @@
 
         loginHandle() {
 			axios.post('/login', this.loginUser).then(response => {
-				const token = response.data.access_token;
-				localStorage.setItem('token', token);
+				const token = response.data.access_token;				
 				axios.defaults.headers['Authorization'] = `Bearer ${token}`;
 
-				const user = response.data.user;
-				this.login(user);
+				// const loggedUser = Object.assign({}, response.data.user, {token: response.data.access_token});
+				// this.login(loggedUser);
+
+				localStorage.setItem('token', token);
+				this.login(response.data.user);
 				this.$router.replace(`/${response.data.user.id}`);
 
 			}).catch(error => {
@@ -252,12 +254,11 @@
 
 		registerHandle() {			
 			axios.post('/register', this.registerUser).then(response => { 
-				const token = response.data.token;
-				localStorage.setItem('token', token);
+				const token = response.data.access_token;
 				axios.defaults.headers['Authorization'] = `Bearer ${token}`;
 
-				const user = response.data.user;
-				this.login(user);
+				localStorage.setItem('token', token);				
+				this.login(response.data.user);
 				this.$router.replace(`/${response.data.user.id}`);
 
 			}).catch(error => {

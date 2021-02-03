@@ -77,7 +77,7 @@ export default {
                 throw new Error ( error.response.data.error || error.response.data.message ); }
         },
         async updateAllCards(store) {               
-                try {               
+                try {
                 const { data } = await $axios.get(`/v1/photos`,
                                     { params: {include :'author,album,comments,likes', 'limit': 100, 'sort':'createdAt:desc'} },
                                     {'Content-Type': 'application/json'}

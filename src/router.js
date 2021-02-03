@@ -1,17 +1,21 @@
+
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-
-import { store } from './store/index';
-
-import guard from './requests';
+import {store} from './store/index';
 
 Vue.use(VueRouter);
 
+import guard from './requests';
+
 const userId = localStorage.getItem('userId');
+// const userId = store.getters['user/loggedUser'].id;
 
 const routes = [
     {
-        path: '/',        
+        path: '/',
+        // redirect: to => {
+        //     return `${store.getters['user/loggedUser'].id}`;
+        //   },
         redirect: `/${userId}`, 
         component: () => import('./vue-components/app-user.vue'),
     },
@@ -56,16 +60,10 @@ const router = new VueRouter({
 router.beforeEach(async (to, from, next) => {
 
     const isPublicRoute = to.matched.some(route => route.meta.public);
-    const isUserLogged = store.getters['user/userIsLogged'];
-    // const userIsFull = store.getters['user/userIsFull'];
+    const isUserLogged = store.getters['user/userIsLogged'];    
 
     if (!isPublicRoute) {
         if (isUserLogged) {
-                // if (!userIsFull) {
-                //     alert('Не заполнен');
-                //     next();
-                // }
-                // else 
                 try {
                     next();
                 }
@@ -75,10 +73,11 @@ router.beforeEach(async (to, from, next) => {
         }
         else {
             const token = localStorage.getItem('token');
+            // const user = await store.getters['user/loggedUser'];
+
             guard.defaults.headers["Authorization"] = `Bearer ${token}`;
             try {
                 const {data} = await guard.get('/user');
-                localStorage.setItem('userId', data.id);
                 store.commit('user/SET_USER', data);
                 next();
             } 
@@ -89,12 +88,7 @@ router.beforeEach(async (to, from, next) => {
         }
     }
     else {
-        // if (isUserLogged) {
-        //     router.replace('/');
-        // }
-        // else {
-            next();
-        // }
+        next();
     }
 
   })
