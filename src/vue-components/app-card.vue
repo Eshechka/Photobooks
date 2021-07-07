@@ -14,7 +14,7 @@
                 tag="a"
                 :to="'/'+cardObject.author.id"
                 :title="`Перейти в профиль пользователя ${cardObject.author.name}`">
-                <img class="card__avatar-img" :src="`${urlAvatars}/${cardObject.author.avatar}`" alt="card avatar">
+                <img class="card__avatar-img" :src="cardObject.author.avatar ? `${urlAvatars}/${cardObject.author.avatar}` : require('../img/no_avatar.png').default" alt="card avatar">
                 <div class="card__avatar-overlay"></div>
             </router-link>
 

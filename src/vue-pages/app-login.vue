@@ -98,10 +98,10 @@
                             <svg class="registration__icon registration__icon_password">
                                 <use :xlink:href="urlInlineSvgSprite+'#password'"></use>
                             </svg>
-                            <input class="registration__input registration__input_password" type="password" placeholder="Подтвердите пароль" v-model="registerUser.passwordConfirm">
+                            <input class="registration__input registration__input_password" type="password" placeholder="Подтвердите пароль" v-model="registerUser.password_confirmation">
                         </label>
 						<div class="registration__error registration__error_password">
-							<span v-show="registerUser.passwordConfirm !== registerUser.password">
+							<span v-show="registerUser.password_confirmation !== registerUser.password">
 								Пароли не совпадают
 							</span>
 						</div>
@@ -112,7 +112,7 @@
 
                             <div class="registration__submit">
 								<button class="button button_size_l" type="submit"
-									:disabled="$v.registerUser.$invalid || registerUser.passwordConfirm !== registerUser.password"
+									:disabled="$v.registerUser.$invalid || registerUser.password_confirmation !== registerUser.password"
 									:title="$v.registerUser.$invalid ? 'Необходимо корректно заполнить все поля' : 'Нажмите для регистрации нового пользователя'" 
 								>Создать аккаунт</button>
                             </div>
@@ -220,7 +220,7 @@
                 </div>
 
                 <div class="login__footer"> 
-					2020 | Создано командой профессионалов: <a target="_blank" href="https://vk.com/id594716031">Lidia</a>&nbsp;&amp;&nbsp;<a target="_blank" href="https://xeniaweb.ch/">XeniaWeb</a>
+					2021 | Создано командой профессионалов: <a target="_blank" href="https://vk.com/id594716031">Lidia</a>&nbsp;&amp;&nbsp;<a target="_blank" href="https://xeniaweb.ch/">XeniaWeb</a>
                 </div> 
                 
             </div>	
@@ -266,7 +266,7 @@
 				name: '',
 				email: '',
 				password: '',
-				passwordConfirm: ''
+				password_confirmation: ''
 			},
 			loginUser: {
 				email: '',
